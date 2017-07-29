@@ -40,8 +40,8 @@ class MapGenerator {
     game.exit = game.createExit(point: shuffledGridNodes.last!.gridPosition)
     game.register(entity: game.exit)
 
-    if n == 0 {
-      print("Regenerating")
+    if !game.getIsReachable(game.player.gridNode, game.exit.gridNode) {
+      print("Exit unreachable. Regenerating.")
       game.reset()
       MapGenerator.generate(scene: scene, game: game, n: n + 1)
     }

@@ -138,7 +138,11 @@ class GameModel {
     ruleSystem.state["game"] = nil
     scene?.evaluatePossibleTransitions()
   }
+}
 
+// MARK: Actions
+
+extension GameModel {
   func movePlayer(by delta: int2, completion: OptionalCallback = nil) {
     guard isAcceptingInput else { return }
     guard let pos = player.position else { fatalError() }
@@ -163,7 +167,20 @@ class GameModel {
       completion?()
     }
   }
+}
 
+// MARK: Utilities
+
+extension GameModel {
+  func getIsReachable(_ a: GridNode?, _ b: GridNode?) -> Bool {
+    guard let a = a, let b = b else { return false }
+    return gridGraph.findPath(from: a, to: b).count > 0
+  }
+}
+
+// MARK: Factories
+
+extension GameModel {
   func createActor(_ character: String, color: SKColor, weight: CGFloat, power: CGFloat, point: int2) -> GKEntity {
     guard let scene = scene else { fatalError() }
     let entity = GKEntity()
