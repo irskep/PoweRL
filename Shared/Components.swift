@@ -83,14 +83,6 @@ class GridSpriteSystem: GKComponentSystem<GridSpriteComponent> {
     sprite.label.color = component.color ?? SKColor.white
     sprite.backgroundColor = component.bkColor
   }
-
-  override func removeComponent(_ component: GridSpriteComponent) {
-    super.removeComponent(component)
-    guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
-    sprite.text = nil
-    sprite.label.color = SKColor.white
-    sprite.backgroundColor = nil
-  }
 }
 
 class GridSpriteComponent: GKComponent {
@@ -108,6 +100,20 @@ class GridSpriteComponent: GKComponent {
     self.color = color
     self.bkColor = bkColor
   }
+
+  func animateAway() {
+    let labelFade = SKAction.fadeAlpha(to: 0, duration: MOVE_TIME)
+    let colorFade = SKAction.colorize(with: SKColor.black, colorBlendFactor: 1, duration: MOVE_TIME)
+
+    guard let pos = node?.gridPosition, let sprite = scene?.gridSprite(at: pos) else { return }
+    sprite.cover.run(colorFade)
+    sprite.label.run(
+      labelFade,
+      completion: {
+        sprite.label.text = " "
+        sprite.label.color = SKColor.white
+      })
+  }
 }
 
 
@@ -123,6 +129,7 @@ class SpriteSystem: GKComponentSystem<SpriteComponent> {
 }
 
 class SpriteComponent: GKComponent {
+  var shouldAnimateAway = true
   var sprite: SKNode
 
   required init(sprite: SKNode) {
@@ -132,6 +139,11 @@ class SpriteComponent: GKComponent {
 
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+
+  func animateAway() {
+    guard shouldAnimateAway else { return }
+    sprite.run(SKAction.fadeAlpha(to: 0, duration: MOVE_TIME))
   }
 }
 

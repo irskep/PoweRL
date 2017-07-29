@@ -34,6 +34,7 @@ class MapGenerator {
     shuffledGridNodes = Array(shuffledGridNodes.dropFirst(1))
     if game.player == nil {
       game.player = game.createActor("@", color: SKColor.white, weight: 100, power: 100, point: playerPosition)
+      game.player.component(ofType: SpriteComponent.self)!.shouldAnimateAway = false
     } else {
       game.player.gridNode = game.gridGraph.node(atGridPosition: playerPosition)
     }
@@ -51,6 +52,7 @@ class MapGenerator {
       drain.addComponent(GridSpriteComponent(scene, drainNode, "-", SKColor.black, SKColor.red.blended(withFraction: 0.8, of: SKColor.black)))
       drain.addComponent(PowerComponent(power: -5, isBattery: true))
       drain.addComponent(GridNodeComponent(gridNode: drainNode))
+      drain.addComponent(PickupConsumableComponent())
       game.register(entity: drain)
     }
     shuffledGridNodes = Array(shuffledGridNodes.dropFirst(numDrains))

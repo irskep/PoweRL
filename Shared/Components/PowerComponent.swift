@@ -14,12 +14,14 @@ class PowerComponent: GKComponent {
   var maxPower: CGFloat = 0
   var isBattery: Bool = false
   var isFull: Bool { return power >= maxPower }
+  var neverChanges: Bool = false
 
-  convenience init(power: CGFloat, isBattery: Bool) {
+  convenience init(power: CGFloat, isBattery: Bool, neverChanges: Bool = false) {
     self.init()
     self.power = power
     self.maxPower = power
     self.isBattery = isBattery
+    self.neverChanges = neverChanges
   }
 
   func getFractionRemaining() -> CGFloat { return power / maxPower }
@@ -34,7 +36,9 @@ class PowerComponent: GKComponent {
 
   func use(_ amount: CGFloat) -> Bool {
     if !canUse(amount) { return false }
-    power -= amount
+    if !neverChanges {
+      power -= amount
+    }
     return true
   }
 
@@ -43,6 +47,7 @@ class PowerComponent: GKComponent {
   }
 
   func discharge() -> CGFloat {
+    guard !neverChanges else { return power }
     let p = power
     power = 0
     return p

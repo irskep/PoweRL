@@ -66,6 +66,9 @@
 		AAD6B9BC1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
 		AAD6B9BD1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
 		AAD6B9BE1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
+		AAD6B9C01F2D551700D0900E /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BF1F2D551700D0900E /* Rules.swift */; };
+		AAD6B9C11F2D551700D0900E /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BF1F2D551700D0900E /* Rules.swift */; };
+		AAD6B9C21F2D551700D0900E /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BF1F2D551700D0900E /* Rules.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +105,7 @@
 		AAC0F8AA1F1AD30900D55037 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AAC0F8AC1F1AD30900D55037 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerComponent.swift; sourceTree = "<group>"; };
+		AAD6B9BF1F2D551700D0900E /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rules.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +163,7 @@
 				AA945B6C1F2D2840006C6DEA /* DeathScene.swift */,
 				AA945B701F2D284C006C6DEA /* DeathScene.sks */,
 				AA945B741F2D2C11006C6DEA /* MapGenerator.swift */,
+				AAD6B9BF1F2D551700D0900E /* Rules.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -372,6 +377,7 @@
 				AA73324A1F2C3616006ECA4D /* Geom.swift in Sources */,
 				AA70E4B91F2C1BB9005F1DD0 /* MapScene.swift in Sources */,
 				AAC0F8891F1AD30900D55037 /* GameViewController.swift in Sources */,
+				AAD6B9C01F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BD1F2C1BFB005F1DD0 /* AbstractScene.swift in Sources */,
 				AA7332501F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AA945B791F2D3D95006C6DEA /* Bresenham.swift in Sources */,
@@ -392,6 +398,7 @@
 				AA7332491F2C3615006ECA4D /* Geom.swift in Sources */,
 				AA70E4BA1F2C1BBD005F1DD0 /* MapScene.swift in Sources */,
 				AAC0F89A1F1AD30900D55037 /* GameViewController.swift in Sources */,
+				AAD6B9C11F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BE1F2C1BFD005F1DD0 /* AbstractScene.swift in Sources */,
 				AA73324F1F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AA945B7A1F2D3D95006C6DEA /* Bresenham.swift in Sources */,
@@ -421,6 +428,7 @@
 				AAD6B9BE1F2D482100D0900E /* PowerComponent.swift in Sources */,
 				AA73324C1F2CF4E1006ECA4D /* Entities.swift in Sources */,
 				AA7332481F2C3613006ECA4D /* Geom.swift in Sources */,
+				AAD6B9C21F2D551700D0900E /* Rules.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
