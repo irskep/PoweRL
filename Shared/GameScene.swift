@@ -16,6 +16,10 @@ class GameScene: AbstractScene {
     self.view?.presentScene(MapScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }
 
+  override func motionIndicate(point: CGPoint) {
+    self.motionAccept()
+  }
+
   override func setup() {
     super.setup()
 

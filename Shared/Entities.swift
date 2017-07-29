@@ -9,40 +9,6 @@
 import GameplayKit
 import SpriteKit
 
-
-class GridNode: GKGridGraphNode {
-
-}
-func +(left: int2, right: int2) -> int2 {
-  return int2(left.x + right.x, left.y + right.y)
-}
-
-class GridNodeComponent: GKComponent {
-  var gridNode: GridNode?
-
-  required init(gridNode: GridNode?) {
-    self.gridNode = gridNode
-    super.init()
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-}
-
-class SpriteComponent: GKComponent {
-  var sprite: SKNode
-
-  required init(sprite: SKNode) {
-    self.sprite = sprite
-    super.init()
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-}
-
 extension GKEntity {
   func get<T: GKComponent>() -> T? {
     return component(ofType: T.self)
@@ -50,6 +16,12 @@ extension GKEntity {
 }
 
 class Actor: GKEntity {
+  var isDeleted: Bool = false
+
+  var powerC: PowerComponent { return self.component(ofType: PowerComponent.self)! }
+  var healthC: HealthComponent { return self.component(ofType: HealthComponent.self)! }
+  var massC: MassComponent { return self.component(ofType: MassComponent.self)! }
+
   var gridNode: GridNode? {
     get {
       let gridNodeComponent: GridNodeComponent? = self.get()

@@ -105,24 +105,24 @@ class SuperAbstractScene: SKScene {
       scaleMode = .aspectFill
     }
 
-    func tapped(_ sender:UITapGestureRecognizer) {
+    @objc func tapped(_ sender:UITapGestureRecognizer) {
       guard let view = self.view else { return }
       self.motionIndicate(point: view.convert(sender.location(in: view), to: self))
     }
 
-    func motionUp() {
+    @objc func motionUp() {
       self.motion(.up)
     }
 
-    func motionDown() {
+    @objc func motionDown() {
       self.motion(.down)
     }
 
-    func motionLeft() {
+    @objc func motionLeft() {
       self.motion(.left)
     }
 
-    func motionRight() {
+    @objc func motionRight() {
       self.motion(.right)
     }
   }
@@ -133,14 +133,14 @@ class SuperAbstractScene: SKScene {
   class KeyStateHandler {
     var heldKeys = Set<Int>()
     var heldSymbols = Set<String>()
-    static let shared = { KeyStateHandler() }()
   }
 
   // Mouse-based event handling
   class AbstractScene: SuperAbstractScene {
+    private let ksh = KeyStateHandler()
 
     override func mouseDown(with event: NSEvent) {
-      _ = event.location(in: self)
+      self.motionIndicate(point: event.location(in: self))
     }
 
     override func mouseDragged(with event: NSEvent) {
@@ -150,7 +150,6 @@ class SuperAbstractScene: SKScene {
     }
 
     override func keyDown(with event: NSEvent) {
-      let ksh = KeyStateHandler.shared
       switch Int(event.keyCode) {
       case kVK_LeftArrow where !ksh.heldSymbols.contains("left"):
         ksh.heldSymbols.insert("left")
@@ -167,7 +166,7 @@ class SuperAbstractScene: SKScene {
       default: break
       }
       for char in event.charactersIgnoringModifiers?.utf16.map({ Int($0) }) ?? [] {
-        KeyStateHandler.shared.heldKeys.insert(char)
+        ksh.heldKeys.insert(char)
         if char == NSCarriageReturnCharacter {
           self.motionAccept()
         }
@@ -175,7 +174,6 @@ class SuperAbstractScene: SKScene {
     }
 
     override func keyUp(with event: NSEvent) {
-      let ksh = KeyStateHandler.shared
       switch Int(event.keyCode) {
       case kVK_LeftArrow:
         ksh.heldSymbols.remove("left")
@@ -190,7 +188,7 @@ class SuperAbstractScene: SKScene {
     }
 
     override func isHolding(m: Motion) -> Bool {
-      return KeyStateHandler.shared.heldSymbols.contains(String(describing: m))
+      return ksh.heldSymbols.contains(String(describing: m))
     }
   }
 #endif
