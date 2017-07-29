@@ -65,20 +65,20 @@ protocol MapScening {
   var tileSize: CGFloat { get }
   var fontSize: CGFloat { get }
   func gridSprite(at position: int2) -> GridSprite?
-  func createLabelNode(_ text: String) -> SKLabelNode
+  func createLabelNode(_ text: String, _ color: SKColor) -> SKLabelNode
   func visualPoint(forPosition position: int2) -> CGPoint
 }
 
 class MapScene: AbstractScene, MapScening {
-  lazy var tileSize: CGFloat = { return self.frame.size.height / self.mapSize.height }()
+  lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
   lazy var fontSize: CGFloat = { return (36.0 / 314) * self.frame.size.height }()
 
   var gridNodes: [CGPoint: GridSprite] = [:]
-  var mapSizeVisual: CGSize { return CGSize(width: mapSize.width * tileSize, height: mapSize.height * tileSize) }
+  var mapSizeVisual: CGSize { return CGSize(width: CGFloat(game.mapSize.x) * tileSize, height: CGFloat(game.mapSize.y) * tileSize) }
 
-  func createLabelNode(_ text: String) -> SKLabelNode {
+  func createLabelNode(_ text: String, _ color: SKColor) -> SKLabelNode {
     let node = SKLabelNode(fontNamed: "Menlo")
-    node.fontColor = SKColor.white
+    node.fontColor = color
     node.verticalAlignmentMode = .center
     node.fontSize = self.fontSize
     node.text = text
@@ -107,7 +107,7 @@ class MapScene: AbstractScene, MapScening {
       color: SKColor.red,
       width: self.hudContainerNode.size.width,
       y: self.hudContainerNode.size.height - 16,
-      getter: { self.game.player.healthC.getFractionRemaining() })
+      getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 })
   }()
 
   lazy var powerMeterNode: MeterNode = {
@@ -115,14 +115,12 @@ class MapScene: AbstractScene, MapScening {
       color: SKColor.cyan,
       width: self.hudContainerNode.size.width,
       y: self.hudContainerNode.size.height - 48,
-      getter: { self.game.player.powerC.getFractionRemaining() })
+      getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 })
   }()
 
   var game: GameModel!
 
-  var mapSize: CGSize { return CGSize(width: game.gridGraph.gridWidth, height: game.gridGraph.gridHeight)}
-
-  class func create(player: Actor) -> MapScene {
+  class func create(player: GKEntity) -> MapScene {
     let scene: MapScene = MapScene.create()
     scene.game = GameModel(player: player)
     return scene
@@ -138,12 +136,13 @@ class MapScene: AbstractScene, MapScening {
     hudContainerNode.addChild(healthMeterNode)
     hudContainerNode.addChild(powerMeterNode)
 
-    mapSize.iterateSteps(by: .columns) {
-      point in
-      let node = GridSprite(node: self.createLabelNode(" "), size: CGSize(width: self.tileSize, height: self.tileSize))
-      node.position = self.visualPoint(forPosition: int2(Int32(point.x), Int32(point.y)))
-      self.mapContainerNode.addChild(node)
-      self.gridNodes[point] = node
+    for x in 0..<game.mapSize.x {
+      for y in 0..<game.mapSize.y {
+        let node = GridSprite(node: self.createLabelNode(" ", SKColor.lightGray), size: CGSize(width: self.tileSize, height: self.tileSize))
+        node.position = self.visualPoint(forPosition: int2(x, y))
+        self.mapContainerNode.addChild(node)
+        self.gridNodes[CGPoint(x: CGFloat(x), y: CGFloat(y))] = node
+      }
     }
 
     game.start(scene: self)
@@ -196,7 +195,10 @@ class MapScene: AbstractScene, MapScening {
   }
 
   func evaluatePossibleTransitions() {
-    if game.player.powerC.power <= 0 {
+    if let playerPower = game.player.powerC?.power, playerPower <= 0 {
+      game.end()
+      self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+    } else if let playerHealth = game.player.healthC?.health, playerHealth <= 0 {
       game.end()
       self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {

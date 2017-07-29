@@ -10,6 +10,20 @@ import SpriteKit
 import GameplayKit
 
 
+class GridSystem: GKComponentSystem<GridNodeComponent> {
+  override init() {
+    super.init(componentClass: GridNodeComponent.self)
+  }
+
+  override func removeComponent(_ component: GridNodeComponent) {
+    if let entity = component.entity {
+      component.gridNode?.remove(entity)
+      super.removeComponent(component)
+    }
+  }
+}
+
+
 class GridNode: GKGridGraphNode {
   var entities: [GKEntity] = []
 
@@ -41,6 +55,53 @@ class GridNodeComponent: GKComponent {
   convenience init(gridNode: GridNode?) {
     self.init()
     self.gridNode = gridNode
+  }
+}
+
+class GridSpriteSystem: GKComponentSystem<GridSpriteComponent> {
+  override init() {
+    super.init(componentClass: GridSpriteComponent.self)
+  }
+
+  override func addComponent(_ component: GridSpriteComponent) {
+    super.addComponent(component)
+    guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
+    sprite.text = component.text
+    sprite.label.color = component.color ?? SKColor.white
+  }
+
+  override func removeComponent(_ component: GridSpriteComponent) {
+    super.removeComponent(component)
+    guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
+    sprite.text = nil
+    sprite.label.color = SKColor.white
+  }
+}
+
+class GridSpriteComponent: GKComponent {
+  weak var scene: MapScene?
+  weak var node: GridNode?
+  var text: String?
+  var color: SKColor?
+
+  convenience init(_ scene: MapScene, _ node: GridNode, _ text: String, _ color: SKColor) {
+    self.init()
+    self.scene = scene
+    self.node = node
+    self.text = text
+    self.color = color
+  }
+}
+
+
+class SpriteSystem: GKComponentSystem<SpriteComponent> {
+  override init() {
+    super.init(componentClass: SpriteComponent.self)
+  }
+
+  override func removeComponent(_ component: SpriteComponent) {
+    component.sprite.removeFromParent()
+    super.removeComponent(component)
   }
 }
 
@@ -104,7 +165,7 @@ class PowerComponent: GKComponent {
   func getFractionRemaining() -> CGFloat { return power / maxPower }
 
   func getPowerRequired(toMove distance: CGFloat) -> CGFloat {
-    return ((self.entity as? Actor)?.massC.weight ?? 0) * 0.01
+    return (self.entity?.massC?.weight ?? 0) * 0.01
   }
 
   func canUse(_ amount: CGFloat) -> Bool {
