@@ -10,33 +10,36 @@ import SpriteKit
 import GameplayKit
 
 
+class GridNode: GKGridGraphNode {
+  var entities = Set<GKEntity>()
+
+  func add(_ entity: GKEntity) {
+    entities.insert(entity)
+  }
+
+  func remove(_ entity: GKEntity) {
+    entities.remove(entity)
+  }
+}
+func +(left: int2, right: int2) -> int2 {
+  return int2(left.x + right.x, left.y + right.y)
+}
+
+
 class GridSystem: GKComponentSystem<GridNodeComponent> {
   override init() {
     super.init(componentClass: GridNodeComponent.self)
   }
 
+  override func addComponent(_ component: GridNodeComponent) {
+    super.addComponent(component)
+    if let e = component.entity { component.gridNode?.add(e) }
+  }
+
   override func removeComponent(_ component: GridNodeComponent) {
-    if let entity = component.entity {
-      component.gridNode?.remove(entity)
-      super.removeComponent(component)
-    }
+    super.removeComponent(component)
+    if let e = component.entity { component.gridNode?.remove(e) }
   }
-}
-
-
-class GridNode: GKGridGraphNode {
-  var entities: [GKEntity] = []
-
-  func add(_ entity: GKEntity) {
-    entities.append(entity)
-  }
-
-  func remove(_ entity: GKEntity) {
-    entities = entities.filter({ $0 != entity })
-  }
-}
-func +(left: int2, right: int2) -> int2 {
-  return int2(left.x + right.x, left.y + right.y)
 }
 
 class GridNodeComponent: GKComponent {
@@ -56,6 +59,16 @@ class GridNodeComponent: GKComponent {
     self.init()
     self.gridNode = gridNode
   }
+
+  override func didAddToEntity() {
+    guard let entity = entity else { return }
+    _gridNode?.add(entity)
+  }
+
+  override func willRemoveFromEntity() {
+    guard let entity = entity else { return }
+    _gridNode?.remove(entity)
+  }
 }
 
 class GridSpriteSystem: GKComponentSystem<GridSpriteComponent> {
@@ -68,6 +81,7 @@ class GridSpriteSystem: GKComponentSystem<GridSpriteComponent> {
     guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
     sprite.text = component.text
     sprite.label.color = component.color ?? SKColor.white
+    sprite.backgroundColor = component.bkColor
   }
 
   override func removeComponent(_ component: GridSpriteComponent) {
@@ -75,6 +89,7 @@ class GridSpriteSystem: GKComponentSystem<GridSpriteComponent> {
     guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
     sprite.text = nil
     sprite.label.color = SKColor.white
+    sprite.backgroundColor = nil
   }
 }
 
@@ -83,13 +98,15 @@ class GridSpriteComponent: GKComponent {
   weak var node: GridNode?
   var text: String?
   var color: SKColor?
+  var bkColor: SKColor?
 
-  convenience init(_ scene: MapScene, _ node: GridNode, _ text: String, _ color: SKColor) {
+  convenience init(_ scene: MapScene, _ node: GridNode, _ text: String, _ color: SKColor, _ bkColor: SKColor? = nil) {
     self.init()
     self.scene = scene
     self.node = node
     self.text = text
     self.color = color
+    self.bkColor = bkColor
   }
 }
 
@@ -149,42 +166,6 @@ class HealthComponent: GKComponent {
   }
 }
 
-class PowerComponent: GKComponent {
-  var power: CGFloat = 0
-  var maxPower: CGFloat = 0
-  var isBattery: Bool = false
-  var isFull: Bool { return power >= maxPower }
-
-  convenience init(power: CGFloat, isBattery: Bool) {
-    self.init()
-    self.power = power
-    self.maxPower = power
-    self.isBattery = isBattery
-  }
-
-  func getFractionRemaining() -> CGFloat { return power / maxPower }
-
-  func getPowerRequired(toMove distance: CGFloat) -> CGFloat {
-    return (self.entity?.massC?.weight ?? 0) * 0.01
-  }
-
-  func canUse(_ amount: CGFloat) -> Bool {
-    return power >= amount
-  }
-
-  func use(_ amount: CGFloat) -> Bool {
-    if !canUse(amount) { return false }
-    power -= amount
-    return true
-  }
-
-  func charge(_ amount: CGFloat) {
-    power = min(maxPower, power + amount)
-  }
-
-  func discharge() -> CGFloat {
-    let p = power
-    power = 0
-    return p
-  }
+class PickupConsumableComponent: GKComponent {
+  var isPickedUp = false
 }

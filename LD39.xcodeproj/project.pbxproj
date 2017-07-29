@@ -63,6 +63,9 @@
 		AAC0F8B61F1AD30900D55037 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F87E1F1AD30900D55037 /* Assets.xcassets */; };
 		AAC0F8B71F1AD30900D55037 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F87E1F1AD30900D55037 /* Assets.xcassets */; };
 		AAC0F8B81F1AD30900D55037 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F87E1F1AD30900D55037 /* Assets.xcassets */; };
+		AAD6B9BC1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
+		AAD6B9BD1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
+		AAD6B9BE1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +101,7 @@
 		AAC0F8A71F1AD30900D55037 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		AAC0F8AA1F1AD30900D55037 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AAC0F8AC1F1AD30900D55037 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerComponent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +143,7 @@
 		AAC0F87A1F1AD30900D55037 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				AAD6B9BA1F2D481400D0900E /* Components */,
 				AA7332471F2C3613006ECA4D /* Geom.swift */,
 				AA945B781F2D3D95006C6DEA /* Bresenham.swift */,
 				AAC0F87E1F1AD30900D55037 /* Assets.xcassets */,
@@ -201,6 +206,14 @@
 				AA7332451F2C2DBE006ECA4D /* LD39WindowController.swift */,
 			);
 			path = macOS;
+			sourceTree = "<group>";
+		};
+		AAD6B9BA1F2D481400D0900E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -363,6 +376,7 @@
 				AA7332501F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AA945B791F2D3D95006C6DEA /* Bresenham.swift in Sources */,
 				AA7332521F2CF511006ECA4D /* Entities.swift in Sources */,
+				AAD6B9BC1F2D482100D0900E /* PowerComponent.swift in Sources */,
 				AA945B6D1F2D2840006C6DEA /* DeathScene.swift in Sources */,
 				AA945B6B1F2D1A8A006C6DEA /* Components.swift in Sources */,
 				AAC0F8871F1AD30900D55037 /* AppDelegate.swift in Sources */,
@@ -382,6 +396,7 @@
 				AA73324F1F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AA945B7A1F2D3D95006C6DEA /* Bresenham.swift in Sources */,
 				AA7332511F2CF511006ECA4D /* Entities.swift in Sources */,
+				AAD6B9BD1F2D482100D0900E /* PowerComponent.swift in Sources */,
 				AA945B6E1F2D2840006C6DEA /* DeathScene.swift in Sources */,
 				AA945B6A1F2D1A8A006C6DEA /* Components.swift in Sources */,
 				AAC0F8981F1AD30900D55037 /* AppDelegate.swift in Sources */,
@@ -403,6 +418,7 @@
 				AAC0F8A61F1AD30900D55037 /* AppDelegate.swift in Sources */,
 				AA7332541F2D0BDC006ECA4D /* Components.swift in Sources */,
 				AA945B6F1F2D2840006C6DEA /* DeathScene.swift in Sources */,
+				AAD6B9BE1F2D482100D0900E /* PowerComponent.swift in Sources */,
 				AA73324C1F2CF4E1006ECA4D /* Entities.swift in Sources */,
 				AA7332481F2C3613006ECA4D /* Geom.swift in Sources */,
 			);

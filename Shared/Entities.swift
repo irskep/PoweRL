@@ -14,6 +14,8 @@ extension GKEntity {
     return component(ofType: T.self)
   }
 
+  var isPickupConsumable: Bool { return self.component(ofType: PickupConsumableComponent.self) != nil }
+
   var powerC: PowerComponent? { return self.component(ofType: PowerComponent.self) }
   var healthC: HealthComponent? { return self.component(ofType: HealthComponent.self) }
   var massC: MassComponent? { return self.component(ofType: MassComponent.self) }

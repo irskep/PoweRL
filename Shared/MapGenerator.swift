@@ -12,31 +12,50 @@ import GameplayKit
 
 class MapGenerator {
   class func generate(scene: MapScene, game: GameModel, n: Int = 0) {
-    let numWalls = Int(CGFloat(game.gridGraph.gridWidth * game.gridGraph.gridHeight) * 0.2)
+    let area: Int = game.gridGraph.gridWidth * game.gridGraph.gridHeight
+    let getAreaFraction = { (frac: CGFloat) -> Int in return Int(CGFloat(area) * frac) }
+    let numBatteries = 3
+    // 20% of cells are walls
+    let numWalls = getAreaFraction(0.2)
+    // 10% + difficulty * 5% are power drains
+    let numDrains = getAreaFraction(0.1 + 0.05 * CGFloat(game.difficulty))
 
-    let shuffledGridNodes = game.random.arrayByShufflingObjects(in: game.gridGraph.nodes ?? []) as! [GridNode]
-    let wallNodes = Array(shuffledGridNodes[0..<numWalls])
-    game.gridGraph.remove(wallNodes)
-    for wallNode in wallNodes {
+    var shuffledGridNodes = game.random.arrayByShufflingObjects(in: game.gridGraph.nodes ?? []) as! [GridNode]
+
+    for wallNode in Array(shuffledGridNodes[0..<numWalls]) {
+      game.gridGraph.remove([wallNode])
       let wall = GKEntity()
       wall.addComponent(GridSpriteComponent(scene, wallNode, "#", SKColor.lightGray))
       game.register(entity: wall)
     }
+    shuffledGridNodes = Array(shuffledGridNodes.dropFirst(numWalls))
 
-    let playerPosition = shuffledGridNodes[numWalls].gridPosition
+    let playerPosition = shuffledGridNodes[0].gridPosition
+    shuffledGridNodes = Array(shuffledGridNodes.dropFirst(1))
     if game.player == nil {
       game.player = game.createActor("@", color: SKColor.white, weight: 100, power: 100, point: playerPosition)
     } else {
       game.player.gridNode = game.gridGraph.node(atGridPosition: playerPosition)
     }
 
-    for batteryGridNode in shuffledGridNodes[numWalls+1..<numWalls+(numWalls/2)] {
+    for batteryGridNode in shuffledGridNodes[0..<numBatteries] {
       let batteryEntity = game.createActor("=", color: SKColor.cyan, weight: 1, power: 10, point: batteryGridNode.gridPosition)
+      batteryEntity.addComponent(PickupConsumableComponent())
       batteryEntity.powerC?.isBattery = true
       game.register(entity: batteryEntity)
     }
-    game.register(entity: game.player)
+    shuffledGridNodes = Array(shuffledGridNodes.dropFirst(numBatteries))
 
+    for drainNode in shuffledGridNodes[0..<numDrains] {
+      let drain = GKEntity()
+      drain.addComponent(GridSpriteComponent(scene, drainNode, "-", SKColor.black, SKColor.red.blended(withFraction: 0.8, of: SKColor.black)))
+      drain.addComponent(PowerComponent(power: -5, isBattery: true))
+      drain.addComponent(GridNodeComponent(gridNode: drainNode))
+      game.register(entity: drain)
+    }
+    shuffledGridNodes = Array(shuffledGridNodes.dropFirst(numDrains))
+
+    game.register(entity: game.player)
     game.exit = game.createExit(point: shuffledGridNodes.last!.gridPosition)
     game.register(entity: game.exit)
 

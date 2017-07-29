@@ -13,35 +13,75 @@ import SpriteKit
 let MOVE_TIME: TimeInterval = 0.15
 
 
-class BatteryPickupRule: GKRule {
+class GridNodeSharingRule: GKRule {
+  func getIsEntityRelevant(_ e: GKEntity) -> Bool {
+    return false
+  }
 
-  required override init() {
-    super.init()
-    self.salience = 1
+  func performAction(inGame game: GameModel, withEntities entities: [GKEntity]) {
   }
 
   override func evaluatePredicate(in system: GKRuleSystem) -> Bool {
+    print("Run \(String(describing: type(of: self)))")
     guard
       let game = system.state["game"] as? GameModel,
       let entities = game.player.gridNode?.entities
       else { return false }
-    let batteries = entities.filter({ $0.powerC?.isBattery == true })
-    if batteries.isEmpty { return false }
-    system.state["batteriesToPickup"] = batteries
+    let wantedEntities: [GKEntity] = entities.filter(self.getIsEntityRelevant)
+    guard !wantedEntities.isEmpty else { return false }
+    system.state[String(describing: type(of: self))] = wantedEntities
     return true
   }
 
   override func performAction(in system: GKRuleSystem) {
     guard
       let game = system.state["game"] as? GameModel,
-      let batteries = system.state["batteriesToPickup"] as? [GKEntity] else { return }
-    system.state["batteriesToPickup"] = nil
-    for battery in batteries {
+      let entities = system.state[String(describing: type(of: self))] as? [GKEntity] else { return }
+    system.state[String(describing: type(of: self))] = nil
+    self.performAction(inGame: game, withEntities: entities)
+  }
+}
+
+
+class BatteryChargeRule: GridNodeSharingRule {
+  required override init() {
+    super.init()
+    self.salience = 1000
+  }
+
+  override func getIsEntityRelevant(_ e: GKEntity) -> Bool {
+    return e.powerC?.isBattery == true
+  }
+
+  override func performAction(inGame game: GameModel, withEntities entities: [GKEntity]) {
+    for battery in entities {
       if game.player.powerC?.isFull == true {
         return
       }
       game.player.powerC?.charge(battery.powerC?.discharge() ?? 0)
-      game.delete(entity: battery)
+      if let pickupC = battery.component(ofType: PickupConsumableComponent.self) {
+        pickupC.isPickedUp = true
+      }
+    }
+  }
+}
+
+
+class ConsumablePickupRule: GridNodeSharingRule {
+  required override init() {
+    super.init()
+    self.salience = 999
+  }
+
+  override func getIsEntityRelevant(_ e: GKEntity) -> Bool {
+    return e.isPickupConsumable
+  }
+
+  override func performAction(inGame game: GameModel, withEntities entities: [GKEntity]) {
+    for e in entities {
+      if let pickupC = e.component(ofType: PickupConsumableComponent.self), pickupC.isPickedUp {
+        game.delete(entity: e)
+      }
     }
   }
 }
@@ -50,12 +90,14 @@ class BatteryPickupRule: GKRule {
 private func createRuleSystem(_ game: GameModel) -> GKRuleSystem {
   let rs = GKRuleSystem()
   rs.state["game"] = game
-  rs.add(BatteryPickupRule())
+  rs.add(BatteryChargeRule())
+  rs.add(ConsumablePickupRule())
   return rs
 }
 
 
 class GameModel {
+  var difficulty: Int = 1
   var isAcceptingInput: Bool = true
 
   var mapSize: int2 = int2(8, 6)
@@ -89,7 +131,8 @@ class GameModel {
     entities.insert(entity)
   }
 
-  init(player: GKEntity?) {
+  init(difficulty: Int, player: GKEntity?) {
+    self.difficulty = difficulty
     self.player = player
   }
 
@@ -105,6 +148,7 @@ class GameModel {
     self.scene = scene
     self.reset()
     MapGenerator.generate(scene: scene, game: self)
+    self.player.sprite?.zPosition = 1
   }
 
   func end() {
@@ -188,7 +232,6 @@ extension GameModel {
     entity.addComponent(SpriteComponent(sprite: scene.createLabelNode(character, color)))
     entity.addComponent(PowerComponent(power: power, isBattery: false))
     entity.addComponent(MassComponent(weight: weight))
-    entity.gridNode?.add(entity)
     return entity
   }
 

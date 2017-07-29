@@ -17,15 +17,20 @@ extension CGPoint {
 
 class GridSprite: SKSpriteNode {
   let label: SKLabelNode
+  let cover: SKSpriteNode
   var text: String? {
     get { return label.text }
     set { label.text = newValue }
   }
+  var backgroundColor: SKColor? {
+    get { return cover.color }
+    set { cover.color = newValue ?? SKColor.black }
+  }
   required init(node: SKLabelNode, size: CGSize) {
     label = node
+    cover = SKSpriteNode(texture: nil, color: SKColor.black, size: size - CGSize(width: 1, height: 1))
     super.init(texture: nil, color: SKColor.darkGray, size: size)
-    let blackCover = SKSpriteNode(texture: nil, color: SKColor.black, size: size - CGSize(width: 1, height: 1))
-    addChild(blackCover)
+    addChild(cover)
     addChild(label)
   }
 
@@ -120,14 +125,14 @@ class MapScene: AbstractScene, MapScening {
 
   var game: GameModel!
 
-  class func create(player: GKEntity) -> MapScene {
+  class func create(difficulty: Int, player: GKEntity) -> MapScene {
     let scene: MapScene = MapScene.create()
-    scene.game = GameModel(player: player)
+    scene.game = GameModel(difficulty: difficulty, player: player)
     return scene
   }
 
   override func setup() {
-    if game == nil { game = GameModel(player: nil) }
+    if game == nil { game = GameModel(difficulty: 1, player: nil) }
     super.setup()
     self.anchorPoint = CGPoint.zero
 
@@ -203,7 +208,7 @@ class MapScene: AbstractScene, MapScening {
       self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
       game.end()
-      self.view?.presentScene(MapScene.create(player: game.player), transition: SKTransition.crossFade(withDuration: 0.5))
+      self.view?.presentScene(MapScene.create(difficulty: game.difficulty + 1, player: game.player), transition: SKTransition.crossFade(withDuration: 0.5))
     }
   }
 }
