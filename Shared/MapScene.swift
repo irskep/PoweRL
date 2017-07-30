@@ -44,11 +44,11 @@ class MeterNode: SKSpriteNode {
   var getter: () -> CGFloat = { return 0 }
   var targetScale: CGFloat = 1
 
-  convenience init(color: SKColor, width: CGFloat, y: CGFloat, getter: @escaping () -> CGFloat) {
+  convenience init(color: SKColor, width: CGFloat, height: CGFloat, y: CGFloat, getter: @escaping () -> CGFloat) {
     self.init()
     self.getter = getter
     self.color = color
-    self.size = CGSize(width: width, height: 16)
+    self.size = CGSize(width: width, height: height)
     self.anchorPoint = CGPoint(x: 0, y: 1)
     self.position = CGPoint(x: 0, y: y)
   }
@@ -81,6 +81,7 @@ class MapScene: AbstractScene, MapScening {
 
   lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
   lazy var fontSize: CGFloat = { return (36.0 / 314) * self.frame.size.height }()
+  var margin: CGFloat { return (16.0 / 314.0) * self.frame.size.height }
 
   var gridNodes: [CGPoint: GridSprite] = [:]
   var mapSizeVisual: CGSize { return CGSize(width: CGFloat(game.mapSize.x) * tileSize, height: CGFloat(game.mapSize.y) * tileSize) }
@@ -101,29 +102,42 @@ class MapScene: AbstractScene, MapScening {
     return mapContainerNode
   }()
 
+  var hudSize: CGSize { return CGSize(
+    width: self.frame.size.width - self.mapSizeVisual.width,
+    height: self.frame.size.height) }
+
   lazy var hudContainerNode: SKSpriteNode = {
     let node = SKSpriteNode(
       color: SKColor.darkGray,
-      size: CGSize(
-        width: self.frame.size.width - self.mapSizeVisual.width,
-        height: self.frame.size.height))
+      size: self.hudSize)
     node.anchorPoint = CGPoint.zero
     return node
+  }()
+
+  lazy var levelNumberLabel: SKLabelNode = {
+    let label = SKLabelNode(fontNamed: "Menlo")
+    label.fontSize = self.fontSize / 2
+    label.color = SKColor.white
+    label.verticalAlignmentMode = .top
+    label.position = CGPoint(x: self.hudSize.width / 2, y: self.hudSize.height - self.margin)
+    return label
   }()
 
   lazy var healthMeterNode: MeterNode = {
     return MeterNode(
       color: SKColor.red,
-      width: self.hudContainerNode.size.width,
-      y: self.hudContainerNode.size.height - 16,
+      width: self.hudSize.width,
+      height: self.margin,
+      y: self.hudSize.height - self.margin * 3,
       getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 })
   }()
 
   lazy var powerMeterNode: MeterNode = {
     return MeterNode(
       color: SKColor.cyan,
-      width: self.hudContainerNode.size.width,
-      y: self.hudContainerNode.size.height - 48,
+      width: self.hudSize.width,
+      height: self.margin,
+      y: self.hudSize.height - self.margin * 5,
       getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 })
   }()
 
@@ -141,8 +155,11 @@ class MapScene: AbstractScene, MapScening {
 
     self.addChild(mapContainerNode)
     self.addChild(hudContainerNode)
+    hudContainerNode.addChild(levelNumberLabel)
     hudContainerNode.addChild(healthMeterNode)
     hudContainerNode.addChild(powerMeterNode)
+
+    levelNumberLabel.text = "Level \(self.game.difficulty)"
 
     for x in 0..<game.mapSize.x {
       for y in 0..<game.mapSize.y {
