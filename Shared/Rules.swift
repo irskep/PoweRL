@@ -19,7 +19,6 @@ class GridNodeSharingRule: GKRule {
   }
 
   override func evaluatePredicate(in system: GKRuleSystem) -> Bool {
-    print("Run \(String(describing: type(of: self)))")
     guard
       let game = system.state["game"] as? GameModel,
       let entities = game.player.gridNode?.entities
@@ -55,7 +54,13 @@ class BatteryChargeRule: GridNodeSharingRule {
       if game.player.powerC?.isFull == true {
         return
       }
-      game.player.powerC?.charge(battery.powerC?.discharge() ?? 0)
+      let amt = battery.powerC?.discharge() ?? 0
+      game.player.powerC?.charge(amt)
+      if amt > 0 {
+        Player.shared.get("up2", useCache: false).play()
+      } else {
+        Player.shared.get("down", useCache: false).play()
+      }
       if let pickupC = battery.component(ofType: PickupConsumableComponent.self) {
         pickupC.isPickedUp = true
       }

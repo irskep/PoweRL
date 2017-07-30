@@ -98,7 +98,7 @@ class GameModel {
       fromGridStartingAt: int2(0, 0),
       width: mapSize.x,
       height: mapSize.y,
-      diagonalsAllowed: true,
+      diagonalsAllowed: false,
       nodeClass: GridNode.self)
   }
 
@@ -123,9 +123,22 @@ extension GameModel {
     guard isAcceptingInput else { return }
     guard let pos = player.position else { fatalError() }
     let nextPos = pos + delta
-    guard let nextGridNode = gridGraph.node(atGridPosition: nextPos) else { return }
-    guard player.gridNode?.connectedNodes.contains(nextGridNode) == true else { return }
+    guard
+      let nextGridNode = gridGraph.node(atGridPosition: nextPos),
+      player.gridNode?.connectedNodes.contains(nextGridNode) == true else {
+        self.bump(delta, completion: completion)
+        return
+    }
     moveEntity(player, toGridNode: nextGridNode, completion: completion)
+  }
+
+  func bump(_ delta: int2, completion: OptionalCallback) {
+    isAcceptingInput = false
+    Player.shared.get("bump", useCache: false).play()
+    player.component(ofType: SpriteComponent.self)!.nudge(delta) {
+      self.isAcceptingInput = true
+      completion?()
+    }
   }
 
   func moveEntity(_ entity: GKEntity, toGridNode gridNode: GridNode, completion: OptionalCallback = nil) {

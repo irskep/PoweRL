@@ -83,6 +83,14 @@ class GridSpriteSystem: GKComponentSystem<GridSpriteComponent> {
     sprite.label.color = component.color ?? SKColor.white
     sprite.backgroundColor = component.bkColor
   }
+
+  override func removeComponent(_ component: GridSpriteComponent) {
+    super.removeComponent(component)
+    guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
+    sprite.text = " "
+    sprite.label.color = SKColor.white
+    sprite.backgroundColor = SKColor.black
+  }
 }
 
 class GridSpriteComponent: GKComponent {
@@ -144,6 +152,15 @@ class SpriteComponent: GKComponent {
   func animateAway() {
     guard shouldAnimateAway else { return }
     sprite.run(SKAction.fadeAlpha(to: 0, duration: MOVE_TIME))
+  }
+
+  func nudge(_ direction: int2, completion: OptionalCallback) {
+    let vector = CGPoint(
+      x: CGFloat(direction.x) * sprite.frame.size.width / 4,
+      y: -1 * CGFloat(direction.y) * sprite.frame.size.height / 4)
+    let actionOut = SKAction.move(to: sprite.position + vector, duration: MOVE_TIME / 2)
+    let actionIn = SKAction.move(to: sprite.position, duration: MOVE_TIME / 2)
+    sprite.run(SKAction.sequence([actionOut, actionIn]), completion: { completion?() })
   }
 }
 

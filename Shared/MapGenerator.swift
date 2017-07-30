@@ -25,6 +25,7 @@ class MapGenerator {
     for wallNode in Array(shuffledGridNodes[0..<numWalls]) {
       game.gridGraph.remove([wallNode])
       let wall = GKEntity()
+      wall.addComponent(GridNodeComponent(gridNode: wallNode))
       wall.addComponent(GridSpriteComponent(scene, wallNode, "#", SKColor.lightGray))
       game.register(entity: wall)
     }
@@ -47,7 +48,7 @@ class MapGenerator {
     }
     shuffledGridNodes = Array(shuffledGridNodes.dropFirst(numBatteries))
 
-    for drainNode in shuffledGridNodes[0..<numDrains] {
+    for drainNode in shuffledGridNodes[0..<min(numDrains, shuffledGridNodes.count)] {
       let drain = GKEntity()
       drain.addComponent(GridSpriteComponent(scene, drainNode, "-", SKColor.black, SKColor.red.blended(withFraction: 0.8, of: SKColor.black)))
       drain.addComponent(PowerComponent(power: -5, isBattery: true))
@@ -61,8 +62,7 @@ class MapGenerator {
     game.exit = game.createExit(point: shuffledGridNodes.last!.gridPosition)
     game.register(entity: game.exit)
 
-    if !game.getIsReachable(game.player.gridNode, game.exit.gridNode) {
-      print("Exit unreachable. Regenerating.")
+    if !game.getIsReachable(game.player.gridNode, game.exit.gridNode) || n < 2 {
       game.reset()
       MapGenerator.generate(scene: scene, game: game, n: n + 1)
     }

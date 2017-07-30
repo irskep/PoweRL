@@ -160,8 +160,12 @@ class MapScene: AbstractScene, MapScening {
       bgMusic = try? AVAudioPlayer(contentsOf: musicURL)
       bgMusic.volume = 0.5
       bgMusic.numberOfLoops = -1
-      bgMusic.play()
+      bgMusic.enableRate = true
+      bgMusic.rate = 1
+//      bgMusic.play()
     }
+
+    Player.shared.get("up1", useCache: false).play()
   }
 
   func gridSprite(at position: int2) -> GridSprite? {
@@ -207,6 +211,15 @@ class MapScene: AbstractScene, MapScening {
 
   func updateVisuals(instant: Bool = false) {
     powerMeterNode.update(instant: instant)
+
+    let power: Float = Float(game.player.powerC?.getFractionRemaining() ?? 1)
+    if power > 0.5 {
+      bgMusic?.rate = 1
+    } else if power > 0.25 {
+      bgMusic?.rate = 0.9
+    } else {
+      bgMusic?.rate = 0.8
+    }
   }
 
   func evaluatePossibleTransitions() {
