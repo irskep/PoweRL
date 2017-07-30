@@ -86,6 +86,7 @@ class MapScene: AbstractScene, MapScening {
   var bgMusic: AVAudioPlayer!
 
   lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
+  var tileScale: CGFloat { return tileSize / 64 }
   lazy var fontSize: CGFloat = { return (36.0 / 314) * self.frame.size.height }()
   var margin: CGFloat { return (16.0 / 314.0) * self.frame.size.height }
   var pixel: CGFloat { return tileSize / 64 }
@@ -119,7 +120,7 @@ class MapScene: AbstractScene, MapScening {
       color: SKColor.cyan,
       width: self.hudSize.width,
       height: self.margin,
-      y: self.hudSize.height - self.margin * 5,
+      y: self.hudSize.height - self.margin * 6,
       getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 })
   }()
 
@@ -139,6 +140,12 @@ class MapScene: AbstractScene, MapScening {
       color: SKColor.darkGray,
       size: self.hudSize)
     node.anchorPoint = CGPoint.zero
+
+    let leveltextbg = SKSpriteNode(color: SKColor.black, size: CGSize(width: hudSize.width, height: self.margin * 3))
+    leveltextbg.anchorPoint = CGPoint.zero
+    leveltextbg.position = CGPoint(x: 0, y: hudSize.height - leveltextbg.frame.size.height)
+    node.addChild(leveltextbg)
+
     let tex: SKTexture = SKTexture(noiseWithSmoothness: 0.2, size: node.frame.size * 2, grayscale: true)
     let flavorNode = SKSpriteNode(
       texture: tex,
@@ -169,7 +176,7 @@ class MapScene: AbstractScene, MapScening {
       color: SKColor.red,
       width: self.hudSize.width,
       height: self.margin,
-      y: self.hudSize.height - self.margin * 3,
+      y: self.hudSize.height - self.margin * 4,
       getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 })
   }()
 
@@ -201,12 +208,14 @@ class MapScene: AbstractScene, MapScening {
 
     self.addChild(mapContainerNode)
     self.addChild(hudContainerNode)
+
     hudContainerNode.addChild(levelNumberLabel)
     hudContainerNode.addChild(healthMeterNode)
     hudContainerNode.addChild(powerMeterNode)
-    self.addHUDLabel(text: "Health", y: healthMeterNode.position.y - self.pixel * 2)
-    self.addHUDLabel(text: "Power", y: powerMeterNode.position.y - self.pixel * 2)
-    self.addHUDLabel(text: "Arrow keys = move", y: self.margin * 3)
+    self.addHUDLabel(text: "Health", y: healthMeterNode.position.y - self.pixel * 2 + self.margin)
+    self.addHUDLabel(text: "Power", y: powerMeterNode.position.y - self.pixel * 2 + self.margin)
+    self.addHUDLabel(text: "Arrow keys = move", y: self.margin * 4)
+    self.addHUDLabel(text: "(and attack)", y: self.margin * 3)
     self.addHUDLabel(text: "Click = shoot", y: self.margin * 2)
     self.addHUDLabel(text: "m = music on/off", y: self.margin * 1)
     self.ammoLabel = self.addHUDLabel(text: "Ammo: 0", y: powerMeterNode.position.y - self.margin * 3)
@@ -369,6 +378,7 @@ class MapScene: AbstractScene, MapScening {
     let node = createLabelNode(text, color.blended(withFraction: 0.2, of: SKColor.white)!)
     node.verticalAlignmentMode = .center
     node.position = CGPoint(x: mapSizeVisual.width / 2, y: mapSizeVisual.height / 2)
+    node.zPosition = 2000
     mapContainerNode.addChild(node)
     node.run(
       SKAction.group([
@@ -385,10 +395,21 @@ class MapScene: AbstractScene, MapScening {
     view.addTrackingArea(trackingArea)
     self.trackingArea = trackingArea
     super.didMove(to: view)
+
+    NotificationCenter.default.addObserver(self, selector: #selector(MapScene.resetTrackingArea), name: NSWindow.didResizeNotification, object: nil)
+  }
+
+  @objc func resetTrackingArea() {
+    guard let oldTrackingArea = self.trackingArea, let view = self.view else { return }
+    view.removeTrackingArea(oldTrackingArea)
+    let trackingArea = NSTrackingArea(rect: view.frame, options: [.activeInKeyWindow, .mouseMoved], owner: self, userInfo: nil)
+    view.addTrackingArea(trackingArea)
+    self.trackingArea = trackingArea
   }
 
   override func willMove(from view: SKView) {
     view.removeTrackingArea(trackingArea!)
+    NotificationCenter.default.removeObserver(self)
     super.willMove(from: view)
   }
   #endif

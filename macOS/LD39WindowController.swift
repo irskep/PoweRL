@@ -12,6 +12,6 @@ import Cocoa
 class LD39WindowController: NSWindowController {
   override func windowDidLoad() {
     super.windowDidLoad()
-    window?.aspectRatio = CGSize(width: 746, height: 414)
+//    window?.aspectRatio = CGSize(width: 746, height: 414)
   }
 }

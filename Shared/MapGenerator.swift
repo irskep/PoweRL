@@ -43,7 +43,9 @@ class MapGenerator {
       game.gridGraph.remove([wallNode])
       let wall = GKEntity()
       wall.addComponent(GridNodeComponent(gridNode: wallNode))
-      wall.addComponent(GridSpriteComponent(scene, wallNode, "#", SKColor.lightGray))
+      let sprite = SKSpriteNode(imageNamed: "wall")
+      sprite.setScale(scene.tileScale)
+      wall.addComponent(SpriteComponent(sprite: sprite))
       game.register(entity: wall)
     }
 

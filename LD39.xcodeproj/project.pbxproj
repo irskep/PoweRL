@@ -53,6 +53,9 @@
 		AA9449EB1F2E7DBC003E7315 /* win.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA9449EA1F2E7DBC003E7315 /* win.mp3 */; };
 		AA9449EC1F2E7DBC003E7315 /* win.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA9449EA1F2E7DBC003E7315 /* win.mp3 */; };
 		AA9449ED1F2E7DBC003E7315 /* win.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA9449EA1F2E7DBC003E7315 /* win.mp3 */; };
+		AA9449EF1F2E9B86003E7315 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA9449EE1F2E9B86003E7315 /* Assets.xcassets */; };
+		AA9449F01F2E9B86003E7315 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA9449EE1F2E9B86003E7315 /* Assets.xcassets */; };
+		AA9449F11F2E9B86003E7315 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA9449EE1F2E9B86003E7315 /* Assets.xcassets */; };
 		AA945B6A1F2D1A8A006C6DEA /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7332531F2D0BDC006ECA4D /* Components.swift */; };
 		AA945B6B1F2D1A8A006C6DEA /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7332531F2D0BDC006ECA4D /* Components.swift */; };
 		AA945B6D1F2D2840006C6DEA /* DeathScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA945B6C1F2D2840006C6DEA /* DeathScene.swift */; };
@@ -86,9 +89,6 @@
 		AAC0F8B31F1AD30900D55037 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F87D1F1AD30900D55037 /* GameScene.swift */; };
 		AAC0F8B41F1AD30900D55037 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F87D1F1AD30900D55037 /* GameScene.swift */; };
 		AAC0F8B51F1AD30900D55037 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F87D1F1AD30900D55037 /* GameScene.swift */; };
-		AAC0F8B61F1AD30900D55037 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F87E1F1AD30900D55037 /* Assets.xcassets */; };
-		AAC0F8B71F1AD30900D55037 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F87E1F1AD30900D55037 /* Assets.xcassets */; };
-		AAC0F8B81F1AD30900D55037 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F87E1F1AD30900D55037 /* Assets.xcassets */; };
 		AAD6B9BC1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
 		AAD6B9BD1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
 		AAD6B9BE1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
@@ -168,6 +168,7 @@
 		AA9449E21F2E7C6C003E7315 /* WinScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinScene.swift; sourceTree = "<group>"; };
 		AA9449E61F2E7CB9003E7315 /* WinScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = WinScene.sks; sourceTree = "<group>"; };
 		AA9449EA1F2E7DBC003E7315 /* win.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = win.mp3; sourceTree = "<group>"; };
+		AA9449EE1F2E9B86003E7315 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA945B6C1F2D2840006C6DEA /* DeathScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeathScene.swift; sourceTree = "<group>"; };
 		AA945B701F2D284C006C6DEA /* DeathScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DeathScene.sks; sourceTree = "<group>"; };
 		AA945B741F2D2C11006C6DEA /* MapGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapGenerator.swift; sourceTree = "<group>"; };
@@ -175,7 +176,6 @@
 		AAC0F87B1F1AD30900D55037 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		AAC0F87C1F1AD30900D55037 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		AAC0F87D1F1AD30900D55037 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
-		AAC0F87E1F1AD30900D55037 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AAC0F8831F1AD30900D55037 /* LD39.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LD39.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC0F8861F1AD30900D55037 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AAC0F8881F1AD30900D55037 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -187,7 +187,7 @@
 		AAC0F8991F1AD30900D55037 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		AAC0F89C1F1AD30900D55037 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AAC0F89E1F1AD30900D55037 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AAC0F8A31F1AD30900D55037 /* LD39.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LD39.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAC0F8A31F1AD30900D55037 /* PoweRL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PoweRL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC0F8A51F1AD30900D55037 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AAC0F8A71F1AD30900D55037 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		AAC0F8AA1F1AD30900D55037 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -271,12 +271,12 @@
 		AAC0F87A1F1AD30900D55037 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				AA9449EE1F2E9B86003E7315 /* Assets.xcassets */,
 				AAD6B9FB1F2D741000D0900E /* Music */,
 				AAD6B9FD1F2D741000D0900E /* Sounds */,
 				AAD6B9BA1F2D481400D0900E /* Components */,
 				AA7332471F2C3613006ECA4D /* Geom.swift */,
 				AA945B781F2D3D95006C6DEA /* Bresenham.swift */,
-				AAC0F87E1F1AD30900D55037 /* Assets.xcassets */,
 				AAC0F87B1F1AD30900D55037 /* Actions.sks */,
 				AA70E4BC1F2C1BFB005F1DD0 /* AbstractScene.swift */,
 				AAC0F87C1F1AD30900D55037 /* GameScene.sks */,
@@ -302,7 +302,7 @@
 			children = (
 				AAC0F8831F1AD30900D55037 /* LD39.app */,
 				AAC0F8951F1AD30900D55037 /* LD39.app */,
-				AAC0F8A31F1AD30900D55037 /* LD39.app */,
+				AAC0F8A31F1AD30900D55037 /* PoweRL.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -432,7 +432,7 @@
 			);
 			name = macOS;
 			productName = macOS;
-			productReference = AAC0F8A31F1AD30900D55037 /* LD39.app */;
+			productReference = AAC0F8A31F1AD30900D55037 /* PoweRL.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -511,6 +511,7 @@
 				AA27C71A1F2D9FFD004419F6 /* bounce.mp3 in Resources */,
 				AA27C71F1F2D9FFD004419F6 /* hit1.mp3 in Resources */,
 				AA27C7201F2D9FFD004419F6 /* hit2.mp3 in Resources */,
+				AA9449EF1F2E9B86003E7315 /* Assets.xcassets in Resources */,
 				AAD6BA211F2D741000D0900E /* select.mp3 in Resources */,
 				AA27C7271F2D9FFD004419F6 /* up3.mp3 in Resources */,
 				AAD6BA0F1F2D741000D0900E /* bump.mp3 in Resources */,
@@ -520,7 +521,6 @@
 				AAD6BA0C1F2D741000D0900E /* bounce.mp3 in Resources */,
 				AAD6BA1E1F2D741000D0900E /* hit3.mp3 in Resources */,
 				AAD6BA271F2D741000D0900E /* toggle.mp3 in Resources */,
-				AAC0F8B61F1AD30900D55037 /* Assets.xcassets in Resources */,
 				AA27C7231F2D9FFD004419F6 /* select2.mp3 in Resources */,
 				AA27C7211F2D9FFD004419F6 /* hit3.mp3 in Resources */,
 				AA7332421F2C2712006ECA4D /* MapScene.sks in Resources */,
@@ -538,13 +538,13 @@
 				AAD6BA161F2D741000D0900E /* gameover.mp3 in Resources */,
 				AA945B721F2D284C006C6DEA /* DeathScene.sks in Resources */,
 				AAD6BA101F2D741000D0900E /* bump.mp3 in Resources */,
+				AA9449F01F2E9B86003E7315 /* Assets.xcassets in Resources */,
 				AAD6BA0A1F2D741000D0900E /* 1.mp3 in Resources */,
 				AA9449E81F2E7CBA003E7315 /* WinScene.sks in Resources */,
 				AAC0F8B11F1AD30900D55037 /* GameScene.sks in Resources */,
 				AA27C7281F2D9FFE004419F6 /* up3.mp3 in Resources */,
 				AAD6BA331F2D777A00D0900E /* down.mp3 in Resources */,
 				AAD6BA0D1F2D741000D0900E /* bounce.mp3 in Resources */,
-				AAC0F8B71F1AD30900D55037 /* Assets.xcassets in Resources */,
 				AAD6BA191F2D741000D0900E /* hit1.mp3 in Resources */,
 				AAD6BA221F2D741000D0900E /* select.mp3 in Resources */,
 				AAD6BA131F2D741000D0900E /* drain.mp3 in Resources */,
@@ -568,13 +568,13 @@
 				AAD6BA171F2D741000D0900E /* gameover.mp3 in Resources */,
 				AA945B731F2D284C006C6DEA /* DeathScene.sks in Resources */,
 				AAD6BA111F2D741000D0900E /* bump.mp3 in Resources */,
+				AA9449F11F2E9B86003E7315 /* Assets.xcassets in Resources */,
 				AAD6BA0B1F2D741000D0900E /* 1.mp3 in Resources */,
 				AA9449E91F2E7CBA003E7315 /* WinScene.sks in Resources */,
 				AAC0F8B21F1AD30900D55037 /* GameScene.sks in Resources */,
 				AA27C7291F2D9FFF004419F6 /* up3.mp3 in Resources */,
 				AAD6BA341F2D777A00D0900E /* down.mp3 in Resources */,
 				AAD6BA0E1F2D741000D0900E /* bounce.mp3 in Resources */,
-				AAC0F8B81F1AD30900D55037 /* Assets.xcassets in Resources */,
 				AAD6BA1A1F2D741000D0900E /* hit1.mp3 in Resources */,
 				AAD6BA231F2D741000D0900E /* select.mp3 in Resources */,
 				AAD6BA141F2D741000D0900E /* drain.mp3 in Resources */,
@@ -883,7 +883,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steveasleep.LD39;
-				PRODUCT_NAME = LD39;
+				PRODUCT_NAME = PoweRL;
 				SDKROOT = macosx;
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
@@ -901,7 +901,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steveasleep.LD39;
-				PRODUCT_NAME = LD39;
+				PRODUCT_NAME = PoweRL;
 				SDKROOT = macosx;
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
