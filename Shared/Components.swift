@@ -198,3 +198,27 @@ class HealthComponent: GKComponent {
 class PickupConsumableComponent: GKComponent {
   var isPickedUp = false
 }
+
+
+class AmmoComponent: GKComponent {
+  var value: Int = 1
+
+  convenience init(value: Int) {
+    self.init()
+    self.value = value
+  }
+
+  func add(value v: Int) {
+    self.value += v
+  }
+
+  func empty() -> Int {
+    let v = value
+    self.value = 0
+    return v
+  }
+
+  func transfer(from ammo: AmmoComponent) {
+    self.add(value: ammo.empty())
+  }
+}

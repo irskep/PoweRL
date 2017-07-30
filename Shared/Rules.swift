@@ -23,7 +23,7 @@ class GridNodeSharingRule: GKRule {
       let game = system.state["game"] as? GameModel,
       let entities = game.player.gridNode?.entities
       else { return false }
-    let wantedEntities: [GKEntity] = entities.filter(self.getIsEntityRelevant)
+    let wantedEntities: [GKEntity] = entities.filter({ $0 != game.player && self.getIsEntityRelevant($0) })
     guard !wantedEntities.isEmpty else { return false }
     system.state[String(describing: type(of: self))] = wantedEntities
     return true
@@ -62,6 +62,28 @@ class BatteryChargeRule: GridNodeSharingRule {
         Player.shared.get("down", useCache: false).play()
       }
       if let pickupC = battery.component(ofType: PickupConsumableComponent.self) {
+        pickupC.isPickedUp = true
+      }
+    }
+  }
+}
+
+
+class AmmoTransferRule: GridNodeSharingRule {
+  required override init() {
+    super.init()
+    self.salience = 1001
+  }
+
+  override func getIsEntityRelevant(_ e: GKEntity) -> Bool {
+    if let ammoVal = e.ammoC?.value { return ammoVal > 0 } else { return false }
+  }
+
+  override func performAction(inGame game: GameModel, withEntities entities: [GKEntity]) {
+    for ammo in entities.flatMap({ $0.ammoC }) {
+      game.player.ammoC?.transfer(from: ammo)
+      Player.shared.get("up3", useCache: false).play()
+      if let pickupC = ammo.entity?.component(ofType: PickupConsumableComponent.self) {
         pickupC.isPickedUp = true
       }
     }

@@ -17,6 +17,7 @@ private func createRuleSystem(_ game: GameModel) -> GKRuleSystem {
   let rs = GKRuleSystem()
   rs.state["game"] = game
   rs.add(BatteryChargeRule())
+  rs.add(AmmoTransferRule())
   rs.add(ConsumablePickupRule())
   return rs
 }

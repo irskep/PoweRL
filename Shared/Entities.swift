@@ -19,6 +19,7 @@ extension GKEntity {
   var powerC: PowerComponent? { return self.component(ofType: PowerComponent.self) }
   var healthC: HealthComponent? { return self.component(ofType: HealthComponent.self) }
   var massC: MassComponent? { return self.component(ofType: MassComponent.self) }
+  var ammoC: AmmoComponent? { return self.component(ofType: AmmoComponent.self) }
 
   var gridNode: GridNode? {
     get {

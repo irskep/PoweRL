@@ -96,7 +96,8 @@ class MapScene: AbstractScene, MapScening {
     return node
   }
 
-  func addHUDLabel(text: String, y: CGFloat) {
+  @discardableResult
+  func addHUDLabel(text: String, y: CGFloat) -> SKLabelNode {
     let label = SKLabelNode(fontNamed: "Menlo")
     label.fontSize = self.fontSize / 3
     label.color = SKColor.white
@@ -104,6 +105,7 @@ class MapScene: AbstractScene, MapScening {
     label.text = text
     label.position = CGPoint(x: self.hudSize.width / 2, y: y)
     self.addChild(label)
+    return label
   }
 
   lazy var powerMeterNode: MeterNode = {
@@ -152,6 +154,8 @@ class MapScene: AbstractScene, MapScening {
       getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 })
   }()
 
+  var ammoLabel: SKLabelNode!
+
   class func create(from mapScene: MapScene) -> MapScene {
     let scene: MapScene = MapScene.create()
     scene.game = GameModel(difficulty: mapScene.game.difficulty + 1, player: mapScene.game.player)
@@ -174,6 +178,7 @@ class MapScene: AbstractScene, MapScening {
     self.addHUDLabel(text: "Power", y: powerMeterNode.position.y - self.pixel * 2)
     self.addHUDLabel(text: "Arrow keys move.", y: self.margin * 3)
     self.addHUDLabel(text: "Click shoots.", y: self.margin * 2)
+    self.ammoLabel = self.addHUDLabel(text: "Ammo: 0", y: powerMeterNode.position.y - self.margin * 3)
 
     levelNumberLabel.text = "Level \(self.game.difficulty)"
 
@@ -247,6 +252,7 @@ class MapScene: AbstractScene, MapScening {
 
   func updateVisuals(instant: Bool = false) {
     powerMeterNode.update(instant: instant)
+    ammoLabel.text = "Ammo: \(game.player.ammoC?.value ?? 0)"
 
     let power: Float = Float(game.player.powerC?.getFractionRemaining() ?? 1)
     if power > 0.5 {
