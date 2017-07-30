@@ -8,6 +8,7 @@
 
 import SpriteKit
 import GameplayKit
+import AVFoundation
 
 extension CGPoint {
   init(_ position: int2) {
@@ -75,6 +76,9 @@ protocol MapScening {
 }
 
 class MapScene: AbstractScene, MapScening {
+  var game: GameModel!
+  var bgMusic: AVAudioPlayer!
+
   lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
   lazy var fontSize: CGFloat = { return (36.0 / 314) * self.frame.size.height }()
 
@@ -123,11 +127,10 @@ class MapScene: AbstractScene, MapScening {
       getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 })
   }()
 
-  var game: GameModel!
-
-  class func create(difficulty: Int, player: GKEntity) -> MapScene {
+  class func create(from mapScene: MapScene) -> MapScene {
     let scene: MapScene = MapScene.create()
-    scene.game = GameModel(difficulty: difficulty, player: player)
+    scene.game = GameModel(difficulty: mapScene.game.difficulty + 1, player: mapScene.game.player)
+    scene.bgMusic = mapScene.bgMusic
     return scene
   }
 
@@ -152,6 +155,13 @@ class MapScene: AbstractScene, MapScening {
 
     game.start(scene: self)
     self.updateVisuals(instant: true)
+
+    if bgMusic == nil, let musicURL = Bundle.main.url(forResource: "1", withExtension: "mp3") {
+      bgMusic = try? AVAudioPlayer(contentsOf: musicURL)
+      bgMusic.volume = 0.5
+      bgMusic.numberOfLoops = -1
+      bgMusic.play()
+    }
   }
 
   func gridSprite(at position: int2) -> GridSprite? {
@@ -201,14 +211,18 @@ class MapScene: AbstractScene, MapScening {
 
   func evaluatePossibleTransitions() {
     if let playerPower = game.player.powerC?.power, playerPower <= 0 {
-      game.end()
-      self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+      bgMusic?.stop()
+      self.gameOver()
     } else if let playerHealth = game.player.healthC?.health, playerHealth <= 0 {
-      game.end()
-      self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+      self.gameOver()
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
       game.end()
-      self.view?.presentScene(MapScene.create(difficulty: game.difficulty + 1, player: game.player), transition: SKTransition.crossFade(withDuration: 0.5))
+      self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
     }
+  }
+
+  func gameOver() {
+    game.end()
+    self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }
 }

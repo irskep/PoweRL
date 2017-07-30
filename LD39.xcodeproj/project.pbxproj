@@ -69,6 +69,11 @@
 		AAD6B9C01F2D551700D0900E /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BF1F2D551700D0900E /* Rules.swift */; };
 		AAD6B9C11F2D551700D0900E /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BF1F2D551700D0900E /* Rules.swift */; };
 		AAD6B9C21F2D551700D0900E /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BF1F2D551700D0900E /* Rules.swift */; };
+		AAD6B9C41F2D5E5E00D0900E /* UIColor+compat.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9C31F2D5E5E00D0900E /* UIColor+compat.swift */; };
+		AAD6B9C51F2D5E5E00D0900E /* UIColor+compat.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9C31F2D5E5E00D0900E /* UIColor+compat.swift */; };
+		AAD6B9CC1F2D6DC600D0900E /* 1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6B9CB1F2D6DC600D0900E /* 1.mp3 */; };
+		AAD6B9CD1F2D6DC600D0900E /* 1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6B9CB1F2D6DC600D0900E /* 1.mp3 */; };
+		AAD6B9CE1F2D6DC900D0900E /* 1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6B9CB1F2D6DC600D0900E /* 1.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +111,8 @@
 		AAC0F8AC1F1AD30900D55037 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerComponent.swift; sourceTree = "<group>"; };
 		AAD6B9BF1F2D551700D0900E /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rules.swift; sourceTree = "<group>"; };
+		AAD6B9C31F2D5E5E00D0900E /* UIColor+compat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+compat.swift"; sourceTree = "<group>"; };
+		AAD6B9CB1F2D6DC600D0900E /* 1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = 1.mp3; path = Music/1.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +154,7 @@
 		AAC0F87A1F1AD30900D55037 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				AAD6B9CB1F2D6DC600D0900E /* 1.mp3 */,
 				AAD6B9BA1F2D481400D0900E /* Components */,
 				AA7332471F2C3613006ECA4D /* Geom.swift */,
 				AA945B781F2D3D95006C6DEA /* Bresenham.swift */,
@@ -164,6 +172,7 @@
 				AA945B701F2D284C006C6DEA /* DeathScene.sks */,
 				AA945B741F2D2C11006C6DEA /* MapGenerator.swift */,
 				AAD6B9BF1F2D551700D0900E /* Rules.swift */,
+				AAD6B9C31F2D5E5E00D0900E /* UIColor+compat.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -333,6 +342,7 @@
 				AAC0F88C1F1AD30900D55037 /* Main.storyboard in Resources */,
 				AAC0F8AD1F1AD30900D55037 /* Actions.sks in Resources */,
 				AA945B711F2D284C006C6DEA /* DeathScene.sks in Resources */,
+				AAD6B9CC1F2D6DC600D0900E /* 1.mp3 in Resources */,
 				AAC0F88F1F1AD30900D55037 /* LaunchScreen.storyboard in Resources */,
 				AAC0F8B61F1AD30900D55037 /* Assets.xcassets in Resources */,
 				AA7332421F2C2712006ECA4D /* MapScene.sks in Resources */,
@@ -345,6 +355,7 @@
 			files = (
 				AAC0F89D1F1AD30900D55037 /* Main.storyboard in Resources */,
 				AA945B721F2D284C006C6DEA /* DeathScene.sks in Resources */,
+				AAD6B9CD1F2D6DC600D0900E /* 1.mp3 in Resources */,
 				AAC0F8B11F1AD30900D55037 /* GameScene.sks in Resources */,
 				AAC0F8B71F1AD30900D55037 /* Assets.xcassets in Resources */,
 				AAC0F8AE1F1AD30900D55037 /* Actions.sks in Resources */,
@@ -358,6 +369,7 @@
 			files = (
 				AAC0F8AB1F1AD30900D55037 /* Main.storyboard in Resources */,
 				AA945B731F2D284C006C6DEA /* DeathScene.sks in Resources */,
+				AAD6B9CE1F2D6DC900D0900E /* 1.mp3 in Resources */,
 				AAC0F8B21F1AD30900D55037 /* GameScene.sks in Resources */,
 				AAC0F8B81F1AD30900D55037 /* Assets.xcassets in Resources */,
 				AAC0F8AF1F1AD30900D55037 /* Actions.sks in Resources */,
@@ -380,6 +392,7 @@
 				AAD6B9C01F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BD1F2C1BFB005F1DD0 /* AbstractScene.swift in Sources */,
 				AA7332501F2CF50E006ECA4D /* GameModel.swift in Sources */,
+				AAD6B9C41F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
 				AA945B791F2D3D95006C6DEA /* Bresenham.swift in Sources */,
 				AA7332521F2CF511006ECA4D /* Entities.swift in Sources */,
 				AAD6B9BC1F2D482100D0900E /* PowerComponent.swift in Sources */,
@@ -401,6 +414,7 @@
 				AAD6B9C11F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BE1F2C1BFD005F1DD0 /* AbstractScene.swift in Sources */,
 				AA73324F1F2CF50E006ECA4D /* GameModel.swift in Sources */,
+				AAD6B9C51F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
 				AA945B7A1F2D3D95006C6DEA /* Bresenham.swift in Sources */,
 				AA7332511F2CF511006ECA4D /* Entities.swift in Sources */,
 				AAD6B9BD1F2D482100D0900E /* PowerComponent.swift in Sources */,
