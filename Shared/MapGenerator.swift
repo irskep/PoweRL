@@ -17,8 +17,8 @@ class MapGenerator {
     let numBatteries = 3
     // 20% of cells are walls
     let numWalls = getAreaFraction(0.2)
-    // 10% + difficulty * 5% are power drains
-    let numDrains = getAreaFraction(0.1 + 0.05 * CGFloat(game.difficulty))
+    // 10% + difficulty * 2% are power drains
+    let numDrains = getAreaFraction(0.1 + 0.02 * CGFloat(game.difficulty))
 
     var shuffledGridNodes = game.random.arrayByShufflingObjects(in: game.gridGraph.nodes ?? []) as! [GridNode]
 
@@ -41,7 +41,7 @@ class MapGenerator {
     }
 
     for batteryGridNode in shuffledGridNodes[0..<numBatteries] {
-      let batteryEntity = game.createActor("=", color: SKColor.cyan, weight: 1, power: 10, point: batteryGridNode.gridPosition)
+      let batteryEntity = game.createActor("+", color: SKColor.cyan, weight: 1, power: 10, point: batteryGridNode.gridPosition)
       batteryEntity.addComponent(PickupConsumableComponent())
       batteryEntity.powerC?.isBattery = true
       game.register(entity: batteryEntity)

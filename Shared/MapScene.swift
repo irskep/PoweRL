@@ -82,6 +82,7 @@ class MapScene: AbstractScene, MapScening {
   lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
   lazy var fontSize: CGFloat = { return (36.0 / 314) * self.frame.size.height }()
   var margin: CGFloat { return (16.0 / 314.0) * self.frame.size.height }
+  var pixel: CGFloat { return tileSize / 64 }
 
   var gridNodes: [CGPoint: GridSprite] = [:]
   var mapSizeVisual: CGSize { return CGSize(width: CGFloat(game.mapSize.x) * tileSize, height: CGFloat(game.mapSize.y) * tileSize) }
@@ -94,6 +95,25 @@ class MapScene: AbstractScene, MapScening {
     node.text = text
     return node
   }
+
+  func addHUDLabel(text: String, y: CGFloat) {
+    let label = SKLabelNode(fontNamed: "Menlo")
+    label.fontSize = self.fontSize / 3
+    label.color = SKColor.white
+    label.verticalAlignmentMode = .top
+    label.text = text
+    label.position = CGPoint(x: self.hudSize.width / 2, y: y)
+    self.addChild(label)
+  }
+
+  lazy var powerMeterNode: MeterNode = {
+    return MeterNode(
+      color: SKColor.cyan,
+      width: self.hudSize.width,
+      height: self.margin,
+      y: self.hudSize.height - self.margin * 5,
+      getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 })
+  }()
 
   lazy var mapContainerNode: SKSpriteNode = {
     let mapContainerNode = SKSpriteNode(color: SKColor.black, size: self.mapSizeVisual)
@@ -132,15 +152,6 @@ class MapScene: AbstractScene, MapScening {
       getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 })
   }()
 
-  lazy var powerMeterNode: MeterNode = {
-    return MeterNode(
-      color: SKColor.cyan,
-      width: self.hudSize.width,
-      height: self.margin,
-      y: self.hudSize.height - self.margin * 5,
-      getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 })
-  }()
-
   class func create(from mapScene: MapScene) -> MapScene {
     let scene: MapScene = MapScene.create()
     scene.game = GameModel(difficulty: mapScene.game.difficulty + 1, player: mapScene.game.player)
@@ -151,6 +162,7 @@ class MapScene: AbstractScene, MapScening {
   override func setup() {
     if game == nil { game = GameModel(difficulty: 1, player: nil) }
     super.setup()
+    scaleMode = .aspectFit
     self.anchorPoint = CGPoint.zero
 
     self.addChild(mapContainerNode)
@@ -158,6 +170,10 @@ class MapScene: AbstractScene, MapScening {
     hudContainerNode.addChild(levelNumberLabel)
     hudContainerNode.addChild(healthMeterNode)
     hudContainerNode.addChild(powerMeterNode)
+    self.addHUDLabel(text: "Health", y: healthMeterNode.position.y - self.pixel * 2)
+    self.addHUDLabel(text: "Power", y: powerMeterNode.position.y - self.pixel * 2)
+    self.addHUDLabel(text: "Arrow keys move.", y: self.margin * 3)
+    self.addHUDLabel(text: "Click shoots.", y: self.margin * 2)
 
     levelNumberLabel.text = "Level \(self.game.difficulty)"
 
@@ -171,6 +187,9 @@ class MapScene: AbstractScene, MapScening {
     }
 
     game.start(scene: self)
+    // migrate all previous scenes' crossover sprites to current font size in case the user
+    // resized the window
+    (game.player.sprite as! SKLabelNode).fontSize = self.fontSize
     self.updateVisuals(instant: true)
 
     if bgMusic == nil, let musicURL = Bundle.main.url(forResource: "1", withExtension: "mp3") {
