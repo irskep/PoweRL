@@ -87,6 +87,7 @@ class GameModel {
     self.reset()
     MapGenerator.generate(scene: scene, game: self)
     self.player.sprite?.zPosition = 1
+    isAcceptingInput = true
   }
 
   func end() {
@@ -129,6 +130,28 @@ class GameModel {
     }
     scene?.evaluatePossibleTransitions()
   }
+
+  func getTargetingLaserPoints(to gridPos: int2) -> [int2] {
+    guard gridGraph.node(atGridPosition: gridPos) != nil else { return [] }
+    guard let startOfLine = player.gridNode?.gridPosition else { return [] }
+    var results: [int2] = []
+    for point in bresenham2(CGPoint(startOfLine), CGPoint(gridPos)) {
+      let p = int2(Int32(point.0), Int32(point.1))
+      if startOfLine == p {
+        continue
+      }
+      if gridGraph.node(atGridPosition: p) == nil {
+        break
+      }
+      let node = gridGraph.node(atGridPosition: p)!
+      results.append(p)
+      if !node.entities.filter({ $0.component(ofType: TakesUpSpaceComponent.self) != nil }).isEmpty {
+        // Include last point so player can see
+        break
+      }
+    }
+    return results
+  }
 }
 
 // MARK: Actions
@@ -138,9 +161,15 @@ extension GameModel {
     guard isAcceptingInput else { return }
     guard let pos = player.position else { fatalError() }
     let nextPos = pos + delta
-    guard
-      let nextGridNode = gridGraph.node(atGridPosition: nextPos),
-      player.gridNode?.connectedNodes.contains(nextGridNode) == true else {
+    guard let nextGridNode = gridGraph.node(atGridPosition: nextPos) else {
+      self.bump(delta, completion: completion)
+      return
+    }
+    if player.gridNode != gridGraph.node(atGridPosition: pos) {
+      print("Player grid node is fucked up")
+      player.gridNode = gridGraph.node(atGridPosition: pos)
+    }
+    guard player.gridNode?.connectedNodes.contains(nextGridNode) == true else {
         self.bump(delta, completion: completion)
         return
     }
@@ -165,10 +194,12 @@ extension GameModel {
   func bump(_ delta: int2, entity: GKEntity? = nil, completion: OptionalCallback) {
     let entity: GKEntity = entity ?? self.player
     isAcceptingInput = false
+    print("Stop input due to bump")
     if entity == self.player {
       Player.shared.get("bump", useCache: false).play()
     }
     entity.component(ofType: SpriteComponent.self)!.nudge(delta) {
+      print("START input due to bump")
       self.isAcceptingInput = true
       completion?()
     }
@@ -178,12 +209,14 @@ extension GameModel {
     guard let scene = scene else { fatalError() }
 
     isAcceptingInput = false
+    print("Stop input due to move \(self.difficulty)")
     entity.gridNode = gridNode
 
     let action = SKAction.move(to: scene.visualPoint(forPosition: gridNode.gridPosition), duration: MOVE_TIME)
     action.timingMode = .easeIn
     entity.sprite?.run(action) {
       self.isAcceptingInput = true
+      print("START input due to move")
       completion?()
     }
   }
@@ -203,7 +236,6 @@ extension GameModel {
   func movePlayer(toGridNode gridNode: GridNode, completion: OptionalCallback = nil) {
     guard let entity = player else { fatalError() }
     guard entity.powerC?.use(entity.powerC?.getPowerRequired(toMove: 1) ?? 0) == true else { return }
-    isAcceptingInput = false
 
     self.move(entity: entity, toGridNode: gridNode) {
       self.executeTurn()

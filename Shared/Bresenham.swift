@@ -61,3 +61,43 @@ func bresenham(_ P1: CGPoint, _ P2: CGPoint) -> [intPoint] {
 
   return internalBresenham(p1, p2, steep)
 }
+
+
+func bresenham2(_ slf: CGPoint, _ other: CGPoint) -> [intPoint] {
+  var delta = other - slf
+  let xsign: CGFloat = delta.x > 0 ? 1 : -1
+  let ysign: CGFloat = delta.y > 0 ? 1 : -1
+
+  delta.x = abs(delta.x)
+  delta.y = abs(delta.y)
+
+  var xx: CGFloat = xsign
+  var xy: CGFloat = 0
+  var yx: CGFloat = 0
+  var yy: CGFloat = ysign
+  if delta.x <= delta.y {
+    let (deltax, deltay) = (delta.y, delta.x)
+    delta.x = deltax
+    delta.y = deltay
+    xx = 0
+    xy = ysign
+    yx = xsign
+    yy = 0
+  }
+
+  var D = 2*delta.y - delta.x
+  var y = 0
+
+  var results: [intPoint] = []
+  for x in 0..<(Int(delta.x) + 1) {
+    let rx: CGFloat = slf.x + CGFloat(x)*xx + CGFloat(y)*yx
+    let ry: CGFloat = slf.y + CGFloat(x)*xy + CGFloat(y)*yy
+    results.append((Int(rx), Int(ry)))
+    if D > 0 {
+      y += 1
+      D -= delta.x
+    }
+    D += delta.y
+  }
+  return results
+}

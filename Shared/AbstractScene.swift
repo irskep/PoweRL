@@ -59,7 +59,9 @@ class SuperAbstractScene: SKScene {
   }
 
   func motionIndicate(point: CGPoint) {
+  }
 
+  func motionLook(point: CGPoint) {
   }
 
   func isHolding(m: Motion) -> Bool {
@@ -100,9 +102,6 @@ class SuperAbstractScene: SKScene {
       tapGR.numberOfTouchesRequired = 1
       tapGR.numberOfTapsRequired = 1
       view.addGestureRecognizer(tapGR)
-
-      // Set the scale mode to scale to fit the window
-      scaleMode = .aspectFill
     }
 
     @objc func tapped(_ sender:UITapGestureRecognizer) {
@@ -139,6 +138,10 @@ class SuperAbstractScene: SKScene {
   class AbstractScene: SuperAbstractScene {
     private let ksh = KeyStateHandler()
 
+    override func setup() {
+      super.setup()
+    }
+
     override func mouseDown(with event: NSEvent) {
       self.motionIndicate(point: event.location(in: self))
     }
@@ -147,6 +150,10 @@ class SuperAbstractScene: SKScene {
     }
 
     override func mouseUp(with event: NSEvent) {
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+      self.motionLook(point: event.location(in: self))
     }
 
     override func keyDown(with event: NSEvent) {

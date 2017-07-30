@@ -56,6 +56,7 @@ class MapGenerator {
       game.player.addComponent(PlayerComponent())
       game.player.addComponent(HealthComponent(health: 100))
       game.player.addComponent(BumpDamageComponent(value: 20))
+      game.player.gridNode = game.gridGraph.node(atGridPosition: playerPosition)
     } else {
       game.player.gridNode = game.gridGraph.node(atGridPosition: playerPosition)
     }
@@ -88,7 +89,17 @@ class MapGenerator {
         int2(1, 1),
         int2(-1, 1),
         int2(1, -1),
-      ])
+      ]),
+      MobSpec(char: "🐇", health: 40, moves: [
+        int2(-1, -2),
+        int2(1, -2),
+        int2(-1, 2),
+        int2(1, 2),
+        int2(-2, -1),
+        int2(2, -1),
+        int2(-2, 1),
+        int2(2, 1),
+      ]),
     ]
     for mobNode in getSomeNodes(numEnemies) {
       let mob = GKEntity()

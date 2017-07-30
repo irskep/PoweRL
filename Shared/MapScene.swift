@@ -16,6 +16,12 @@ extension CGPoint {
   }
 }
 
+extension int2 {
+  init(_ point: CGPoint) {
+    self.init(Int32(point.x), Int32(point.y))
+  }
+}
+
 class GridSprite: SKSpriteNode {
   let label: SKLabelNode
   let cover: SKSpriteNode
@@ -156,6 +162,17 @@ class MapScene: AbstractScene, MapScening {
 
   var ammoLabel: SKLabelNode!
 
+  lazy var hoverIndicatorSprites: [SKSpriteNode] = {
+    return Array((0..<30).map({
+      _ in
+      let node = SKSpriteNode(color: SKColor.yellow, size: CGSize(width: self.tileSize, height: self.tileSize))
+      node.alpha = 0.2
+      node.isHidden = true
+      node.zPosition = 100
+      return node
+    }))
+  }()
+
   class func create(from mapScene: MapScene) -> MapScene {
     let scene: MapScene = MapScene.create()
     scene.game = GameModel(difficulty: mapScene.game.difficulty + 1, player: mapScene.game.player)
@@ -164,6 +181,7 @@ class MapScene: AbstractScene, MapScening {
   }
 
   override func setup() {
+    print(game?.difficulty)
     if game == nil { game = GameModel(difficulty: 1, player: nil) }
     super.setup()
     scaleMode = .aspectFit
@@ -179,6 +197,8 @@ class MapScene: AbstractScene, MapScening {
     self.addHUDLabel(text: "Arrow keys move.", y: self.margin * 3)
     self.addHUDLabel(text: "Click shoots.", y: self.margin * 2)
     self.ammoLabel = self.addHUDLabel(text: "Ammo: 0", y: powerMeterNode.position.y - self.margin * 3)
+
+    hoverIndicatorSprites.forEach(mapContainerNode.addChild)
 
     levelNumberLabel.text = "Level \(self.game.difficulty)"
 
@@ -238,6 +258,26 @@ class MapScene: AbstractScene, MapScening {
     }
   }
 
+  private var _lastTargetedPoint: int2? = nil
+  private func _hideTargetingLaser() {
+    for s in hoverIndicatorSprites { s.isHidden = true }
+  }
+  override func motionLook(point: CGPoint) {
+    var visualPointInMap = self.convert(point, to: mapContainerNode)
+    visualPointInMap.y = mapContainerNode.frame.size.height - visualPointInMap.y
+    let gridPos = int2(Int32(visualPointInMap.x / tileSize), Int32(visualPointInMap.y / tileSize))
+    guard gridPos != _lastTargetedPoint else { return }
+    _hideTargetingLaser()
+    guard game.gridGraph.node(atGridPosition: gridPos) != nil else { return }
+    for (i, p) in game.getTargetingLaserPoints(to: gridPos).enumerated() {
+      if let s = gridSprite(at: p) {
+        hoverIndicatorSprites[i].position = s.position
+        hoverIndicatorSprites[i].isHidden = false
+      }
+    }
+    _lastTargetedPoint = gridPos
+  }
+
   var lastTime: TimeInterval? = nil
   override func update(_ currentTime: TimeInterval) {
     guard let lastTime = lastTime else {
@@ -265,9 +305,10 @@ class MapScene: AbstractScene, MapScening {
     }
   }
 
-  func evaluatePossibleTransitions() {
+  func evaluatePossibleTransitions() {  // aka 'turnDidEnd'
+    _hideTargetingLaser()
+
     if let playerPower = game.player.powerC?.power, playerPower <= 0 {
-      bgMusic?.stop()
       self.gameOver()
     } else if let playerHealth = game.player.healthC?.health, playerHealth <= 0 {
       self.gameOver()
@@ -278,7 +319,23 @@ class MapScene: AbstractScene, MapScening {
   }
 
   func gameOver() {
+    bgMusic?.stop()
     game.end()
     self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }
+
+  #if os(OSX)
+  var trackingArea: NSTrackingArea?
+  override func didMove(to view: SKView) {
+    let trackingArea = NSTrackingArea(rect: view.frame, options: [.activeInKeyWindow, .mouseMoved], owner: self, userInfo: nil)
+    view.addTrackingArea(trackingArea)
+    self.trackingArea = trackingArea
+    super.didMove(to: view)
+  }
+
+  override func willMove(from view: SKView) {
+    view.removeTrackingArea(trackingArea!)
+    super.willMove(from: view)
+  }
+  #endif
 }
