@@ -58,8 +58,10 @@ class BatteryChargeRule: GridNodeSharingRule {
       game.player.powerC?.charge(amt)
       if amt > 0 {
         Player.shared.get("up2", useCache: false).play()
+        game.scene?.flashMessage("+\(Int(amt)) power", color: SKColor.cyan)
       } else {
         Player.shared.get("down", useCache: false).play()
+        game.scene?.flashMessage("\(Int(amt)) power")
       }
       if let pickupC = battery.component(ofType: PickupConsumableComponent.self) {
         pickupC.isPickedUp = true
@@ -86,6 +88,31 @@ class AmmoTransferRule: GridNodeSharingRule {
       if let pickupC = ammo.entity?.component(ofType: PickupConsumableComponent.self) {
         pickupC.isPickedUp = true
       }
+    }
+  }
+}
+
+
+class ConsumableHealthTransferRule: GridNodeSharingRule {
+  required override init() {
+    super.init()
+    self.salience = 1002
+  }
+
+  override func getIsEntityRelevant(_ e: GKEntity) -> Bool {
+    if let healthVal = e.healthC?.health { return healthVal > 0 } else { return false }
+  }
+
+  override func performAction(inGame game: GameModel, withEntities entities: [GKEntity]) {
+    for health in entities.flatMap({ $0.healthC }) {
+      if let pickupC = health.entity?.component(ofType: PickupConsumableComponent.self) {
+        pickupC.isPickedUp = true
+      } else {
+        continue  // ignore
+      }
+      game.player.healthC?.heal(health.health)
+      Player.shared.get("select2", useCache: false).play()
+      game.scene?.flashMessage("+\(Int(health.health)) health", color: SKColor.green)
     }
   }
 }

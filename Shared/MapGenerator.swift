@@ -23,6 +23,7 @@ class MapGenerator {
     let getAreaFraction = { (frac: CGFloat) -> Int in return Int(CGFloat(area) * frac) }
     let numBatteries = 2
     let numAmmos = 3
+    let numHealthPacks = 1
     // 20% of cells are walls
     let numWalls = getAreaFraction(0.2)
     // 10% + difficulty * 2% are power drains
@@ -51,7 +52,7 @@ class MapGenerator {
     if game.player == nil {
       game.player = game.createActor("@", color: SKColor.white, weight: 100, power: 100, point: playerPosition)
       game.player.component(ofType: SpriteComponent.self)!.shouldAnimateAway = false
-      game.player.addComponent(AmmoComponent(value: 0))
+      game.player.addComponent(AmmoComponent(value: 0, damage: 40))
       game.player.addComponent(TakesUpSpaceComponent())
       game.player.addComponent(PlayerComponent())
       game.player.addComponent(HealthComponent(health: 100))
@@ -79,17 +80,32 @@ class MapGenerator {
       ammo.addComponent(GridNodeComponent(gridNode: ammoNode))
       ammo.addComponent(SpriteComponent(sprite: scene.createLabelNode(char, SKColor.purple)))
       ammo.addComponent(PickupConsumableComponent())
-      ammo.addComponent(AmmoComponent(value: 2))
+      ammo.addComponent(AmmoComponent(value: 2, damage: 40))
       game.register(entity: ammo)
+    }
+    
+    for healthNode in getSomeNodes(numHealthPacks) {
+      let health = GKEntity()
+      health.addComponent(GridNodeComponent(gridNode: healthNode))
+      health.addComponent(SpriteComponent(sprite: scene.createLabelNode("+", SKColor.red)))
+      health.addComponent(PickupConsumableComponent())
+      health.addComponent(HealthComponent(health: 50))
+      game.register(entity: health)
     }
 
     let mobSpecs: [MobSpec] = [
-      MobSpec(char: "🐛", health: 40, moves: [
+      MobSpec(char: "🦋", health: 40, moves: [
         int2(-1, -1),
         int2(1, 1),
         int2(-1, 1),
         int2(1, -1),
       ]),
+      MobSpec(char: "🐢", health: 40, moves: [
+        int2(-1, 0),
+        int2(1, 0),
+        int2(0, 1),
+        int2(0, -1),
+        ]),
       MobSpec(char: "🐇", health: 40, moves: [
         int2(-1, -2),
         int2(1, -2),

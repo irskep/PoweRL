@@ -216,10 +216,12 @@ class PlayerComponent: GKComponent { }
 
 class AmmoComponent: GKComponent {
   var value: Int = 1
+  var damage: CGFloat = 20
 
-  convenience init(value: Int) {
+  convenience init(value: Int, damage: CGFloat) {
     self.init()
     self.value = value
+    self.damage = damage
   }
 
   func add(value v: Int) {

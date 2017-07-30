@@ -18,6 +18,7 @@ private func createRuleSystem(_ game: GameModel) -> GKRuleSystem {
   rs.state["game"] = game
   rs.add(BatteryChargeRule())
   rs.add(AmmoTransferRule())
+  rs.add(ConsumableHealthTransferRule())
   rs.add(ConsumablePickupRule())
   return rs
 }
@@ -132,7 +133,6 @@ class GameModel {
   }
 
   func getTargetingLaserPoints(to gridPos: int2) -> [int2] {
-    guard gridGraph.node(atGridPosition: gridPos) != nil else { return [] }
     guard let startOfLine = player.gridNode?.gridPosition else { return [] }
     var results: [int2] = []
     for point in bresenham2(CGPoint(startOfLine), CGPoint(gridPos)) {
@@ -157,6 +157,39 @@ class GameModel {
 // MARK: Actions
 
 extension GameModel {
+  func shoot(target: int2, path: [int2]) {
+    guard isAcceptingInput else { return }
+    guard let node = gridGraph.node(atGridPosition: target) else { return }
+    guard let ammoC = player.ammoC else { return }
+    let entitiesToShoot = node.entities.filter({ $0.healthC != nil })
+    guard !entitiesToShoot.isEmpty else { return }
+    guard ammoC.value > 0 else {
+      Player.shared.get("hit2", useCache: false).play()
+      scene?.flashMessage("No ammo")
+      return
+    }
+    ammoC.add(value: -1)
+
+    let bulletSprite = scene!.createLabelNode("•", SKColor.purple)
+    bulletSprite.position = player.sprite!.position
+
+    var actions = path.map({
+      return SKAction.move(to: scene!.visualPoint(forPosition: $0), duration: MOVE_TIME / 2)
+    })
+    actions.append(SKAction.fadeOut(withDuration: MOVE_TIME / 2))
+    scene!.mapContainerNode.addChild(bulletSprite)
+    isAcceptingInput = false
+    bulletSprite.run(SKAction.sequence(actions), completion: {
+      bulletSprite.removeFromParent()
+      for e in entitiesToShoot {
+        self.damageEnemy(entity: e, amt: ammoC.damage)
+      }
+      Player.shared.get("hit3", useCache: false).play()
+      self.isAcceptingInput = true
+      self.executeTurn()
+    })
+  }
+
   func movePlayer(by delta: int2, completion: OptionalCallback = nil) {
     guard isAcceptingInput else { return }
     guard let pos = player.position else { fatalError() }
@@ -173,21 +206,28 @@ extension GameModel {
         self.bump(delta, completion: completion)
         return
     }
-    let entitiesToDamage = nextGridNode.entities.filter({ $0.component(ofType: HealthComponent.self) != nil })
+    let entitiesToDamage = nextGridNode.entities.filter({
+      return $0.healthC != nil &&
+             $0.component(ofType: TakesUpSpaceComponent.self) != nil
+    })
     if entitiesToDamage.isEmpty {
       movePlayer(toGridNode: nextGridNode, completion: completion)
     } else {
       let amt = player.component(ofType: BumpDamageComponent.self)?.value ?? 0
       for e in entitiesToDamage {
-        e.healthC?.hit(amt)
-        if e.healthC?.isDead == true {
-          self.delete(entity: e)
-        }
+        self.damageEnemy(entity: e, amt: amt)
       }
       self.bump(delta, entity: player, completion: {
         self.executeTurn()
         completion?()
       })
+    }
+  }
+
+  func damageEnemy(entity: GKEntity, amt: CGFloat) {
+    entity.healthC?.hit(amt)
+    if entity.healthC?.isDead == true {
+      self.delete(entity: entity)
     }
   }
 
@@ -228,6 +268,7 @@ extension GameModel {
       let entityPos = entity.gridNode?.gridPosition
       else { return }
     player.healthC?.hit(bumpDamageC.value)
+    scene?.flashMessage("-\(Int(bumpDamageC.value)) hp")
     Player.shared.get("hit1", useCache: false).play()
     self.bump(int2(playerPos.x - entityPos.x, playerPos.y - entityPos.y), entity: entity, completion: nil)
     scene?.evaluatePossibleTransitions()

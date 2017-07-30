@@ -181,7 +181,6 @@ class MapScene: AbstractScene, MapScening {
   }
 
   override func setup() {
-    print(game?.difficulty)
     if game == nil { game = GameModel(difficulty: 1, player: nil) }
     super.setup()
     scaleMode = .aspectFit
@@ -262,13 +261,22 @@ class MapScene: AbstractScene, MapScening {
   private func _hideTargetingLaser() {
     for s in hoverIndicatorSprites { s.isHidden = true }
   }
-  override func motionLook(point: CGPoint) {
+  func eventPointToGrid(point: CGPoint) -> int2? {
     var visualPointInMap = self.convert(point, to: mapContainerNode)
     visualPointInMap.y = mapContainerNode.frame.size.height - visualPointInMap.y
     let gridPos = int2(Int32(visualPointInMap.x / tileSize), Int32(visualPointInMap.y / tileSize))
-    guard gridPos != _lastTargetedPoint else { return }
+    guard gridPos.x >= 0 && gridPos.y >= 0 && gridPos.x < game.gridGraph.gridWidth && gridPos.y < game.gridGraph.gridHeight else { return nil }
+    return gridPos
+  }
+  override func motionLook(point: CGPoint) {
+    guard let gridPos = eventPointToGrid(point: point) else {
+      if _lastTargetedPoint != nil {
+        _lastTargetedPoint = nil
+        _hideTargetingLaser()
+      }
+      return
+    }
     _hideTargetingLaser()
-    guard game.gridGraph.node(atGridPosition: gridPos) != nil else { return }
     for (i, p) in game.getTargetingLaserPoints(to: gridPos).enumerated() {
       if let s = gridSprite(at: p) {
         hoverIndicatorSprites[i].position = s.position
@@ -276,6 +284,13 @@ class MapScene: AbstractScene, MapScening {
       }
     }
     _lastTargetedPoint = gridPos
+  }
+
+  override func motionIndicate(point: CGPoint) {
+    guard let gridPos = eventPointToGrid(point: point) else { return }
+    let path = game.getTargetingLaserPoints(to: gridPos)
+    guard !path.isEmpty else { return }
+    game.shoot(target: path.last!, path: path)
   }
 
   var lastTime: TimeInterval? = nil
@@ -314,7 +329,13 @@ class MapScene: AbstractScene, MapScening {
       self.gameOver()
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
       game.end()
-      self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
+
+      if game.difficulty > 8 {
+        bgMusic?.stop()
+        self.view?.presentScene(WinScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+      } else {
+        self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
+      }
     }
   }
 
@@ -322,6 +343,19 @@ class MapScene: AbstractScene, MapScening {
     bgMusic?.stop()
     game.end()
     self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+  }
+
+  func flashMessage(_ text: String, color: SKColor = SKColor.red) {
+    let node = createLabelNode(text, color.blended(withFraction: 0.2, of: SKColor.white)!)
+    node.verticalAlignmentMode = .center
+    node.position = CGPoint(x: mapSizeVisual.width / 2, y: mapSizeVisual.height / 2)
+    mapContainerNode.addChild(node)
+    node.run(
+      SKAction.group([
+        SKAction.fadeOut(withDuration: 1),
+        SKAction.moveBy(x: 0, y: tileSize * 3, duration: 1)
+      ]),
+      completion: { node.removeFromParent() })
   }
 
   #if os(OSX)
