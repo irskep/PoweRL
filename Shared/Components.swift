@@ -131,7 +131,11 @@ class SpriteSystem: GKComponentSystem<SpriteComponent> {
   }
 
   override func removeComponent(_ component: SpriteComponent) {
-    component.sprite.removeFromParent()
+    if component.shouldAnimateAway {
+      component.animateAway(completion: { component.sprite.removeFromParent() })
+    } else {
+      component.sprite.removeFromParent()
+    }
     super.removeComponent(component)
   }
 }
@@ -149,9 +153,9 @@ class SpriteComponent: GKComponent {
     fatalError("init(coder:) has not been implemented")
   }
 
-  func animateAway() {
+  func animateAway(completion: OptionalCallback) {
     guard shouldAnimateAway else { return }
-    sprite.run(SKAction.fadeAlpha(to: 0, duration: MOVE_TIME))
+    sprite.run(SKAction.fadeAlpha(to: 0, duration: MOVE_TIME), completion: { completion?() })
   }
 
   func nudge(_ direction: int2, completion: OptionalCallback) {
@@ -188,10 +192,18 @@ class HealthComponent: GKComponent {
 
   func hit(_ amount: CGFloat) {
     health = max(0, health - amount)
+
+    if let sprite = self.entity?.sprite as? SKLabelNode {
+      sprite.colorBlendFactor = 1 - getFractionRemaining()
+    }
   }
 
   func heal(_ amount: CGFloat) {
     health = min(maxHealth, health + amount)
+
+    if let sprite = self.entity?.sprite as? SKLabelNode {
+      sprite.colorBlendFactor = 1 - getFractionRemaining()
+    }
   }
 }
 
@@ -199,6 +211,8 @@ class PickupConsumableComponent: GKComponent {
   var isPickedUp = false
 }
 
+class TakesUpSpaceComponent: GKComponent { }
+class PlayerComponent: GKComponent { }
 
 class AmmoComponent: GKComponent {
   var value: Int = 1
@@ -220,5 +234,48 @@ class AmmoComponent: GKComponent {
 
   func transfer(from ammo: AmmoComponent) {
     self.add(value: ammo.empty())
+  }
+}
+
+class BumpDamageComponent: GKComponent {
+  var value: CGFloat = 20
+
+  convenience init(value: CGFloat) {
+    self.init()
+    self.value = value
+  }
+}
+
+class MoveTowardPlayerComponent: GKComponent {
+  var vectors: [int2] = []
+
+  convenience init(vectors: [int2]) {
+    self.init()
+    self.vectors = vectors
+  }
+
+  func getClosest(to target: int2, inGraph graph: GKGridGraph<GridNode>) -> GridNode? {
+    guard let myPos = self.entity?.gridNode?.gridPosition else { return nil }
+    var bestDist: CGFloat = 1000
+    var bestNode: GridNode? = nil
+
+    for v in vectors {
+      let nextPos: int2 = myPos + v
+      if graph.node(atGridPosition: nextPos) == nil {
+        continue
+      }
+      let node = graph.node(atGridPosition: nextPos)!
+      if node.entities.filter({ (e: GKEntity) -> Bool in return e.component(ofType: TakesUpSpaceComponent.self) != nil && e.component(ofType: PlayerComponent.self) == nil }).count > 0 {
+        continue
+      }
+      let dx = CGFloat(nextPos.x - target.x)
+      let dy = CGFloat(nextPos.y - target.y)
+      let dist = sqrt(dx * dx + dy * dy)
+      if dist < bestDist {
+        bestDist = dist
+        bestNode = node
+      }
+    }
+    return bestNode
   }
 }

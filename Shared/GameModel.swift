@@ -34,7 +34,15 @@ class GameModel {
   lazy var gridSystem: GridSystem = { return GridSystem() }()
   lazy var spriteSystem: SpriteSystem = { return SpriteSystem() }()
   lazy var gridSpriteSystem: GridSpriteSystem = { return GridSpriteSystem() }()
-  lazy var componentSystems: [GKComponentSystem] = { return [self.gridSystem, self.spriteSystem, self.gridSpriteSystem] as! [GKComponentSystem] }()
+  lazy var mobMoveSystem: GKComponentSystem = { return GKComponentSystem(componentClass: MoveTowardPlayerComponent.self) }()
+  lazy var componentSystems: [GKComponentSystem] = {
+    return [
+      self.gridSystem,
+      self.spriteSystem,
+      self.gridSpriteSystem,
+      self.mobMoveSystem,
+      ] as! [GKComponentSystem]
+  }()
   var gridGraph: GKGridGraph<GridNode>!
   var player: GKEntity!
   var exit: GKEntity!
@@ -67,9 +75,6 @@ class GameModel {
     print("delete \(entity)")
     if let gridSpriteC = entity.component(ofType: GridSpriteComponent.self) {
       gridSpriteC.animateAway()
-    }
-    if let spriteC = entity.component(ofType: SpriteComponent.self) {
-      spriteC.animateAway()
     }
     for system in componentSystems {
       system.removeComponent(foundIn: entity)
@@ -113,6 +118,15 @@ class GameModel {
     ruleSystem.reset()
     ruleSystem.evaluate()
     ruleSystem.state["game"] = nil
+    for component in mobMoveSystem.components {
+      if let nextNode = (component as? MoveTowardPlayerComponent)?.getClosest(to: player.gridNode!.gridPosition, inGraph: gridGraph) {
+        if nextNode == player.gridNode {
+          self.damagePlayer(withEntity: component.entity!)
+        } else {
+          self.move(entity: component.entity!, toGridNode: nextNode)
+        }
+      }
+    }
     scene?.evaluatePossibleTransitions()
   }
 }
@@ -130,29 +144,68 @@ extension GameModel {
         self.bump(delta, completion: completion)
         return
     }
-    moveEntity(player, toGridNode: nextGridNode, completion: completion)
+    let entitiesToDamage = nextGridNode.entities.filter({ $0.component(ofType: HealthComponent.self) != nil })
+    if entitiesToDamage.isEmpty {
+      movePlayer(toGridNode: nextGridNode, completion: completion)
+    } else {
+      let amt = player.component(ofType: BumpDamageComponent.self)?.value ?? 0
+      for e in entitiesToDamage {
+        e.healthC?.hit(amt)
+        if e.healthC?.isDead == true {
+          self.delete(entity: e)
+        }
+      }
+      self.bump(delta, entity: player, completion: {
+        self.executeTurn()
+        completion?()
+      })
+    }
   }
 
-  func bump(_ delta: int2, completion: OptionalCallback) {
+  func bump(_ delta: int2, entity: GKEntity? = nil, completion: OptionalCallback) {
+    let entity: GKEntity = entity ?? self.player
     isAcceptingInput = false
-    Player.shared.get("bump", useCache: false).play()
-    player.component(ofType: SpriteComponent.self)!.nudge(delta) {
+    if entity == self.player {
+      Player.shared.get("bump", useCache: false).play()
+    }
+    entity.component(ofType: SpriteComponent.self)!.nudge(delta) {
       self.isAcceptingInput = true
       completion?()
     }
   }
 
-  func moveEntity(_ entity: GKEntity, toGridNode gridNode: GridNode, completion: OptionalCallback = nil) {
+  func move(entity: GKEntity, toGridNode gridNode: GridNode, completion: OptionalCallback = nil) {
     guard let scene = scene else { fatalError() }
-    guard entity.powerC?.use(entity.powerC?.getPowerRequired(toMove: 1) ?? 0) == true else { return }
-    isAcceptingInput = false
 
+    isAcceptingInput = false
     entity.gridNode = gridNode
 
     let action = SKAction.move(to: scene.visualPoint(forPosition: gridNode.gridPosition), duration: MOVE_TIME)
     action.timingMode = .easeIn
     entity.sprite?.run(action) {
       self.isAcceptingInput = true
+      completion?()
+    }
+  }
+
+  func damagePlayer(withEntity entity: GKEntity) {
+    guard
+      let bumpDamageC = entity.component(ofType: BumpDamageComponent.self),
+      let playerPos = player.gridNode?.gridPosition,
+      let entityPos = entity.gridNode?.gridPosition
+      else { return }
+    player.healthC?.hit(bumpDamageC.value)
+    Player.shared.get("hit1", useCache: false).play()
+    self.bump(int2(playerPos.x - entityPos.x, playerPos.y - entityPos.y), entity: entity, completion: nil)
+    scene?.evaluatePossibleTransitions()
+  }
+
+  func movePlayer(toGridNode gridNode: GridNode, completion: OptionalCallback = nil) {
+    guard let entity = player else { fatalError() }
+    guard entity.powerC?.use(entity.powerC?.getPowerRequired(toMove: 1) ?? 0) == true else { return }
+    isAcceptingInput = false
+
+    self.move(entity: entity, toGridNode: gridNode) {
       self.executeTurn()
       completion?()
     }

@@ -252,6 +252,7 @@ class MapScene: AbstractScene, MapScening {
 
   func updateVisuals(instant: Bool = false) {
     powerMeterNode.update(instant: instant)
+    healthMeterNode.update(instant: instant)
     ammoLabel.text = "Ammo: \(game.player.ammoC?.value ?? 0)"
 
     let power: Float = Float(game.player.powerC?.getFractionRemaining() ?? 1)
