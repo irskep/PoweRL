@@ -281,3 +281,34 @@ class MoveTowardPlayerComponent: GKComponent {
     return bestNode
   }
 }
+
+class SpeedLimiterComponent: GKComponent {
+  var bucketSize: Int = 2
+  var stepCost: Int = 1
+  var bucketLeft: Int = 2
+
+  convenience init(bucketSize: Int, stepCost: Int) {
+    self.init()
+    self.bucketSize = bucketSize
+    self.stepCost = stepCost
+    self.bucketLeft = bucketSize
+  }
+
+  func tryToStep() -> Bool {
+    if bucketLeft >= bucketSize {
+      bucketLeft -= stepCost
+      refillIfZero()
+      return true
+    } else {
+      bucketLeft -= stepCost
+      refillIfZero()
+      return false
+    }
+  }
+
+  func refillIfZero() {
+    if bucketLeft <= 0 {
+      bucketLeft = bucketSize
+    }
+  }
+}

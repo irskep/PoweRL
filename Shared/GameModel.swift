@@ -122,6 +122,11 @@ class GameModel {
     ruleSystem.state["game"] = nil
     for component in mobMoveSystem.components {
       if let nextNode = (component as? MoveTowardPlayerComponent)?.getClosest(to: player.gridNode!.gridPosition, inGraph: gridGraph) {
+        if let speedLimiter = component.entity?.component(ofType: SpeedLimiterComponent.self) {
+          if !speedLimiter.tryToStep() {
+            continue
+          }
+        }
         if nextNode == player.gridNode {
           self.damagePlayer(withEntity: component.entity!)
         } else {

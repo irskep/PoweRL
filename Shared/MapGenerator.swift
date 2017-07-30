@@ -95,7 +95,7 @@ class MapGenerator {
       game.register(entity: health)
     }
 
-    let mobSpecs: [MobSpec] = [
+    var mobSpecs: [MobSpec] = [
       MobSpec(char: "🦋", health: 40, moves: [
         int2(-1, -1),
         int2(1, 1),
@@ -108,7 +108,9 @@ class MapGenerator {
         int2(0, 1),
         int2(0, -1),
         ]),
-      MobSpec(char: "🐇", health: 40, moves: [
+    ]
+    if game.difficulty > 3 {
+      mobSpecs.append(MobSpec(char: "🐇", health: 40, moves: [
         int2(-1, -2),
         int2(1, -2),
         int2(-1, 2),
@@ -117,8 +119,8 @@ class MapGenerator {
         int2(2, -1),
         int2(-2, 1),
         int2(2, 1),
-      ]),
-    ]
+      ]))
+    }
     for mobNode in getSomeNodes(numEnemies) {
       let mob = GKEntity()
       let spec = mobSpecs[game.random.nextInt(upperBound: mobSpecs.count)]
@@ -130,6 +132,9 @@ class MapGenerator {
       mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
+      if spec.char == "🐢" {
+        mob.addComponent(SpeedLimiterComponent(bucketSize: 2, stepCost: 1))
+      }
       mob.sprite?.zPosition = 1
       (mob.sprite as? SKLabelNode)?.color = SKColor.red
       game.register(entity: mob)
