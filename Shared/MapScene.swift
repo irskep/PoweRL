@@ -139,6 +139,19 @@ class MapScene: AbstractScene, MapScening {
       color: SKColor.darkGray,
       size: self.hudSize)
     node.anchorPoint = CGPoint.zero
+    let tex: SKTexture = SKTexture(noiseWithSmoothness: 0.2, size: node.frame.size * 2, grayscale: true)
+    let flavorNode = SKSpriteNode(
+      texture: tex,
+      color: SKColor.white,
+      size: node.frame.size)
+    flavorNode.alpha = 0.2
+    node.addChild(flavorNode)
+    flavorNode.anchorPoint = CGPoint.zero
+
+    let line = SKShapeNode(rect: CGRect(x: node.frame.size.width - 1, y: 0, width: 1, height: node.frame.size.height))
+    line.strokeColor = SKColor.lightGray
+    line.zPosition = 1000
+    node.addChild(line)
     return node
   }()
 
@@ -193,8 +206,9 @@ class MapScene: AbstractScene, MapScening {
     hudContainerNode.addChild(powerMeterNode)
     self.addHUDLabel(text: "Health", y: healthMeterNode.position.y - self.pixel * 2)
     self.addHUDLabel(text: "Power", y: powerMeterNode.position.y - self.pixel * 2)
-    self.addHUDLabel(text: "Arrow keys move.", y: self.margin * 3)
-    self.addHUDLabel(text: "Click shoots.", y: self.margin * 2)
+    self.addHUDLabel(text: "Arrow keys = move", y: self.margin * 3)
+    self.addHUDLabel(text: "Click = shoot", y: self.margin * 2)
+    self.addHUDLabel(text: "m = music on/off", y: self.margin * 1)
     self.ammoLabel = self.addHUDLabel(text: "Ammo: 0", y: powerMeterNode.position.y - self.margin * 3)
 
     hoverIndicatorSprites.forEach(mapContainerNode.addChild)
@@ -222,7 +236,7 @@ class MapScene: AbstractScene, MapScening {
       bgMusic.numberOfLoops = -1
       bgMusic.enableRate = true
       bgMusic.rate = 1
-//      bgMusic.play()
+      bgMusic.play()
     }
 
     Player.shared.get("up1", useCache: false).play()
@@ -254,6 +268,14 @@ class MapScene: AbstractScene, MapScening {
         motion(m)
         return
       }
+    }
+  }
+
+  override func motionToggleMusic() {
+    if bgMusic?.isPlaying == true {
+      bgMusic?.pause()
+    } else {
+      bgMusic?.play()
     }
   }
 
@@ -311,12 +333,10 @@ class MapScene: AbstractScene, MapScening {
     ammoLabel.text = "Ammo: \(game.player.ammoC?.value ?? 0)"
 
     let power: Float = Float(game.player.powerC?.getFractionRemaining() ?? 1)
-    if power > 0.5 {
+    if power > 0.3 {
       bgMusic?.rate = 1
-    } else if power > 0.25 {
-      bgMusic?.rate = 0.9
     } else {
-      bgMusic?.rate = 0.8
+      bgMusic?.rate = 0.9
     }
   }
 

@@ -24,8 +24,8 @@ class MapGenerator {
     let numBatteries = 2
     let numAmmos = 2
     let numHealthPacks = 1
-    // 20% of cells are walls
-    let numWalls = getAreaFraction(0.2)
+    // 25% of cells are walls
+    let numWalls = getAreaFraction(0.25)
     // 10% + difficulty * 2% are power drains
     let numDrains = getAreaFraction(0.1 + 0.02 * CGFloat(game.difficulty))
 
@@ -72,7 +72,8 @@ class MapGenerator {
       game.register(entity: batteryEntity)
     }
 
-    for ammoNode in getSomeNodes(numAmmos) {
+    let ammoNodes = getSomeNodes(numAmmos)
+    for ammoNode in ammoNodes {
       let ammo = GKEntity()
       let value = game.random.nextInt(upperBound: 2) + 1
       var char = ""
@@ -83,8 +84,9 @@ class MapGenerator {
       ammo.addComponent(AmmoComponent(value: 2, damage: 40))
       game.register(entity: ammo)
     }
-    
-    for healthNode in getSomeNodes(numHealthPacks) {
+
+    let healthNodes = getSomeNodes(numHealthPacks)
+    for healthNode in healthNodes {
       let health = GKEntity()
       health.addComponent(GridNodeComponent(gridNode: healthNode))
       health.addComponent(SpriteComponent(sprite: scene.createLabelNode("+", SKColor.red)))
@@ -146,9 +148,18 @@ class MapGenerator {
     game.register(entity: game.player)
     game.register(entity: game.exit)
 
-    if !game.getIsReachable(game.player.gridNode, game.exit.gridNode) || n < 2 {
+    if !game.getIsReachable(game.player.gridNode, game.exit.gridNode) {
+      game.reset()
+      MapGenerator.generate(scene: scene, game: game, n: n + 1)
+      return
+    }
+    game.gridGraph.remove([game.exit.gridNode!])
+    let nodesThatMustBeReachable: [GridNode] = ammoNodes + healthNodes
+    if nodesThatMustBeReachable.first(where: { !game.getIsReachable(game.player.gridNode, $0) }) != nil {
       game.reset()
       MapGenerator.generate(scene: scene, game: game, n: n + 1)
     }
+    game.gridGraph.add([game.exit.gridNode!])
+    game.gridGraph.connectToAdjacentNodes(node: game.exit.gridNode!)
   }
 }

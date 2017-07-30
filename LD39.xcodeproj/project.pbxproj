@@ -881,7 +881,7 @@
 				DEVELOPMENT_TEAM = 9TC4EP6SEE;
 				INFOPLIST_FILE = macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steveasleep.LD39;
 				PRODUCT_NAME = LD39;
 				SDKROOT = macosx;
@@ -899,7 +899,7 @@
 				DEVELOPMENT_TEAM = 9TC4EP6SEE;
 				INFOPLIST_FILE = macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steveasleep.LD39;
 				PRODUCT_NAME = LD39;
 				SDKROOT = macosx;

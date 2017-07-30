@@ -83,8 +83,10 @@ class AmmoTransferRule: GridNodeSharingRule {
 
   override func performAction(inGame game: GameModel, withEntities entities: [GKEntity]) {
     for ammo in entities.flatMap({ $0.ammoC }) {
+      let amt = ammo.value
       game.player.ammoC?.transfer(from: ammo)
       Player.shared.get("up3", useCache: false).play()
+      game.scene?.flashMessage("+\(amt) ammo", color: SKColor.magenta)
       if let pickupC = ammo.entity?.component(ofType: PickupConsumableComponent.self) {
         pickupC.isPickedUp = true
       }

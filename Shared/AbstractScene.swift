@@ -67,6 +67,9 @@ class SuperAbstractScene: SKScene {
   func isHolding(m: Motion) -> Bool {
     return false
   }
+
+  func motionToggleMusic() {
+  }
 }
 
 #if os(iOS) || os(tvOS)
@@ -176,6 +179,9 @@ class SuperAbstractScene: SKScene {
         ksh.heldKeys.insert(char)
         if char == NSCarriageReturnCharacter {
           self.motionAccept()
+        }
+        if char == Int("m".utf16.map({ Int($0) })[0]) {
+          self.motionToggleMusic()
         }
       }
     }

@@ -24,7 +24,7 @@ import SpriteKit
       return (r, g, b, a)
     }
 
-    func blended(withFraction fraction: CGFloat, of color: UIColor) -> UIColor {
+    func blended(withFraction fraction: CGFloat, of color: UIColor) -> UIColor? {
       let fromComponents = components()
 
       let toComponents = color.components()
