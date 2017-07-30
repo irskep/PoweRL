@@ -27,7 +27,7 @@ class PowerComponent: GKComponent {
   func getFractionRemaining() -> CGFloat { return power / maxPower }
 
   func getPowerRequired(toMove distance: CGFloat) -> CGFloat {
-    return (self.entity?.massC?.weight ?? 0) * 0.01
+    return (self.entity?.massC?.weight ?? 0) * 0.02
   }
 
   func canUse(_ amount: CGFloat) -> Bool {

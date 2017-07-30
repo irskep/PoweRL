@@ -22,7 +22,7 @@ class MapGenerator {
     let area: Int = game.gridGraph.gridWidth * game.gridGraph.gridHeight
     let getAreaFraction = { (frac: CGFloat) -> Int in return Int(CGFloat(area) * frac) }
     let numBatteries = 2
-    let numAmmos = 3
+    let numAmmos = 2
     let numHealthPacks = 1
     // 20% of cells are walls
     let numWalls = getAreaFraction(0.2)

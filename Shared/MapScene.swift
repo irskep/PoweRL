@@ -330,7 +330,7 @@ class MapScene: AbstractScene, MapScening {
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
       game.end()
 
-      if game.difficulty > 8 {
+      if game.difficulty > 7 {
         bgMusic?.stop()
         self.view?.presentScene(WinScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
       } else {
