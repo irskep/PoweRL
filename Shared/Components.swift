@@ -193,7 +193,10 @@ class HealthComponent: GKComponent {
   func hit(_ amount: CGFloat) {
     health = max(0, health - amount)
 
+    if self.entity?.component(ofType: PlayerComponent.self) != nil { return }
     if let sprite = self.entity?.sprite as? SKLabelNode {
+      sprite.colorBlendFactor = 1 - getFractionRemaining()
+    } else if let sprite = self.entity?.sprite as? SKSpriteNode {
       sprite.colorBlendFactor = 1 - getFractionRemaining()
     }
   }

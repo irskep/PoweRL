@@ -45,6 +45,7 @@ class MapGenerator {
       wall.addComponent(GridNodeComponent(gridNode: wallNode))
       let sprite = SKSpriteNode(imageNamed: "wall")
       sprite.setScale(scene.tileScale)
+      sprite.texture?.filteringMode = .nearest
       wall.addComponent(SpriteComponent(sprite: sprite))
       game.register(entity: wall)
     }
@@ -52,7 +53,13 @@ class MapGenerator {
     let playerPosition = shuffledGridNodes[0].gridPosition
     shuffledGridNodes = Array(shuffledGridNodes.dropFirst(1))
     if game.player == nil {
-      game.player = game.createActor("@", color: SKColor.white, weight: 100, power: 100, point: playerPosition)
+      game.player = GKEntity()
+      let sprite = SKSpriteNode(imageNamed: "robot")
+      sprite.setScale(scene.tileScale / 4)
+      game.player.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: playerPosition)))
+      game.player.addComponent(SpriteComponent(sprite: sprite))
+      game.player.addComponent(PowerComponent(power: 100, isBattery: false))
+      game.player.addComponent(MassComponent(weight: 100))
       game.player.component(ofType: SpriteComponent.self)!.shouldAnimateAway = false
       game.player.addComponent(AmmoComponent(value: 0, damage: 40))
       game.player.addComponent(TakesUpSpaceComponent())
@@ -68,7 +75,7 @@ class MapGenerator {
     shuffledGridNodes = Array(shuffledGridNodes.dropFirst(1))
 
     for batteryGridNode in getSomeNodes(numBatteries) {
-      let batteryEntity = game.createActor("+", color: SKColor.cyan, weight: 1, power: 20, point: batteryGridNode.gridPosition)
+      let batteryEntity = game.createActor("+", color: SKColor.cyan, weight: 1, power: 25, point: batteryGridNode.gridPosition)
       batteryEntity.addComponent(PickupConsumableComponent())
       batteryEntity.powerC?.isBattery = true
       game.register(entity: batteryEntity)
@@ -127,15 +134,36 @@ class MapGenerator {
       let mob = GKEntity()
       let spec = mobSpecs[game.random.nextInt(upperBound: mobSpecs.count)]
       mob.addComponent(GridNodeComponent(gridNode: mobNode))
-      let spriteC = SpriteComponent(sprite: scene.createLabelNode(spec.char, SKColor.red))
-      spriteC.shouldAnimateAway = true
-      mob.addComponent(spriteC)
       mob.addComponent(HealthComponent(health: spec.health))
       mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
       if spec.char == "🐢" {
         mob.addComponent(SpeedLimiterComponent(bucketSize: 2, stepCost: 1))
+        let sprite = SKSpriteNode(imageNamed: "turtle")
+        let spriteC = SpriteComponent(sprite: sprite)
+        sprite.setScale(scene.tileScale / 4)
+        sprite.color = SKColor.red
+        spriteC.shouldAnimateAway = true
+        mob.addComponent(spriteC)
+      } else if spec.char == "🦋" {
+        let sprite = SKSpriteNode(imageNamed: "butterfly")
+        let spriteC = SpriteComponent(sprite: sprite)
+        sprite.setScale(scene.tileScale / 4)
+        sprite.color = SKColor.red
+        spriteC.shouldAnimateAway = true
+        mob.addComponent(spriteC)
+      } else if spec.char == "🐇" {
+        let sprite = SKSpriteNode(imageNamed: "rabbit")
+        let spriteC = SpriteComponent(sprite: sprite)
+        sprite.setScale(scene.tileScale / 4)
+        sprite.color = SKColor.red
+        spriteC.shouldAnimateAway = true
+        mob.addComponent(spriteC)
+      } else {
+        let spriteC = SpriteComponent(sprite: scene.createLabelNode(spec.char, SKColor.red))
+        spriteC.shouldAnimateAway = true
+        mob.addComponent(spriteC)
       }
       mob.sprite?.zPosition = 1
       (mob.sprite as? SKLabelNode)?.color = SKColor.red
@@ -163,8 +191,10 @@ class MapGenerator {
     game.gridGraph.remove([game.exit.gridNode!])
     let nodesThatMustBeReachable: [GridNode] = ammoNodes + healthNodes
     if nodesThatMustBeReachable.first(where: { !game.getIsReachable(game.player.gridNode, $0) }) != nil {
+      print("Can't reach something important")
       game.reset()
       MapGenerator.generate(scene: scene, game: game, n: n + 1)
+      return
     }
     game.gridGraph.add([game.exit.gridNode!])
     game.gridGraph.connectToAdjacentNodes(node: game.exit.gridNode!)

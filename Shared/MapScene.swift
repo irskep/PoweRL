@@ -50,8 +50,12 @@ class MeterNode: SKSpriteNode {
   var getter: () -> CGFloat = { return 0 }
   var targetScale: CGFloat = 1
 
-  convenience init(color: SKColor, width: CGFloat, height: CGFloat, y: CGFloat, getter: @escaping () -> CGFloat) {
-    self.init()
+  convenience init(imageName: String?, color: SKColor, width: CGFloat, height: CGFloat, y: CGFloat, getter: @escaping () -> CGFloat) {
+    if let imageName = imageName {
+      self.init(imageNamed: imageName)
+    } else {
+      self.init()
+    }
     self.getter = getter
     self.color = color
     self.size = CGSize(width: width, height: height)
@@ -117,6 +121,7 @@ class MapScene: AbstractScene, MapScening {
 
   lazy var powerMeterNode: MeterNode = {
     return MeterNode(
+      imageName: "power",
       color: SKColor.cyan,
       width: self.hudSize.width,
       height: self.margin,
@@ -173,6 +178,7 @@ class MapScene: AbstractScene, MapScening {
 
   lazy var healthMeterNode: MeterNode = {
     return MeterNode(
+      imageName: "health",
       color: SKColor.red,
       width: self.hudSize.width,
       height: self.margin,
@@ -212,12 +218,10 @@ class MapScene: AbstractScene, MapScening {
     hudContainerNode.addChild(levelNumberLabel)
     hudContainerNode.addChild(healthMeterNode)
     hudContainerNode.addChild(powerMeterNode)
+    powerMeterNode.zPosition = 2
+    healthMeterNode.zPosition = 2
     self.addHUDLabel(text: "Health", y: healthMeterNode.position.y - self.pixel * 2 + self.margin)
     self.addHUDLabel(text: "Power", y: powerMeterNode.position.y - self.pixel * 2 + self.margin)
-    self.addHUDLabel(text: "Arrow keys = move", y: self.margin * 4)
-    self.addHUDLabel(text: "(and attack)", y: self.margin * 3)
-    self.addHUDLabel(text: "Click = shoot", y: self.margin * 2)
-    self.addHUDLabel(text: "m = music on/off", y: self.margin * 1)
     self.ammoLabel = self.addHUDLabel(text: "Ammo: 0", y: powerMeterNode.position.y - self.margin * 3)
 
     hoverIndicatorSprites.forEach(mapContainerNode.addChild)
@@ -234,10 +238,15 @@ class MapScene: AbstractScene, MapScening {
     }
 
     game.start(scene: self)
-    // migrate all previous scenes' crossover sprites to current font size in case the user
-    // resized the window
-    (game.player.sprite as! SKLabelNode).fontSize = self.fontSize
     self.updateVisuals(instant: true)
+
+    let screenCover = SKSpriteNode(color: SKColor.black, size: mapContainerNode.frame.size)
+    screenCover.anchorPoint = CGPoint.zero
+    screenCover.zPosition = 3000
+    mapContainerNode.addChild(screenCover)
+    screenCover.run(SKAction.fadeOut(withDuration: MOVE_TIME), completion: {
+      screenCover.removeFromParent()
+    })
 
     if bgMusic == nil, let musicURL = Bundle.main.url(forResource: "1", withExtension: "mp3") {
       bgMusic = try? AVAudioPlayer(contentsOf: musicURL)
@@ -249,6 +258,7 @@ class MapScene: AbstractScene, MapScening {
     }
 
     Player.shared.get("up1", useCache: false).play()
+    
   }
 
   func gridSprite(at position: int2) -> GridSprite? {
