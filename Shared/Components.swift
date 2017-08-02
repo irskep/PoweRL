@@ -71,59 +71,6 @@ class GridNodeComponent: GKComponent {
   }
 }
 
-class GridSpriteSystem: GKComponentSystem<GridSpriteComponent> {
-  override init() {
-    super.init(componentClass: GridSpriteComponent.self)
-  }
-
-  override func addComponent(_ component: GridSpriteComponent) {
-    super.addComponent(component)
-    guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
-    sprite.text = component.text
-    sprite.label.color = component.color ?? SKColor.white
-    sprite.backgroundColor = component.bkColor
-  }
-
-  override func removeComponent(_ component: GridSpriteComponent) {
-    super.removeComponent(component)
-    guard let pos = component.node?.gridPosition, let sprite = component.scene?.gridSprite(at: pos) else { return }
-    sprite.text = " "
-    sprite.label.color = SKColor.white
-    sprite.backgroundColor = SKColor.black
-  }
-}
-
-class GridSpriteComponent: GKComponent {
-  weak var scene: MapScene?
-  weak var node: GridNode?
-  var text: String?
-  var color: SKColor?
-  var bkColor: SKColor?
-
-  convenience init(_ scene: MapScene, _ node: GridNode, _ text: String, _ color: SKColor, _ bkColor: SKColor? = nil) {
-    self.init()
-    self.scene = scene
-    self.node = node
-    self.text = text
-    self.color = color
-    self.bkColor = bkColor
-  }
-
-  func animateAway() {
-    let labelFade = SKAction.fadeAlpha(to: 0, duration: MOVE_TIME)
-    let colorFade = SKAction.colorize(with: SKColor.black, colorBlendFactor: 1, duration: MOVE_TIME)
-
-    guard let pos = node?.gridPosition, let sprite = scene?.gridSprite(at: pos) else { return }
-    sprite.cover.run(colorFade)
-    sprite.label.run(
-      labelFade,
-      completion: {
-        sprite.label.text = " "
-        sprite.label.color = SKColor.white
-      })
-  }
-}
-
 
 class SpriteSystem: GKComponentSystem<SpriteComponent> {
   override init() {

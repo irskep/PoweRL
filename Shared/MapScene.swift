@@ -22,45 +22,22 @@ extension int2 {
   }
 }
 
-class GridSprite: SKSpriteNode {
-  let label: SKLabelNode
-  let cover: SKSpriteNode
-  var text: String? {
-    get { return label.text }
-    set { label.text = newValue }
-  }
-  var backgroundColor: SKColor? {
-    get { return cover.color }
-    set { cover.color = newValue ?? SKColor.black }
-  }
-  required init(node: SKLabelNode, size: CGSize) {
-    label = node
-    cover = SKSpriteNode(texture: nil, color: SKColor.black, size: size - CGSize(width: 1, height: 1))
-    super.init(texture: nil, color: SKColor.darkGray, size: size)
-    addChild(cover)
-    addChild(label)
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-}
-
 class MeterNode: SKSpriteNode {
   var getter: () -> CGFloat = { return 0 }
   var targetScale: CGFloat = 1
 
-  convenience init(imageName: String?, color: SKColor, width: CGFloat, height: CGFloat, y: CGFloat, getter: @escaping () -> CGFloat) {
+  convenience init(imageName: String?, color: SKColor, position: CGPoint, size: CGSize, getter: @escaping () -> CGFloat) {
     if let imageName = imageName {
       self.init(imageNamed: imageName)
     } else {
       self.init()
     }
+    self.texture?.filteringMode = .nearest
     self.getter = getter
     self.color = color
-    self.size = CGSize(width: width, height: height)
+    self.size = size
     self.anchorPoint = CGPoint(x: 0, y: 1)
-    self.position = CGPoint(x: 0, y: y)
+    self.position = position
   }
 
   func update(instant: Bool) {
@@ -80,7 +57,7 @@ class MeterNode: SKSpriteNode {
 protocol MapScening {
   var tileSize: CGFloat { get }
   var fontSize: CGFloat { get }
-  func gridSprite(at position: int2) -> GridSprite?
+  func gridSprite(at position: int2) -> SKSpriteNode?
   func createLabelNode(_ text: String, _ color: SKColor) -> SKLabelNode
   func visualPoint(forPosition position: int2) -> CGPoint
 }
@@ -90,12 +67,12 @@ class MapScene: AbstractScene, MapScening {
   var bgMusic: AVAudioPlayer!
 
   lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
-  var tileScale: CGFloat { return tileSize / 64 }
+  var tileScale: CGFloat { return tileSize / 16 }
   lazy var fontSize: CGFloat = { return (36.0 / 314) * self.frame.size.height }()
   var margin: CGFloat { return (16.0 / 314.0) * self.frame.size.height }
   var pixel: CGFloat { return tileSize / 64 }
 
-  var gridNodes: [CGPoint: GridSprite] = [:]
+  var gridNodes: [CGPoint: SKSpriteNode] = [:]
   var mapSizeVisual: CGSize { return CGSize(width: CGFloat(game.mapSize.x) * tileSize, height: CGFloat(game.mapSize.y) * tileSize) }
 
   func createLabelNode(_ text: String, _ color: SKColor) -> SKLabelNode {
@@ -109,7 +86,7 @@ class MapScene: AbstractScene, MapScening {
 
   @discardableResult
   func addHUDLabel(text: String, y: CGFloat) -> SKLabelNode {
-    let label = SKLabelNode(fontNamed: "Menlo")
+    let label = SKLabelNode(fontNamed: "Coolville")
     label.fontSize = self.fontSize / 3
     label.color = SKColor.white
     label.verticalAlignmentMode = .top
@@ -119,14 +96,34 @@ class MapScene: AbstractScene, MapScening {
     return label
   }
 
+  lazy var healthIcon: SKSpriteNode = {
+    let node = SKSpriteNode(imageNamed: "icon-health").pixelized().scaled(self.tileScale).withZ(1)
+    node.position = CGPoint(x: 0, y: self.hudSize.height - self.margin * 4)
+    node.anchorPoint = CGPoint(x: 0, y: 1)
+    return node
+  }()
+  lazy var healthMeterNode: MeterNode = {
+    return MeterNode(
+      imageName: "health",
+      color: SKColor.red,
+      position: CGPoint(x: 8 * self.tileScale, y: self.hudSize.height - self.margin * 4),
+      size: CGSize(width: self.hudSize.width - 8 * self.tileScale, height: self.tileScale * 8),
+      getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 }).withZ(2)
+  }()
+
+  lazy var powerIcon: SKSpriteNode = {
+    let node = SKSpriteNode(imageNamed: "icon-battery").pixelized().scaled(self.tileScale).withZ(1)
+    node.position = CGPoint(x: 0, y: self.hudSize.height - self.margin * 6)
+    node.anchorPoint = CGPoint(x: 0, y: 1)
+    return node
+  }()
   lazy var powerMeterNode: MeterNode = {
     return MeterNode(
       imageName: "power",
       color: SKColor.cyan,
-      width: self.hudSize.width,
-      height: self.margin,
-      y: self.hudSize.height - self.margin * 6,
-      getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 })
+      position: CGPoint(x: 8 * self.tileScale, y: self.hudSize.height - self.margin * 6),
+      size: CGSize(width: self.hudSize.width - 8 * self.tileScale, height: self.tileScale * 8),
+      getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 }).withZ(2)
   }()
 
   lazy var mapContainerNode: SKSpriteNode = {
@@ -142,23 +139,28 @@ class MapScene: AbstractScene, MapScening {
 
   lazy var hudContainerNode: SKSpriteNode = {
     let node = SKSpriteNode(
-      color: SKColor.darkGray,
+      color: SKColor.clear,
       size: self.hudSize)
     node.anchorPoint = CGPoint.zero
 
-    let leveltextbg = SKSpriteNode(color: SKColor.black, size: CGSize(width: hudSize.width, height: self.margin * 3))
-    leveltextbg.anchorPoint = CGPoint.zero
-    leveltextbg.position = CGPoint(x: 0, y: hudSize.height - leveltextbg.frame.size.height)
-    node.addChild(leveltextbg)
-
-    let tex: SKTexture = SKTexture(noiseWithSmoothness: 0.2, size: node.frame.size * 2, grayscale: true)
-    let flavorNode = SKSpriteNode(
-      texture: tex,
-      color: SKColor.white,
-      size: node.frame.size)
-    flavorNode.alpha = 0.2
-    node.addChild(flavorNode)
-    flavorNode.anchorPoint = CGPoint.zero
+    let flavorParent = SKNode()
+    flavorParent.zPosition = -1
+    node.addChild(flavorParent)
+    var x: CGFloat = 0
+    let tex = SKTexture(imageNamed: "hud-bg")
+    tex.filteringMode = .nearest
+    while x < hudSize.width {
+      var y: CGFloat = 0
+      while y < hudSize.height {
+        let child = SKSpriteNode(texture: tex)
+        child.size = tex.size() * self.tileScale / 2
+        child.position = CGPoint(x: x, y: y)
+        child.anchorPoint = CGPoint.zero
+        flavorParent.addChild(child)
+        y += tex.size().height * self.tileScale / 2
+      }
+      x += tex.size().width * self.tileScale / 2
+    }
 
     let line = SKShapeNode(rect: CGRect(x: node.frame.size.width - 1, y: 0, width: 1, height: node.frame.size.height))
     line.strokeColor = SKColor.lightGray
@@ -168,22 +170,12 @@ class MapScene: AbstractScene, MapScening {
   }()
 
   lazy var levelNumberLabel: SKLabelNode = {
-    let label = SKLabelNode(fontNamed: "Menlo")
+    let label = SKLabelNode(fontNamed: "Coolville")
     label.fontSize = self.fontSize / 2
     label.color = SKColor.white
     label.verticalAlignmentMode = .top
     label.position = CGPoint(x: self.hudSize.width / 2, y: self.hudSize.height - self.margin)
     return label
-  }()
-
-  lazy var healthMeterNode: MeterNode = {
-    return MeterNode(
-      imageName: "health",
-      color: SKColor.red,
-      width: self.hudSize.width,
-      height: self.margin,
-      y: self.hudSize.height - self.margin * 4,
-      getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 })
   }()
 
   var ammoLabel: SKLabelNode!
@@ -218,10 +210,8 @@ class MapScene: AbstractScene, MapScening {
     hudContainerNode.addChild(levelNumberLabel)
     hudContainerNode.addChild(healthMeterNode)
     hudContainerNode.addChild(powerMeterNode)
-    powerMeterNode.zPosition = 2
-    healthMeterNode.zPosition = 2
-    self.addHUDLabel(text: "Health", y: healthMeterNode.position.y - self.pixel * 2 + self.margin)
-    self.addHUDLabel(text: "Power", y: powerMeterNode.position.y - self.pixel * 2 + self.margin)
+    hudContainerNode.addChild(healthIcon)
+    hudContainerNode.addChild(powerIcon)
     self.ammoLabel = self.addHUDLabel(text: "Ammo: 0", y: powerMeterNode.position.y - self.margin * 3)
 
     hoverIndicatorSprites.forEach(mapContainerNode.addChild)
@@ -230,8 +220,9 @@ class MapScene: AbstractScene, MapScening {
 
     for x in 0..<game.mapSize.x {
       for y in 0..<game.mapSize.y {
-        let node = GridSprite(node: self.createLabelNode(" ", SKColor.lightGray), size: CGSize(width: self.tileSize, height: self.tileSize))
+        let node = SKSpriteNode(imageNamed: "ground1").pixelized().scaled(self.tileScale)
         node.position = self.visualPoint(forPosition: int2(x, y))
+        node.zPosition = 0
         self.mapContainerNode.addChild(node)
         self.gridNodes[CGPoint(x: CGFloat(x), y: CGFloat(y))] = node
       }
@@ -261,7 +252,7 @@ class MapScene: AbstractScene, MapScening {
     
   }
 
-  func gridSprite(at position: int2) -> GridSprite? {
+  func gridSprite(at position: int2) -> SKSpriteNode? {
     return gridNodes[CGPoint(position)]
   }
 
@@ -327,11 +318,23 @@ class MapScene: AbstractScene, MapScening {
     _lastTargetedPoint = gridPos
   }
 
+  var lastPointIndicated: int2? = nil
   override func motionIndicate(point: CGPoint) {
     guard let gridPos = eventPointToGrid(point: point) else { return }
     let path = game.getTargetingLaserPoints(to: gridPos)
     guard !path.isEmpty else { return }
-    game.shoot(target: path.last!, path: path)
+
+    if isTouch {
+      if lastPointIndicated == gridPos {
+        game.shoot(target: path.last!, path: path)
+        lastPointIndicated = nil
+      } else {
+        lastPointIndicated = gridPos
+        self.motionLook(point: point)
+      }
+    } else {
+      game.shoot(target: path.last!, path: path)
+    }
   }
 
   var lastTime: TimeInterval? = nil

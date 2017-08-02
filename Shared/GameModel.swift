@@ -34,13 +34,11 @@ class GameModel {
 
   lazy var gridSystem: GridSystem = { return GridSystem() }()
   lazy var spriteSystem: SpriteSystem = { return SpriteSystem() }()
-  lazy var gridSpriteSystem: GridSpriteSystem = { return GridSpriteSystem() }()
   lazy var mobMoveSystem: GKComponentSystem = { return GKComponentSystem(componentClass: MoveTowardPlayerComponent.self) }()
   lazy var componentSystems: [GKComponentSystem] = {
     return [
       self.gridSystem,
       self.spriteSystem,
-      self.gridSpriteSystem,
       self.mobMoveSystem,
       ] as! [GKComponentSystem]
   }()
@@ -74,9 +72,6 @@ class GameModel {
 
   func delete(entity: GKEntity) {
     print("delete \(entity)")
-    if let gridSpriteC = entity.component(ofType: GridSpriteComponent.self) {
-      gridSpriteC.animateAway()
-    }
     for system in componentSystems {
       system.removeComponent(foundIn: entity)
     }
@@ -87,7 +82,6 @@ class GameModel {
     self.scene = scene
     self.reset()
     MapGenerator.generate(scene: scene, game: self)
-    self.player.sprite?.zPosition = 1
     isAcceptingInput = true
   }
 
@@ -175,7 +169,7 @@ extension GameModel {
     }
     ammoC.add(value: -1)
 
-    let bulletSprite = scene!.createLabelNode("•", SKColor.purple)
+    let bulletSprite = SKSpriteNode(imageNamed: "ammo-1").pixelized().withZ(Z.player).scaled(scene!.tileScale)
     bulletSprite.position = player.sprite!.position
 
     var actions = path.map({
@@ -239,12 +233,10 @@ extension GameModel {
   func bump(_ delta: int2, entity: GKEntity? = nil, completion: OptionalCallback) {
     let entity: GKEntity = entity ?? self.player
     isAcceptingInput = false
-    print("Stop input due to bump")
     if entity == self.player {
       Player.shared.get("bump", useCache: false).play()
     }
     entity.component(ofType: SpriteComponent.self)!.nudge(delta) {
-      print("START input due to bump")
       self.isAcceptingInput = true
       completion?()
     }
@@ -254,14 +246,12 @@ extension GameModel {
     guard let scene = scene else { fatalError() }
 
     isAcceptingInput = false
-    print("Stop input due to move \(self.difficulty)")
     entity.gridNode = gridNode
 
     let action = SKAction.move(to: scene.visualPoint(forPosition: gridNode.gridPosition), duration: MOVE_TIME)
     action.timingMode = .easeIn
     entity.sprite?.run(action) {
       self.isAcceptingInput = true
-      print("START input due to move")
       completion?()
     }
   }
@@ -305,15 +295,6 @@ extension GameModel {
 // MARK: Factories
 
 extension GameModel {
-  func createActor(_ character: String, color: SKColor, weight: CGFloat, power: CGFloat, point: int2) -> GKEntity {
-    guard let scene = scene else { fatalError() }
-    let entity = GKEntity()
-    entity.addComponent(GridNodeComponent(gridNode: gridGraph.node(atGridPosition: point)))
-    entity.addComponent(SpriteComponent(sprite: scene.createLabelNode(character, color)))
-    entity.addComponent(PowerComponent(power: power, isBattery: false))
-    entity.addComponent(MassComponent(weight: weight))
-    return entity
-  }
 
   func createExit(point: int2) -> GKEntity {
     guard let scene = scene else { fatalError() }

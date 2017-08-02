@@ -58,6 +58,8 @@ class SuperAbstractScene: SKScene {
   func motion(_ m: Motion) {
   }
 
+  var isTouch: Bool { return false }
+
   func motionIndicate(point: CGPoint) {
   }
 
@@ -106,6 +108,8 @@ class SuperAbstractScene: SKScene {
       tapGR.numberOfTapsRequired = 1
       view.addGestureRecognizer(tapGR)
     }
+
+    override var isTouch: Bool { return true }
 
     @objc func tapped(_ sender:UITapGestureRecognizer) {
       guard let view = self.view else { return }

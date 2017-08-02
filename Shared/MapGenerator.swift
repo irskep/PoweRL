@@ -16,6 +16,31 @@ struct MobSpec {
   let moves: [int2]
 }
 
+extension SKSpriteNode {
+  func pixelized() -> SKSpriteNode {
+    self.texture?.filteringMode = .nearest
+    return self
+  }
+
+  func scaled(_ s: CGFloat) -> Self {
+    self.setScale(s)
+    return self
+  }
+
+  func withZ(_ z: CGFloat) -> Self {
+    self.zPosition = z
+    return self
+  }
+}
+
+struct Z {
+  static let floor: CGFloat = 0
+  static let wall: CGFloat = 100
+  static let pickup: CGFloat = 200
+  static let mob: CGFloat = 300
+  static let player: CGFloat = 4000
+}
+
 
 class MapGenerator {
   class func generate(scene: MapScene, game: GameModel, n: Int = 0) {
@@ -43,9 +68,7 @@ class MapGenerator {
       game.gridGraph.remove([wallNode])
       let wall = GKEntity()
       wall.addComponent(GridNodeComponent(gridNode: wallNode))
-      let sprite = SKSpriteNode(imageNamed: "wall")
-      sprite.setScale(scene.tileScale)
-      sprite.texture?.filteringMode = .nearest
+      let sprite = SKSpriteNode(imageNamed: "wall").pixelized().scaled(scene.tileScale).withZ(Z.wall)
       wall.addComponent(SpriteComponent(sprite: sprite))
       game.register(entity: wall)
     }
@@ -54,8 +77,9 @@ class MapGenerator {
     shuffledGridNodes = Array(shuffledGridNodes.dropFirst(1))
     if game.player == nil {
       game.player = GKEntity()
-      let sprite = SKSpriteNode(imageNamed: "robot")
-      sprite.setScale(scene.tileScale / 4)
+      let sprite = SKSpriteNode(imageNamed: "robot").pixelized().scaled(scene.tileScale).withZ(Z.player)
+      sprite.zPosition = Z.player
+      print(sprite.zPosition)
       game.player.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: playerPosition)))
       game.player.addComponent(SpriteComponent(sprite: sprite))
       game.player.addComponent(PowerComponent(power: 100, isBattery: false))
@@ -71,24 +95,25 @@ class MapGenerator {
       game.player.gridNode = game.gridGraph.node(atGridPosition: playerPosition)
     }
 
-    game.exit = game.createExit(point: shuffledGridNodes[0].gridPosition)
-    shuffledGridNodes = Array(shuffledGridNodes.dropFirst(1))
+    game.exit = GKEntity()
+    game.exit.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: getSomeNodes(1).first!.gridPosition)))
+    game.exit.addComponent(SpriteComponent(sprite: SKSpriteNode(imageNamed: "exit").pixelized().scaled(scene.tileScale).withZ(Z.pickup)))
 
     for batteryGridNode in getSomeNodes(numBatteries) {
-      let batteryEntity = game.createActor("+", color: SKColor.cyan, weight: 1, power: 25, point: batteryGridNode.gridPosition)
-      batteryEntity.addComponent(PickupConsumableComponent())
-      batteryEntity.powerC?.isBattery = true
-      game.register(entity: batteryEntity)
+      let battery = GKEntity()
+      battery.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: batteryGridNode.gridPosition)))
+      battery.addComponent(SpriteComponent(sprite: SKSpriteNode(imageNamed: "powerup-battery").pixelized().scaled(scene.tileScale).withZ(Z.pickup)))
+      battery.addComponent(PowerComponent(power: 25, isBattery: true))
+      battery.addComponent(PickupConsumableComponent())
+      game.register(entity: battery)
     }
 
     let ammoNodes = getSomeNodes(numAmmos)
     for ammoNode in ammoNodes {
       let ammo = GKEntity()
       let value = game.random.nextInt(upperBound: 2) + 1
-      var char = ""
-      for _ in 0..<value { char += "•" }
       ammo.addComponent(GridNodeComponent(gridNode: ammoNode))
-      ammo.addComponent(SpriteComponent(sprite: scene.createLabelNode(char, SKColor.purple)))
+      ammo.addComponent(SpriteComponent(sprite: SKSpriteNode(imageNamed: "ammo-\(value)").pixelized().scaled(scene.tileScale).withZ(Z.pickup)))
       ammo.addComponent(PickupConsumableComponent())
       ammo.addComponent(AmmoComponent(value: 2, damage: 40))
       game.register(entity: ammo)
@@ -98,20 +123,20 @@ class MapGenerator {
     for healthNode in healthNodes {
       let health = GKEntity()
       health.addComponent(GridNodeComponent(gridNode: healthNode))
-      health.addComponent(SpriteComponent(sprite: scene.createLabelNode("+", SKColor.red)))
+      health.addComponent(SpriteComponent(sprite: SKSpriteNode(imageNamed: "powerup-health").pixelized().scaled(scene.tileScale).withZ(Z.pickup)))
       health.addComponent(PickupConsumableComponent())
       health.addComponent(HealthComponent(health: 50))
       game.register(entity: health)
     }
 
     var mobSpecs: [MobSpec] = [
-      MobSpec(char: "🦋", health: 40, moves: [
+      MobSpec(char: "butterfly", health: 40, moves: [
         int2(-1, -1),
         int2(1, 1),
         int2(-1, 1),
         int2(1, -1),
       ]),
-      MobSpec(char: "🐢", health: 40, moves: [
+      MobSpec(char: "turtle", health: 40, moves: [
         int2(-1, 0),
         int2(1, 0),
         int2(0, 1),
@@ -119,7 +144,7 @@ class MapGenerator {
         ]),
     ]
     if game.difficulty > 3 {
-      mobSpecs.append(MobSpec(char: "🐇", health: 40, moves: [
+      mobSpecs.append(MobSpec(char: "rabbit", health: 40, moves: [
         int2(-1, -2),
         int2(1, -2),
         int2(-1, 2),
@@ -138,41 +163,21 @@ class MapGenerator {
       mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
-      if spec.char == "🐢" {
+      if spec.char == "turtle" {
         mob.addComponent(SpeedLimiterComponent(bucketSize: 2, stepCost: 1))
-        let sprite = SKSpriteNode(imageNamed: "turtle")
-        let spriteC = SpriteComponent(sprite: sprite)
-        sprite.setScale(scene.tileScale / 4)
-        sprite.color = SKColor.red
-        spriteC.shouldAnimateAway = true
-        mob.addComponent(spriteC)
-      } else if spec.char == "🦋" {
-        let sprite = SKSpriteNode(imageNamed: "butterfly")
-        let spriteC = SpriteComponent(sprite: sprite)
-        sprite.setScale(scene.tileScale / 4)
-        sprite.color = SKColor.red
-        spriteC.shouldAnimateAway = true
-        mob.addComponent(spriteC)
-      } else if spec.char == "🐇" {
-        let sprite = SKSpriteNode(imageNamed: "rabbit")
-        let spriteC = SpriteComponent(sprite: sprite)
-        sprite.setScale(scene.tileScale / 4)
-        sprite.color = SKColor.red
-        spriteC.shouldAnimateAway = true
-        mob.addComponent(spriteC)
-      } else {
-        let spriteC = SpriteComponent(sprite: scene.createLabelNode(spec.char, SKColor.red))
-        spriteC.shouldAnimateAway = true
-        mob.addComponent(spriteC)
       }
-      mob.sprite?.zPosition = 1
+      let sprite = SKSpriteNode(imageNamed: spec.char).pixelized().scaled(scene.tileScale).withZ(Z.mob)
+      let spriteC = SpriteComponent(sprite: sprite)
+      sprite.color = SKColor.red
+      spriteC.shouldAnimateAway = true
+      mob.addComponent(spriteC)
       (mob.sprite as? SKLabelNode)?.color = SKColor.red
       game.register(entity: mob)
     }
 
     for drainNode in getSomeNodes(numDrains) {
       let drain = GKEntity()
-      drain.addComponent(GridSpriteComponent(scene, drainNode, "-", SKColor.black, SKColor.red.blended(withFraction: 0.8, of: SKColor.black)))
+      drain.addComponent(SpriteComponent(sprite: SKSpriteNode(imageNamed: "drain").pixelized().scaled(scene.tileScale).withZ(Z.wall)))
       drain.addComponent(PowerComponent(power: -7, isBattery: true))
       drain.addComponent(GridNodeComponent(gridNode: drainNode))
       drain.addComponent(PickupConsumableComponent())

@@ -139,6 +139,11 @@
 		AAD6BA321F2D777A00D0900E /* down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6BA2E1F2D777A00D0900E /* down.mp3 */; };
 		AAD6BA331F2D777A00D0900E /* down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6BA2E1F2D777A00D0900E /* down.mp3 */; };
 		AAD6BA341F2D777A00D0900E /* down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6BA2E1F2D777A00D0900E /* down.mp3 */; };
+		AAE9193F1F2F893C009840C5 /* Mac.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAE9193E1F2F893C009840C5 /* Mac.xcassets */; };
+		AAE919411F2F899D009840C5 /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAE919401F2F899D009840C5 /* iOS.xcassets */; };
+		AAE919471F3174EA009840C5 /* Coolville.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAE919461F3174EA009840C5 /* Coolville.ttf */; };
+		AAE919481F3174EA009840C5 /* Coolville.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAE919461F3174EA009840C5 /* Coolville.ttf */; };
+		AAE919491F3174EA009840C5 /* Coolville.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAE919461F3174EA009840C5 /* Coolville.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -209,6 +214,9 @@
 		AAD6BA081F2D741000D0900E /* up1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up1.mp3; sourceTree = "<group>"; };
 		AAD6BA2D1F2D777A00D0900E /* up2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up2.mp3; sourceTree = "<group>"; };
 		AAD6BA2E1F2D777A00D0900E /* down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = down.mp3; sourceTree = "<group>"; };
+		AAE9193E1F2F893C009840C5 /* Mac.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Mac.xcassets; sourceTree = "<group>"; };
+		AAE919401F2F899D009840C5 /* iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = iOS.xcassets; sourceTree = "<group>"; };
+		AAE919461F3174EA009840C5 /* Coolville.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Coolville.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,6 +279,7 @@
 		AAC0F87A1F1AD30900D55037 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				AAE919461F3174EA009840C5 /* Coolville.ttf */,
 				AA9449EE1F2E9B86003E7315 /* Assets.xcassets */,
 				AAD6B9FB1F2D741000D0900E /* Music */,
 				AAD6B9FD1F2D741000D0900E /* Sounds */,
@@ -315,6 +324,7 @@
 				AAC0F88A1F1AD30900D55037 /* Main.storyboard */,
 				AAC0F88D1F1AD30900D55037 /* LaunchScreen.storyboard */,
 				AAC0F8901F1AD30900D55037 /* Info.plist */,
+				AAE919401F2F899D009840C5 /* iOS.xcassets */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -338,6 +348,7 @@
 				AAC0F8A91F1AD30900D55037 /* Main.storyboard */,
 				AAC0F8AC1F1AD30900D55037 /* Info.plist */,
 				AA7332451F2C2DBE006ECA4D /* LD39WindowController.swift */,
+				AAE9193E1F2F893C009840C5 /* Mac.xcassets */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -490,6 +501,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B01F1AD30900D55037 /* GameScene.sks in Resources */,
+				AAE919411F2F899D009840C5 /* iOS.xcassets in Resources */,
+				AAE919471F3174EA009840C5 /* Coolville.ttf in Resources */,
 				AA27C71D1F2D9FFD004419F6 /* drain.mp3 in Resources */,
 				AAC0F88C1F1AD30900D55037 /* Main.storyboard in Resources */,
 				AA27C71B1F2D9FFD004419F6 /* bump.mp3 in Resources */,
@@ -544,6 +557,7 @@
 				AAC0F8B11F1AD30900D55037 /* GameScene.sks in Resources */,
 				AA27C7281F2D9FFE004419F6 /* up3.mp3 in Resources */,
 				AAD6BA331F2D777A00D0900E /* down.mp3 in Resources */,
+				AAE919481F3174EA009840C5 /* Coolville.ttf in Resources */,
 				AAD6BA0D1F2D741000D0900E /* bounce.mp3 in Resources */,
 				AAD6BA191F2D741000D0900E /* hit1.mp3 in Resources */,
 				AAD6BA221F2D741000D0900E /* select.mp3 in Resources */,
@@ -565,6 +579,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8AB1F1AD30900D55037 /* Main.storyboard in Resources */,
+				AAE9193F1F2F893C009840C5 /* Mac.xcassets in Resources */,
 				AAD6BA171F2D741000D0900E /* gameover.mp3 in Resources */,
 				AA945B731F2D284C006C6DEA /* DeathScene.sks in Resources */,
 				AAD6BA111F2D741000D0900E /* bump.mp3 in Resources */,
@@ -580,6 +595,7 @@
 				AAD6BA141F2D741000D0900E /* drain.mp3 in Resources */,
 				AAD6BA261F2D741000D0900E /* select2.mp3 in Resources */,
 				AAD6BA201F2D741000D0900E /* hit3.mp3 in Resources */,
+				AAE919491F3174EA009840C5 /* Coolville.ttf in Resources */,
 				AAD6BA311F2D777A00D0900E /* up2.mp3 in Resources */,
 				AA9449ED1F2E7DBC003E7315 /* win.mp3 in Resources */,
 				AAD6BA291F2D741000D0900E /* toggle.mp3 in Resources */,
