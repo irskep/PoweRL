@@ -68,7 +68,7 @@ class MapScene: AbstractScene, MapScening {
 
   lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
   var tileScale: CGFloat { return tileSize / 16 }
-  lazy var fontSize: CGFloat = { return (36.0 / 314) * self.frame.size.height }()
+  lazy var fontSize: CGFloat = { return (24.0 / 314) * self.frame.size.height }()
   var margin: CGFloat { return (16.0 / 314.0) * self.frame.size.height }
   var pixel: CGFloat { return tileSize / 64 }
 
@@ -76,7 +76,7 @@ class MapScene: AbstractScene, MapScening {
   var mapSizeVisual: CGSize { return CGSize(width: CGFloat(game.mapSize.x) * tileSize, height: CGFloat(game.mapSize.y) * tileSize) }
 
   func createLabelNode(_ text: String, _ color: SKColor) -> SKLabelNode {
-    let node = SKLabelNode(fontNamed: "Menlo")
+    let node = SKLabelNode(fontNamed: "Coolville")
     node.fontColor = color
     node.verticalAlignmentMode = .center
     node.fontSize = self.fontSize
@@ -87,7 +87,7 @@ class MapScene: AbstractScene, MapScening {
   @discardableResult
   func addHUDLabel(text: String, y: CGFloat) -> SKLabelNode {
     let label = SKLabelNode(fontNamed: "Coolville")
-    label.fontSize = self.fontSize / 3
+    label.fontSize = self.fontSize
     label.color = SKColor.white
     label.verticalAlignmentMode = .top
     label.text = text
@@ -171,7 +171,7 @@ class MapScene: AbstractScene, MapScening {
 
   lazy var levelNumberLabel: SKLabelNode = {
     let label = SKLabelNode(fontNamed: "Coolville")
-    label.fontSize = self.fontSize / 2
+    label.fontSize = self.fontSize
     label.color = SKColor.white
     label.verticalAlignmentMode = .top
     label.position = CGPoint(x: self.hudSize.width / 2, y: self.hudSize.height - self.margin)

@@ -45,6 +45,9 @@ class SuperAbstractScene: SKScene {
   }
 
   override func didMove(to view: SKView) {
+    view.showsFPS = false
+    view.showsNodeCount = false
+    view.showsDrawCount = false
     self.setup()
   }
 
