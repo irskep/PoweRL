@@ -191,7 +191,10 @@ extension GameModel {
 
   func movePlayer(by delta: int2, completion: OptionalCallback = nil) {
     guard isAcceptingInput else { return }
-    guard let pos = player.position else { fatalError() }
+    guard let pos = player.position else {
+      print("Trying to move player but it has no position, wat???")
+      return
+    }
     let nextPos = pos + delta
     guard let nextGridNode = gridGraph.node(atGridPosition: nextPos) else {
       self.bump(delta, completion: completion)
