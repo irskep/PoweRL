@@ -186,7 +186,7 @@ class MapScene: AbstractScene, MapScening {
       let node = SKSpriteNode(color: SKColor.yellow, size: CGSize(width: self.tileSize, height: self.tileSize))
       node.alpha = 0.2
       node.isHidden = true
-      node.zPosition = 100
+      node.zPosition = Z.player
       return node
     }))
   }()
