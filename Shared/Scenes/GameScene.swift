@@ -24,7 +24,13 @@ class GameScene: AbstractScene {
     super.setup()
 
     scaleMode = .aspectFit
-    (self.childNode(withName: "//robot") as? SKSpriteNode)?.texture?.filteringMode = .nearest
+
+    for child in children {
+      (child as? SKSpriteNode)?.texture?.filteringMode = .nearest
+      for grandchild in child.children {
+        (grandchild as? SKSpriteNode)?.texture?.filteringMode = .nearest
+      }
+    }
     #if os(iOS)
       let scale = UIScreen.main.bounds.size.height / (414 * 1.5)
       for child in self.children {
