@@ -109,13 +109,14 @@ class GameModel {
   }
 
   func executeTurn() {
+    guard let playerNode = player.gridNode else { return }
     print("------------")
     ruleSystem.state["game"] = self
     ruleSystem.reset()
     ruleSystem.evaluate()
     ruleSystem.state["game"] = nil
     for component in mobMoveSystem.components {
-      if let nextNode = (component as? MoveTowardPlayerComponent)?.getClosest(to: player.gridNode!.gridPosition, inGraph: gridGraph) {
+      if let nextNode = (component as? MoveTowardPlayerComponent)?.getClosest(to: playerNode.gridPosition, inGraph: gridGraph) {
         if let speedLimiter = component.entity?.component(ofType: SpeedLimiterComponent.self) {
           if !speedLimiter.tryToStep() {
             continue

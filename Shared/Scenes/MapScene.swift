@@ -65,6 +65,7 @@ protocol MapScening {
 class MapScene: AbstractScene, MapScening {
   var game: GameModel!
   var bgMusic: AVAudioPlayer!
+  var isDead = false
 
   lazy var tileSize: CGFloat = { return self.frame.size.height / CGFloat(self.game.mapSize.y) }()
   var tileScale: CGFloat { return tileSize / 16 }
@@ -263,12 +264,14 @@ class MapScene: AbstractScene, MapScening {
   }
 
   override func motion(_ m: Motion) {
+    guard !isDead else { return }
     game.movePlayer(by: m.vector) {
       [weak self] in self?._moveAgain(m)
     }
   }
 
   private func _moveAgain(_ m: Motion) {
+    guard !isDead else { return }
     if isHolding(m: m) == true {
       motion(m)
       return
@@ -301,6 +304,7 @@ class MapScene: AbstractScene, MapScening {
     return gridPos
   }
   override func motionLook(point: CGPoint) {
+    guard !isDead else { return }
     guard let gridPos = eventPointToGrid(point: point) else {
       if _lastTargetedPoint != nil {
         _lastTargetedPoint = nil
@@ -320,6 +324,7 @@ class MapScene: AbstractScene, MapScening {
 
   var lastPointIndicated: int2? = nil
   override func motionIndicate(point: CGPoint) {
+    guard !isDead else { return }
     guard let gridPos = eventPointToGrid(point: point) else { return }
     let path = game.getTargetingLaserPoints(to: gridPos)
     guard !path.isEmpty else { return }
@@ -366,10 +371,13 @@ class MapScene: AbstractScene, MapScening {
     _hideTargetingLaser()
 
     if let playerPower = game.player.powerC?.power, playerPower <= 0 {
+      self.isDead = true
       self.gameOver()
     } else if let playerHealth = game.player.healthC?.health, playerHealth <= 0 {
+      self.isDead = true
       self.gameOver()
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
+      self.isDead = true
       game.end()
 
       if game.difficulty > 7 {
