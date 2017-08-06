@@ -33,12 +33,36 @@ extension SKSpriteNode {
   }
 }
 
+extension int2 {
+  func manhattanDistanceTo(_ other: int2) -> Int {
+    return abs(Int(self.x) - Int(other.x)) + abs(Int(self.y) - Int(other.y))
+  }
+}
+
 struct Z {
   static let floor: CGFloat = 0
   static let wall: CGFloat = 100
   static let pickup: CGFloat = 200
   static let mob: CGFloat = 300
   static let player: CGFloat = 4000
+}
+
+
+func isEverythingReachable(graph: GKGridGraph<GridNode>, start: GridNode, canMovePast: (GridNode) -> Bool) -> Bool {
+  var unvisitedNodes = Set<GridNode>(graph.nodes as! [GridNode])
+  var stack: Array<GridNode> = [start]
+
+  while let node = stack.popLast() {
+    if !unvisitedNodes.contains(node) { continue }
+    unvisitedNodes.remove(node)
+
+    if !canMovePast(node) { continue }
+    for neighbor in node.connectedNodes as! [GridNode] {
+      stack.append(neighbor)
+    }
+  }
+
+  return unvisitedNodes.isEmpty
 }
 
 
@@ -64,6 +88,20 @@ class MapGenerator {
       return val
     }
 
+    let getNodeWithScore = { (n: Int, getScore: (GridNode) -> Int) -> GridNode in
+      var maxScore: Int = getScore(shuffledGridNodes[0])
+      var bestNode = shuffledGridNodes[0]
+      for node in shuffledGridNodes {
+        let score = getScore(node)
+        if score > maxScore {
+          maxScore = score
+          bestNode = node
+        }
+      }
+      shuffledGridNodes = Array(shuffledGridNodes.filter({ $0 != bestNode }))
+      return bestNode
+    }
+
     for wallNode in getSomeNodes(numWalls) {
       game.gridGraph.remove([wallNode])
       let wall = GKEntity()
@@ -73,14 +111,12 @@ class MapGenerator {
       game.register(entity: wall)
     }
 
-    let playerPosition = shuffledGridNodes[0].gridPosition
-    shuffledGridNodes = Array(shuffledGridNodes.dropFirst(1))
+    let playerNode = getSomeNodes(1)[0]
     if game.player == nil {
       game.player = GKEntity()
       let sprite = SKSpriteNode(imageNamed: "robot").pixelized().scaled(scene.tileScale).withZ(Z.player)
       sprite.zPosition = Z.player
-      print(sprite.zPosition)
-      game.player.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: playerPosition)))
+      game.player.addComponent(GridNodeComponent(gridNode: playerNode))
       game.player.addComponent(SpriteComponent(sprite: sprite))
       game.player.addComponent(PowerComponent(power: 100, isBattery: false))
       game.player.addComponent(MassComponent(weight: 100))
@@ -90,14 +126,21 @@ class MapGenerator {
       game.player.addComponent(PlayerComponent())
       game.player.addComponent(HealthComponent(health: 100))
       game.player.addComponent(BumpDamageComponent(value: 20))
-      game.player.gridNode = game.gridGraph.node(atGridPosition: playerPosition)
     } else {
-      game.player.gridNode = game.gridGraph.node(atGridPosition: playerPosition)
+      game.player.gridNode = playerNode
     }
 
     game.exit = GKEntity()
-    game.exit.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: getSomeNodes(1).first!.gridPosition)))
+    game.exit.addComponent(GridNodeComponent(gridNode: getNodeWithScore(1, { $0.gridPosition.manhattanDistanceTo(playerNode.gridPosition) })))
     game.exit.addComponent(SpriteComponent(sprite: SKSpriteNode(imageNamed: "exit").pixelized().scaled(scene.tileScale).withZ(Z.pickup)))
+
+
+    if !isEverythingReachable(graph: game.gridGraph, start: game.player.gridNode!, canMovePast: {$0 != game.exit.gridNode}) {
+      print("Regenerating map due to reachability issue")
+      game.reset()
+      MapGenerator.generate(scene: scene, game: game, n: n + 1)
+      return
+    }
 
     for batteryGridNode in getSomeNodes(numBatteries) {
       let battery = GKEntity()
@@ -187,21 +230,5 @@ class MapGenerator {
 
     game.register(entity: game.player)
     game.register(entity: game.exit)
-
-    if !game.getIsReachable(game.player.gridNode, game.exit.gridNode) {
-      game.reset()
-      MapGenerator.generate(scene: scene, game: game, n: n + 1)
-      return
-    }
-    game.gridGraph.remove([game.exit.gridNode!])
-    let nodesThatMustBeReachable: [GridNode] = ammoNodes + healthNodes
-    if nodesThatMustBeReachable.first(where: { !game.getIsReachable(game.player.gridNode, $0) }) != nil {
-      print("Can't reach something important")
-      game.reset()
-      MapGenerator.generate(scene: scene, game: game, n: n + 1)
-      return
-    }
-    game.gridGraph.add([game.exit.gridNode!])
-    game.gridGraph.connectToAdjacentNodes(node: game.exit.gridNode!)
   }
 }
