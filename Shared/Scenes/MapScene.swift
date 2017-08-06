@@ -22,6 +22,14 @@ extension int2 {
   }
 }
 
+extension UserDefaults {
+  static var pwr_isMusicEnabled: Bool {
+    // store inverted so default is true
+    get { return !UserDefaults.standard.bool(forKey: "isMusicDisabled") }
+    set { UserDefaults.standard.set(!newValue, forKey: "isMusicDisabled") }
+  }
+}
+
 class MeterNode: SKSpriteNode {
   var getter: () -> CGFloat = { return 0 }
   var targetScale: CGFloat = 1
@@ -246,7 +254,9 @@ class MapScene: AbstractScene, MapScening {
       bgMusic.numberOfLoops = -1
       bgMusic.enableRate = true
       bgMusic.rate = 1
-      bgMusic.play()
+      if UserDefaults.pwr_isMusicEnabled {
+        bgMusic.play()
+      }
     }
 
     Player.shared.get("up1", useCache: false).play()
@@ -287,8 +297,10 @@ class MapScene: AbstractScene, MapScening {
   override func motionToggleMusic() {
     if bgMusic?.isPlaying == true {
       bgMusic?.pause()
+      UserDefaults.pwr_isMusicEnabled = false
     } else {
       bgMusic?.play()
+      UserDefaults.pwr_isMusicEnabled = true
     }
   }
 
