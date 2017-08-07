@@ -170,7 +170,7 @@ extension GameModel {
     }
     ammoC.add(value: -1)
 
-    let bulletSprite = SKSpriteNode(imageNamed: "ammo-1").pixelized().withZ(Z.player).scaled(scene!.tileScale)
+    let bulletSprite = SKSpriteNode(imageNamed: "ammo-1").pixelized().withZ(Z.player)
     bulletSprite.position = player.sprite!.position
 
     var actions = path.map({
@@ -293,19 +293,5 @@ extension GameModel {
   func getIsReachable(_ a: GridNode?, _ b: GridNode?) -> Bool {
     guard let a = a, let b = b else { return false }
     return gridGraph.findPath(from: a, to: b).count > 0
-  }
-}
-
-// MARK: Factories
-
-extension GameModel {
-
-  func createExit(point: int2) -> GKEntity {
-    guard let scene = scene else { fatalError() }
-    let entity = GKEntity()
-    let gnc = GridNodeComponent(gridNode: gridGraph.node(atGridPosition: point))
-    entity.addComponent(gnc)
-    entity.addComponent(SpriteComponent(sprite: scene.createLabelNode(">", SKColor.green)))
-    return entity
   }
 }

@@ -20,8 +20,8 @@ enum Motion {
 
   var vector: int2 {
     switch self {
-    case .up: return int2(0, -1)
-    case .down: return int2(0, 1)
+    case .up: return int2(0, 1)
+    case .down: return int2(0, -1)
     case .left: return int2(-1, 0)
     case .right: return int2(1, 0)
     }

@@ -70,6 +70,15 @@
 		AA945B791F2D3D95006C6DEA /* Bresenham.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA945B781F2D3D95006C6DEA /* Bresenham.swift */; };
 		AA945B7A1F2D3D95006C6DEA /* Bresenham.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA945B781F2D3D95006C6DEA /* Bresenham.swift */; };
 		AA945B7B1F2D3D95006C6DEA /* Bresenham.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA945B781F2D3D95006C6DEA /* Bresenham.swift */; };
+		AAA323DE1F381A570039D299 /* Swift+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323DD1F381A570039D299 /* Swift+utils.swift */; };
+		AAA323DF1F381A590039D299 /* Swift+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323DD1F381A570039D299 /* Swift+utils.swift */; };
+		AAA323E01F381A5A0039D299 /* Swift+utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323DD1F381A570039D299 /* Swift+utils.swift */; };
+		AAA323E21F381A790039D299 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E11F381A790039D299 /* Nodes.swift */; };
+		AAA323E31F381A7B0039D299 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E11F381A790039D299 /* Nodes.swift */; };
+		AAA323E41F381A7D0039D299 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E11F381A790039D299 /* Nodes.swift */; };
+		AAA323EA1F382CFC0039D299 /* BitmapFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E91F382CFC0039D299 /* BitmapFont.swift */; };
+		AAA323EB1F382CFC0039D299 /* BitmapFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E91F382CFC0039D299 /* BitmapFont.swift */; };
+		AAA323EC1F382CFC0039D299 /* BitmapFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E91F382CFC0039D299 /* BitmapFont.swift */; };
 		AAC0F8871F1AD30900D55037 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F8861F1AD30900D55037 /* AppDelegate.swift */; };
 		AAC0F8891F1AD30900D55037 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F8881F1AD30900D55037 /* GameViewController.swift */; };
 		AAC0F88C1F1AD30900D55037 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F88A1F1AD30900D55037 /* Main.storyboard */; };
@@ -178,6 +187,9 @@
 		AA945B701F2D284C006C6DEA /* DeathScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DeathScene.sks; sourceTree = "<group>"; };
 		AA945B741F2D2C11006C6DEA /* MapGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapGenerator.swift; sourceTree = "<group>"; };
 		AA945B781F2D3D95006C6DEA /* Bresenham.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bresenham.swift; sourceTree = "<group>"; };
+		AAA323DD1F381A570039D299 /* Swift+utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Swift+utils.swift"; sourceTree = "<group>"; };
+		AAA323E11F381A790039D299 /* Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nodes.swift; sourceTree = "<group>"; };
+		AAA323E91F382CFC0039D299 /* BitmapFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFont.swift; sourceTree = "<group>"; };
 		AAC0F87B1F1AD30900D55037 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		AAC0F87C1F1AD30900D55037 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		AAC0F87D1F1AD30900D55037 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -294,6 +306,9 @@
 				AA945B741F2D2C11006C6DEA /* MapGenerator.swift */,
 				AAD6B9BF1F2D551700D0900E /* Rules.swift */,
 				AAD6B9C31F2D5E5E00D0900E /* UIColor+compat.swift */,
+				AAA323DD1F381A570039D299 /* Swift+utils.swift */,
+				AAA323E11F381A790039D299 /* Nodes.swift */,
+				AAA323E91F382CFC0039D299 /* BitmapFont.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -622,6 +637,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B31F1AD30900D55037 /* GameScene.swift in Sources */,
+				AAA323E21F381A790039D299 /* Nodes.swift in Sources */,
 				AA945B751F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
 				AA73324A1F2C3616006ECA4D /* Geom.swift in Sources */,
 				AA70E4B91F2C1BB9005F1DD0 /* MapScene.swift in Sources */,
@@ -629,6 +645,8 @@
 				AA9449E31F2E7C6C003E7315 /* WinScene.swift in Sources */,
 				AAD6B9C01F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BD1F2C1BFB005F1DD0 /* AbstractScene.swift in Sources */,
+				AAA323DE1F381A570039D299 /* Swift+utils.swift in Sources */,
+				AAA323EA1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA7332501F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C41F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
 				AA945B791F2D3D95006C6DEA /* Bresenham.swift in Sources */,
@@ -645,6 +663,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B41F1AD30900D55037 /* GameScene.swift in Sources */,
+				AAA323E31F381A7B0039D299 /* Nodes.swift in Sources */,
 				AA945B761F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
 				AA7332491F2C3615006ECA4D /* Geom.swift in Sources */,
 				AA70E4BA1F2C1BBD005F1DD0 /* MapScene.swift in Sources */,
@@ -652,6 +671,8 @@
 				AA9449E41F2E7C6C003E7315 /* WinScene.swift in Sources */,
 				AAD6B9C11F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BE1F2C1BFD005F1DD0 /* AbstractScene.swift in Sources */,
+				AAA323DF1F381A590039D299 /* Swift+utils.swift in Sources */,
+				AAA323EB1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA73324F1F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C51F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
 				AA945B7A1F2D3D95006C6DEA /* Bresenham.swift in Sources */,
@@ -668,6 +689,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B51F1AD30900D55037 /* GameScene.swift in Sources */,
+				AAA323E41F381A7D0039D299 /* Nodes.swift in Sources */,
 				AA70E4BB1F2C1BBD005F1DD0 /* MapScene.swift in Sources */,
 				AA945B771F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
 				AA73324E1F2CF4FC006ECA4D /* GameModel.swift in Sources */,
@@ -675,6 +697,8 @@
 				AA9449E51F2E7C6C003E7315 /* WinScene.swift in Sources */,
 				AAC0F8A81F1AD30900D55037 /* GameViewController.swift in Sources */,
 				AA7332461F2C2DBE006ECA4D /* LD39WindowController.swift in Sources */,
+				AAA323E01F381A5A0039D299 /* Swift+utils.swift in Sources */,
+				AAA323EC1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA70E4BF1F2C1BFE005F1DD0 /* AbstractScene.swift in Sources */,
 				AAC0F8A61F1AD30900D55037 /* AppDelegate.swift in Sources */,
 				AA7332541F2D0BDC006ECA4D /* Components.swift in Sources */,
