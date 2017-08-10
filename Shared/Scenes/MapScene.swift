@@ -36,7 +36,9 @@ class MapScene: AbstractScene {
 
   var hudSize: CGSize { return self.screenPixelSize - CGSize(width: self.mapPixelSize.width, height: 0) }
 
-  lazy var hudContainerNode: HUDNode = { return HUDNode(game: self.game, size: self.hudSize) }()
+  lazy var hudContainerNode: HUDNode = {
+    return HUDNode(view: self.view, game: self.game, size: self.hudSize)
+  }()
 
   lazy var mapContainerNode: SKSpriteNode = {
     let mapContainerNode = SKSpriteNode(color: SKColor.black, size: self.mapPixelSize)
@@ -159,7 +161,7 @@ class MapScene: AbstractScene {
     for s in hoverIndicatorSprites { s.isHidden = true }
   }
   func eventPointToGrid(point: CGPoint) -> int2? {
-    var visualPointInMap = self.convert(point, to: mapContainerNode)
+    let visualPointInMap = self.convert(point, to: mapContainerNode)
     let gridPos = int2(
       Int32(visualPointInMap.x / tileSize.width),
       Int32(visualPointInMap.y / tileSize.height))
@@ -258,20 +260,35 @@ class MapScene: AbstractScene {
   }
 
   func flashMessage(_ text: String, color: SKColor = SKColor.red) {
-    let node = SKLabelNode(text: text)
-    node.fontName = "Coolville"
-    node.fontColor = color.blended(withFraction: 0.2, of: SKColor.white)!
-    node.fontSize = 12
-    node.verticalAlignmentMode = .center
-    node.position = CGPoint(x: mapPixelSize.width / 2, y: mapPixelSize.height / 2)
+    let node = PixelyLabelNode(view: view, text: text, color: color.blended(withFraction: 0.2, of: SKColor.white)!)
+
+    let position = game.player?.gridNode?.gridPosition
+
+    if let position = position {
+      node.position = visualPoint(forPosition: position) + tileSize.point / 2
+    } else {
+      node.position = CGPoint(x: mapPixelSize.width / 2, y: mapPixelSize.height / 2)
+    }
     node.zPosition = 2000
     mapContainerNode.addChild(node)
-    node.run(
-      SKAction.group([
-        SKAction.fadeOut(withDuration: 1),
-        SKAction.moveBy(x: 0, y: tileSize.height * 3, duration: 1)
-      ]),
-      completion: { node.removeFromParent() })
+
+    if let position = position, position.y > (game.gridGraph?.gridHeight ?? 0) - 2 {
+      node.position -= CGPoint(x: 0, y: tileSize.height) / 2
+      node.run(
+        SKAction.group([
+          SKAction.fadeOut(withDuration: 1),
+          SKAction.moveBy(x: 0, y: -tileSize.height * 3, duration: 1)
+          ]),
+        completion: { node.removeFromParent() })
+    } else {
+      node.position += CGPoint(x: 0, y: tileSize.height) / 2
+      node.run(
+        SKAction.group([
+          SKAction.fadeOut(withDuration: 1),
+          SKAction.moveBy(x: 0, y: tileSize.height * 3, duration: 1)
+          ]),
+        completion: { node.removeFromParent() })
+    }
   }
 
   #if os(OSX)

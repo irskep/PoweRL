@@ -171,10 +171,12 @@ extension GameModel {
     ammoC.add(value: -1)
 
     let bulletSprite = SKSpriteNode(imageNamed: "ammo-1").pixelized().withZ(Z.player)
-    bulletSprite.position = player.sprite!.position
+    bulletSprite.position = player.sprite!.position + (scene!.tileSize / 2).point
 
     var actions = path.map({
-      return SKAction.move(to: scene!.visualPoint(forPosition: $0), duration: MOVE_TIME / 2)
+      return SKAction.move(
+        to: scene!.visualPoint(forPosition: $0) + (scene!.tileSize / 2).point,
+        duration: MOVE_TIME / 2)
     })
     actions.append(SKAction.fadeOut(withDuration: MOVE_TIME / 2))
     scene!.mapContainerNode.addChild(bulletSprite)

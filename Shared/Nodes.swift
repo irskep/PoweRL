@@ -42,9 +42,49 @@ class MeterNode: SKSpriteNode {
   }
 }
 
+class PixelyLabelNode: SKSpriteNode {
+  lazy var backingLabel: SKLabelNode = {
+    let label = SKLabelNode(fontNamed: "Coolville")
+    label.fontSize = 10
+    label.color = SKColor.white
+    label.verticalAlignmentMode = .top
+    return label
+  }()
+
+  weak var view: SKView?
+
+  required init(view: SKView?, text: String = "", color: SKColor = SKColor.white) {
+    self.text = text
+    self.view = view
+    super.init(texture: nil, color: SKColor.white, size: CGSize.zero)
+
+    backingLabel.fontColor = color
+    if !text.isEmpty {
+      self._updateTexture()
+    }
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  private func _updateTexture() {
+    backingLabel.text = text
+    self.texture = self.view?.texture(from: backingLabel)
+    if let tex = self.texture {
+      tex.filteringMode = .nearest
+      self.size = tex.size()
+    }
+  }
+
+  var text: String {
+    didSet { self._updateTexture() }
+  }
+}
 
 class HUDNode: SKSpriteNode {
   private let game: GameModel
+  private weak var view: SKView?
 
   private let fontSize: CGFloat = 8
   private let margin: CGFloat = 4
@@ -53,13 +93,9 @@ class HUDNode: SKSpriteNode {
 
   private func _y(_ n: CGFloat) -> CGFloat { return floor(self.height) - self.margin * n }
 
-
-  lazy var levelNumberLabel: SKLabelNode = {
-    let label = SKLabelNode(fontNamed: "Coolville")
-    label.fontSize = self.fontSize
-    label.color = SKColor.white
-    label.verticalAlignmentMode = .top
-    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(1))
+  lazy var levelNumberLabel: PixelyLabelNode = {
+    let label = PixelyLabelNode(view: view)
+    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(1.4))
     return label
   }()
 
@@ -94,13 +130,9 @@ class HUDNode: SKSpriteNode {
       getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 }).withZ(2)
   }()
 
-  lazy var ammoLabel: SKLabelNode = {
-    let label = SKLabelNode(fontNamed: "Coolville")
-    label.fontSize = self.fontSize
-    label.color = SKColor.white
-    label.verticalAlignmentMode = .top
-    label.text = "Ammo: 0"
-    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(8))
+  lazy var ammoLabel: PixelyLabelNode = {
+    let label = PixelyLabelNode(view: self.view)
+    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(8.4))
     return label
   }()
 
@@ -112,7 +144,8 @@ class HUDNode: SKSpriteNode {
     return line
   }()
 
-  required init(game: GameModel, size: CGSize) {
+  required init(view: SKView?, game: GameModel, size: CGSize) {
+    self.view = view
     self.game = game
 
     super.init(texture: nil, color: SKColor.clear, size: size)
