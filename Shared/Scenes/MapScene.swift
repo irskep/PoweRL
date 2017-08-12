@@ -116,6 +116,7 @@ class MapScene: AbstractScene {
     }
 
     Player.shared.get("up1", useCache: false).play()
+    print(screenPixelSize)
   }
 
   func gridSprite(at position: int2) -> SKSpriteNode? {

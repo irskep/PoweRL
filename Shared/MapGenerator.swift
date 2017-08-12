@@ -26,7 +26,7 @@ struct Z {
 
 
 class PWRSpriteNode: SKSpriteNode {
-  required override init(texture: SKTexture?, color: NSColor, size: CGSize) {
+  required override init(texture: SKTexture?, color: SKColor, size: CGSize) {
     super.init(texture: texture, color: color, size: size)
     self.texture?.filteringMode = .nearest
     self.anchorPoint = CGPoint.zero
