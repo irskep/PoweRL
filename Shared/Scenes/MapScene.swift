@@ -112,6 +112,7 @@ class MapScene: AbstractScene {
       if UserDefaults.pwr_isMusicEnabled {
         bgMusic.play()
       }
+      self.hudContainerNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
     }
 
     Player.shared.get("up1", useCache: false).play()
@@ -154,6 +155,7 @@ class MapScene: AbstractScene {
       bgMusic?.play()
       UserDefaults.pwr_isMusicEnabled = true
     }
+    self.hudContainerNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
   }
 
   private var _lastTargetedPoint: int2? = nil
@@ -191,7 +193,14 @@ class MapScene: AbstractScene {
   var lastPointIndicated: int2? = nil
   override func motionIndicate(point: CGPoint) {
     guard !isDead else { return }
-    guard let gridPos = eventPointToGrid(point: point) else { return }
+    if let gridPos = eventPointToGrid(point: point) {
+      self.handleGridIndicate(point: point, gridPos: gridPos)
+    } else {
+      hudContainerNode.motionIndicate(self.convert(point, to: hudContainerNode))
+    }
+  }
+
+  func handleGridIndicate(point: CGPoint, gridPos: int2) {
     let path = game.getTargetingLaserPoints(to: gridPos)
     guard !path.isEmpty else { return }
 

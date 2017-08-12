@@ -136,8 +136,14 @@ class HUDNode: SKSpriteNode {
     return label
   }()
 
+  lazy var musicIcon: SKSpriteNode = {
+    let node = SKSpriteNode(imageNamed: "icon-music-on").pixelized().withZ(1)
+    node.position = CGPoint(x: 1, y: 1)
+    node.anchorPoint = CGPoint.zero
+    return node
+  }()
+
   lazy var line: SKSpriteNode = {
-    print(self.frame)
     let line = PWRSpriteNode(texture: nil, color: SKColor.lightGray, size: CGSize(width: 1, height: self.height))
     line.position = CGPoint(x: self.width - 1, y: 0)
     line.zPosition = 1001
@@ -159,6 +165,7 @@ class HUDNode: SKSpriteNode {
     self.addChild(healthIcon)
     self.addChild(powerIcon)
     self.addChild(ammoLabel)
+    self.addChild(musicIcon)
   }
 
   required init?(coder aDecoder: NSCoder) {
@@ -191,5 +198,11 @@ class HUDNode: SKSpriteNode {
     powerMeterNode.update(instant: instant)
     healthMeterNode.update(instant: instant)
     ammoLabel.text = "Ammo: \(game.player.ammoC?.value ?? 0)"
+  }
+
+  func motionIndicate(_ point: CGPoint) {
+    if musicIcon.frame.contains(point) {
+      (scene as? MapScene)?.motionToggleMusic()
+    }
   }
 }

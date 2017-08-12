@@ -34,6 +34,13 @@ extension int2 {
   }
 }
 
+extension SKTexture {
+  func pixelized() -> SKTexture {
+    self.filteringMode = .nearest
+    return self
+  }
+}
+
 extension SKSpriteNode {
   func pixelized() -> SKSpriteNode {
     self.texture?.filteringMode = .nearest
