@@ -10,6 +10,7 @@ import SpriteKit
 import AVFoundation
 
 class Player {
+  
   static var shared = { Player() }()
 
   var cache: [String: AVAudioPlayer] = [:]
@@ -25,6 +26,8 @@ class Player {
 }
 
 class DeathScene: AbstractScene {
+  class func create() -> DeathScene { return DeathScene(fileNamed: "DeathScene")! }
+
   override func motionAccept() {
     self.view?.presentScene(MapScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }

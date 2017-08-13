@@ -11,6 +11,8 @@ import GameplayKit
 import AVFoundation
 
 class MapScene: AbstractScene {
+  class func create() -> MapScene { return MapScene(fileNamed: "MapScene")! }
+  
   var game: GameModel!
   var bgMusic: AVAudioPlayer!
   var isDead = false

@@ -9,6 +9,8 @@
 import SpriteKit
 
 class WinScene: AbstractScene {
+  class func create() -> WinScene { return WinScene(fileNamed: "WinScene")! }
+  
   override func motionAccept() {
     self.view?.presentScene(MapScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }

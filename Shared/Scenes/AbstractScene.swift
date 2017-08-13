@@ -30,20 +30,6 @@ enum Motion {
 
 class SuperAbstractScene: SKScene {
 
-  class func create() -> Self {
-    return self._create()
-  }
-
-  private class func _create<T>() -> T {
-    print(String(describing: T.self))
-    guard let scene = SKScene(fileNamed: String(describing: T.self)) as? T else { abort() }
-    return scene
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-  }
-
   override func didMove(to view: SKView) {
     view.showsFPS = false
     view.showsNodeCount = false

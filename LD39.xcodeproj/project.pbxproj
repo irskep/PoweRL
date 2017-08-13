@@ -204,7 +204,7 @@
 		AAC0F8991F1AD30900D55037 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		AAC0F89C1F1AD30900D55037 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AAC0F89E1F1AD30900D55037 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AAC0F8A31F1AD30900D55037 /* PoweRL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PoweRL.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAC0F8A31F1AD30900D55037 /* Power-Q.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Power-Q.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAC0F8A51F1AD30900D55037 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AAC0F8A71F1AD30900D55037 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		AAC0F8AA1F1AD30900D55037 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -318,7 +318,7 @@
 			children = (
 				AAC0F8831F1AD30900D55037 /* LD39.app */,
 				AAC0F8951F1AD30900D55037 /* LD39.app */,
-				AAC0F8A31F1AD30900D55037 /* PoweRL.app */,
+				AAC0F8A31F1AD30900D55037 /* Power-Q.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -466,7 +466,7 @@
 			);
 			name = macOS;
 			productName = macOS;
-			productReference = AAC0F8A31F1AD30900D55037 /* PoweRL.app */;
+			productReference = AAC0F8A31F1AD30900D55037 /* Power-Q.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -932,7 +932,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steveasleep.LD39;
-				PRODUCT_NAME = PoweRL;
+				PRODUCT_NAME = "Power-Q";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
@@ -952,7 +952,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.steveasleep.LD39;
-				PRODUCT_NAME = PoweRL;
+				PRODUCT_NAME = "Power-Q";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;

@@ -67,8 +67,8 @@ class MapGenerator {
     let numHealthPacks = 1
     // 25% of cells are walls
     let numWalls = getAreaFraction(0.25)
-    // 10% + difficulty * 2% are power drains
-    let numDrains = getAreaFraction(0.1 + 0.02 * CGFloat(game.difficulty))
+    // 10% + difficulty * 1.5% are power drains
+    let numDrains = getAreaFraction(0.1 + 0.015 * CGFloat(game.difficulty))
 
     let numEnemies = game.difficulty
 
@@ -195,11 +195,13 @@ class MapGenerator {
       let spec = mobSpecs[game.random.nextInt(upperBound: mobSpecs.count)]
       mob.addComponent(GridNodeComponent(gridNode: mobNode))
       mob.addComponent(HealthComponent(health: spec.health))
-      mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
       if spec.char == "turtle" {
         mob.addComponent(SpeedLimiterComponent(bucketSize: 2, stepCost: 1))
+        mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves, pathfinding: true))
+      } else {
+        mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       }
       let sprite = PWRSpriteNode(imageNamed: spec.char).withZ(Z.mob)
       let spriteC = SpriteComponent(sprite: sprite)

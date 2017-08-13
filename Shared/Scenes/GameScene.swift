@@ -12,6 +12,8 @@ class GameScene: AbstractScene {
   fileprivate var label : SKLabelNode?
   fileprivate var spinnyNode : SKShapeNode?
 
+  class func create() -> GameScene { return GameScene(fileNamed: "GameScene")! }
+
   override func motionAccept() {
     self.view?.presentScene(MapScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }
@@ -37,6 +39,14 @@ class GameScene: AbstractScene {
         child.position *= scale
         child.setScale(scale)
       }
+    #endif
+
+    let gameName = "Power-Q"
+    (self.childNode(withName: "//logo1") as? SKLabelNode)?.text = gameName
+    (self.childNode(withName: "//logo2") as? SKLabelNode)?.text = gameName
+
+    #if os(iOS)
+      (self.childNode(withName: "//clicktoshoot") as? SKLabelNode)?.text = "Tap to shoot"
     #endif
   }
 }

@@ -200,13 +200,27 @@ class BumpDamageComponent: GKComponent {
 
 class MoveTowardPlayerComponent: GKComponent {
   var vectors: [int2] = []
+  var pathfinding: Bool = false
 
-  convenience init(vectors: [int2]) {
+  convenience init(vectors: [int2], pathfinding: Bool = false) {
     self.init()
     self.vectors = vectors
+    self.pathfinding = pathfinding
   }
 
   func getClosest(to target: int2, inGraph graph: GKGridGraph<GridNode>) -> GridNode? {
+    if pathfinding {
+      return getClosestByPathfinding(to: target, inGraph: graph)
+    } else {
+      return getClosestByProximity(to: target, inGraph: graph)
+    }
+  }
+
+  private func _isNodeOk(_ node: GridNode) -> Bool {
+    return node.entities.filter({ (e: GKEntity) -> Bool in return e.component(ofType: TakesUpSpaceComponent.self) != nil && e.component(ofType: PlayerComponent.self) == nil }).isEmpty
+  }
+
+  func getClosestByProximity(to target: int2, inGraph graph: GKGridGraph<GridNode>) -> GridNode? {
     guard let myPos = self.entity?.gridNode?.gridPosition else { return nil }
     var bestDist: CGFloat = 1000
     var bestNode: GridNode? = nil
@@ -217,9 +231,7 @@ class MoveTowardPlayerComponent: GKComponent {
         continue
       }
       let node = graph.node(atGridPosition: nextPos)!
-      if node.entities.filter({ (e: GKEntity) -> Bool in return e.component(ofType: TakesUpSpaceComponent.self) != nil && e.component(ofType: PlayerComponent.self) == nil }).count > 0 {
-        continue
-      }
+      if !_isNodeOk(node) { continue }
       let dx = CGFloat(nextPos.x - target.x)
       let dy = CGFloat(nextPos.y - target.y)
       let dist = sqrt(dx * dx + dy * dy)
@@ -229,6 +241,18 @@ class MoveTowardPlayerComponent: GKComponent {
       }
     }
     return bestNode
+  }
+
+  func getClosestByPathfinding(to target: int2, inGraph graph: GKGridGraph<GridNode>) -> GridNode? {
+    guard let myNode = self.entity?.gridNode else { return nil }
+    guard let theirNode = graph.node(atGridPosition: target) else { return nil }
+    let nodes = graph.findPath(from: myNode, to: theirNode)
+    guard let node = nodes.dropFirst().first as? GridNode else { return getClosestByProximity(to: target, inGraph: graph) }
+    if _isNodeOk(node) {
+      return node
+    } else {
+      return getClosestByProximity(to: target, inGraph: graph)
+    }
   }
 }
 
