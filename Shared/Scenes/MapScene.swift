@@ -8,13 +8,11 @@
 
 import SpriteKit
 import GameplayKit
-import AVFoundation
 
 class MapScene: AbstractScene {
   class func create() -> MapScene { return MapScene(fileNamed: "MapScene")! }
   
   var game: GameModel!
-  var bgMusic: AVAudioPlayer!
   var isDead = false
 
   let tileSize = CGSize(width: 16, height: 16)
@@ -64,7 +62,6 @@ class MapScene: AbstractScene {
   class func create(from mapScene: MapScene) -> MapScene {
     let scene: MapScene = MapScene.create()
     scene.game = GameModel(difficulty: mapScene.game.difficulty + 1, player: mapScene.game.player)
-    scene.bgMusic = mapScene.bgMusic
     return scene
   }
 
@@ -105,20 +102,12 @@ class MapScene: AbstractScene {
       screenCover.removeFromParent()
     })
 
-    if bgMusic == nil, let musicURL = Bundle.main.url(forResource: "1", withExtension: "mp3") {
-      bgMusic = try? AVAudioPlayer(contentsOf: musicURL)
-      bgMusic.volume = 0.5
-      bgMusic.numberOfLoops = -1
-      bgMusic.enableRate = true
-      bgMusic.rate = 1
-      if UserDefaults.pwr_isMusicEnabled {
-        bgMusic.play()
-      }
-      self.hudContainerNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
-    }
+    MusicPlayer.shared.prepare(track: "1")
+    MusicPlayer.shared.play()
+    self.hudContainerNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
 
     Player.shared.get("up1", useCache: false).play()
-    print(screenPixelSize)
+//    print(screenPixelSize)  // 170.66 x 96
   }
 
   func gridSprite(at position: int2) -> SKSpriteNode? {
@@ -151,13 +140,7 @@ class MapScene: AbstractScene {
   }
 
   override func motionToggleMusic() {
-    if bgMusic?.isPlaying == true {
-      bgMusic?.pause()
-      UserDefaults.pwr_isMusicEnabled = false
-    } else {
-      bgMusic?.play()
-      UserDefaults.pwr_isMusicEnabled = true
-    }
+    MusicPlayer.shared.toggleMusicSetting()
     self.hudContainerNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
   }
 
@@ -237,9 +220,9 @@ class MapScene: AbstractScene {
 
     let power: Float = Float(game.player.powerC?.getFractionRemaining() ?? 1)
     if power > 0.3 {
-      bgMusic?.rate = 1
+      MusicPlayer.shared.player?.rate = 1
     } else {
-      bgMusic?.rate = 0.9
+      MusicPlayer.shared.player?.rate = 0.2
     }
   }
 
@@ -248,16 +231,16 @@ class MapScene: AbstractScene {
 
     if let playerPower = game.player.powerC?.power, playerPower <= 0 {
       self.isDead = true
-      self.gameOver()
+      self.gameOver(reason: .power)
     } else if let playerHealth = game.player.healthC?.health, playerHealth <= 0 {
       self.isDead = true
-      self.gameOver()
+      self.gameOver(reason: .health)
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
       self.isDead = true
       game.end()
 
       if game.difficulty > 7 {
-        bgMusic?.stop()
+        MusicPlayer.shared.player?.stop()
         self.view?.presentScene(WinScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
       } else {
         self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
@@ -265,10 +248,10 @@ class MapScene: AbstractScene {
     }
   }
 
-  func gameOver() {
-    bgMusic?.stop()
+  func gameOver(reason: DeathReason) {
+    MusicPlayer.shared.player?.stop()
     game.end()
-    self.view?.presentScene(DeathScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+    self.view?.presentScene(DeathScene.create(reason: reason), transition: SKTransition.crossFade(withDuration: 0.5))
   }
 
   func flashMessage(_ text: String, color: SKColor = SKColor.red) {

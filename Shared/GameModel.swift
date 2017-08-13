@@ -278,7 +278,7 @@ extension GameModel {
   func movePlayer(toGridNode gridNode: GridNode, completion: OptionalCallback = nil) {
     guard let entity = player else { fatalError() }
     guard entity.powerC?.use(entity.powerC?.getPowerRequired(toMove: 1) ?? 0) == true else {
-      scene?.gameOver()
+      scene?.gameOver(reason: .power)
       return
     }
 

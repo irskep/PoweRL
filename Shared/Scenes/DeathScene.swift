@@ -25,11 +25,20 @@ class Player {
   }
 }
 
-class DeathScene: AbstractScene {
-  class func create() -> DeathScene { return DeathScene(fileNamed: "DeathScene")! }
+enum DeathReason: String {
+  case health = "health"
+  case power = "power"
+}
+class DeathScene: PixelatedScene {
+  var deathReason: DeathReason = .health
+  class func create(reason: DeathReason) -> DeathScene {
+    let scene = DeathScene(fileNamed: "DeathScene")!
+    scene.deathReason = reason
+    return scene
+  }
 
   override func motionAccept() {
-    self.view?.presentScene(MapScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+    self.view?.presentScene(GameScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }
 
   override func motionIndicate(point: CGPoint) {
@@ -38,6 +47,7 @@ class DeathScene: AbstractScene {
 
   override func setup() {
     super.setup()
+    (childNode(withName: "//graphic") as? SKSpriteNode)?.texture = SKTexture(imageNamed: "lose-\(deathReason.rawValue)").pixelized()
     Player.shared.get("gameover").play()
   }
 }

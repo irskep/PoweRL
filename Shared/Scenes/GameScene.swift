@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class GameScene: AbstractScene {
+class GameScene: PixelatedScene {
   fileprivate var label : SKLabelNode?
   fileprivate var spinnyNode : SKShapeNode?
 
@@ -24,22 +24,6 @@ class GameScene: AbstractScene {
 
   override func setup() {
     super.setup()
-
-    scaleMode = .aspectFit
-
-    for child in children {
-      (child as? SKSpriteNode)?.texture?.filteringMode = .nearest
-      for grandchild in child.children {
-        (grandchild as? SKSpriteNode)?.texture?.filteringMode = .nearest
-      }
-    }
-    #if os(iOS)
-      let scale = UIScreen.main.bounds.size.height / (414 * 1.5)
-      for child in self.children {
-        child.position *= scale
-        child.setScale(scale)
-      }
-    #endif
 
     let gameName = "Power-Q"
     (self.childNode(withName: "//logo1") as? SKLabelNode)?.text = gameName

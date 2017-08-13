@@ -8,11 +8,11 @@
 
 import SpriteKit
 
-class WinScene: AbstractScene {
+class WinScene: PixelatedScene {
   class func create() -> WinScene { return WinScene(fileNamed: "WinScene")! }
   
   override func motionAccept() {
-    self.view?.presentScene(MapScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+    self.view?.presentScene(GameScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
   }
 
   override func motionIndicate(point: CGPoint) {

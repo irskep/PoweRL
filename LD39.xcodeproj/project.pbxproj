@@ -44,6 +44,12 @@
 		AA7332511F2CF511006ECA4D /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA73324B1F2CF4E1006ECA4D /* Entities.swift */; };
 		AA7332521F2CF511006ECA4D /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA73324B1F2CF4E1006ECA4D /* Entities.swift */; };
 		AA7332541F2D0BDC006ECA4D /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA7332531F2D0BDC006ECA4D /* Components.swift */; };
+		AA75EE891F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75EE881F40DB1F00B9CA0F /* PixelatedScene.swift */; };
+		AA75EE8A1F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75EE881F40DB1F00B9CA0F /* PixelatedScene.swift */; };
+		AA75EE8B1F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75EE881F40DB1F00B9CA0F /* PixelatedScene.swift */; };
+		AA75EE8D1F40E67100B9CA0F /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75EE8C1F40E67100B9CA0F /* MusicPlayer.swift */; };
+		AA75EE8E1F40E67100B9CA0F /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75EE8C1F40E67100B9CA0F /* MusicPlayer.swift */; };
+		AA75EE8F1F40E67100B9CA0F /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA75EE8C1F40E67100B9CA0F /* MusicPlayer.swift */; };
 		AA9449E31F2E7C6C003E7315 /* WinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9449E21F2E7C6C003E7315 /* WinScene.swift */; };
 		AA9449E41F2E7C6C003E7315 /* WinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9449E21F2E7C6C003E7315 /* WinScene.swift */; };
 		AA9449E51F2E7C6C003E7315 /* WinScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9449E21F2E7C6C003E7315 /* WinScene.swift */; };
@@ -179,6 +185,8 @@
 		AA73324B1F2CF4E1006ECA4D /* Entities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
 		AA73324D1F2CF4FC006ECA4D /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		AA7332531F2D0BDC006ECA4D /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		AA75EE881F40DB1F00B9CA0F /* PixelatedScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelatedScene.swift; sourceTree = "<group>"; };
+		AA75EE8C1F40E67100B9CA0F /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 		AA9449E21F2E7C6C003E7315 /* WinScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinScene.swift; sourceTree = "<group>"; };
 		AA9449E61F2E7CB9003E7315 /* WinScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = WinScene.sks; sourceTree = "<group>"; };
 		AA9449EA1F2E7DBC003E7315 /* win.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = win.mp3; sourceTree = "<group>"; };
@@ -309,6 +317,7 @@
 				AAA323DD1F381A570039D299 /* Swift+utils.swift */,
 				AAA323E11F381A790039D299 /* Nodes.swift */,
 				AAA323E91F382CFC0039D299 /* BitmapFont.swift */,
+				AA75EE8C1F40E67100B9CA0F /* MusicPlayer.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -403,6 +412,7 @@
 			isa = PBXGroup;
 			children = (
 				AA70E4BC1F2C1BFB005F1DD0 /* AbstractScene.swift */,
+				AA75EE881F40DB1F00B9CA0F /* PixelatedScene.swift */,
 				AAC0F87C1F1AD30900D55037 /* GameScene.sks */,
 				AAC0F87D1F1AD30900D55037 /* GameScene.swift */,
 				AA7332411F2C2712006ECA4D /* MapScene.sks */,
@@ -637,6 +647,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B31F1AD30900D55037 /* GameScene.swift in Sources */,
+				AA75EE891F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */,
 				AAA323E21F381A790039D299 /* Nodes.swift in Sources */,
 				AA945B751F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
 				AA73324A1F2C3616006ECA4D /* Geom.swift in Sources */,
@@ -646,6 +657,7 @@
 				AAD6B9C01F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BD1F2C1BFB005F1DD0 /* AbstractScene.swift in Sources */,
 				AAA323DE1F381A570039D299 /* Swift+utils.swift in Sources */,
+				AA75EE8D1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
 				AAA323EA1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA7332501F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C41F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
@@ -663,6 +675,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B41F1AD30900D55037 /* GameScene.swift in Sources */,
+				AA75EE8A1F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */,
 				AAA323E31F381A7B0039D299 /* Nodes.swift in Sources */,
 				AA945B761F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
 				AA7332491F2C3615006ECA4D /* Geom.swift in Sources */,
@@ -672,6 +685,7 @@
 				AAD6B9C11F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BE1F2C1BFD005F1DD0 /* AbstractScene.swift in Sources */,
 				AAA323DF1F381A590039D299 /* Swift+utils.swift in Sources */,
+				AA75EE8E1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
 				AAA323EB1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA73324F1F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C51F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
@@ -689,6 +703,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B51F1AD30900D55037 /* GameScene.swift in Sources */,
+				AA75EE8B1F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */,
 				AAA323E41F381A7D0039D299 /* Nodes.swift in Sources */,
 				AA70E4BB1F2C1BBD005F1DD0 /* MapScene.swift in Sources */,
 				AA945B771F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
@@ -698,6 +713,7 @@
 				AAC0F8A81F1AD30900D55037 /* GameViewController.swift in Sources */,
 				AA7332461F2C2DBE006ECA4D /* LD39WindowController.swift in Sources */,
 				AAA323E01F381A5A0039D299 /* Swift+utils.swift in Sources */,
+				AA75EE8F1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
 				AAA323EC1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA70E4BF1F2C1BFE005F1DD0 /* AbstractScene.swift in Sources */,
 				AAC0F8A61F1AD30900D55037 /* AppDelegate.swift in Sources */,
