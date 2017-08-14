@@ -10,7 +10,7 @@ import GameplayKit
 import SpriteKit
 
 
-let MOVE_TIME: TimeInterval = 0.15
+let MOVE_TIME: TimeInterval = 0.1
 
 
 private func createRuleSystem(_ game: GameModel) -> GKRuleSystem {

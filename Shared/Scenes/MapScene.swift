@@ -126,17 +126,18 @@ class MapScene: AbstractScene {
   }
 
   private func _moveAgain(_ m: Motion) {
-    guard !isDead else { return }
-    if isHolding(m: m) == true {
-      motion(m)
-      return
-    }
-    for m in Motion.all {
-      if isHolding(m: m) == true {
-        motion(m)
-        return
-      }
-    }
+    // just disable this dumb feature
+//    guard !isDead else { return }
+//    if isHolding(m: m) == true {
+//      motion(m)
+//      return
+//    }
+//    for m in Motion.all {
+//      if isHolding(m: m) == true {
+//        motion(m)
+//        return
+//      }
+//    }
   }
 
   override func motionToggleMusic() {
@@ -159,7 +160,7 @@ class MapScene: AbstractScene {
 
   override func motionLook(point: CGPoint) {
     guard !isDead else { return }
-    guard let gridPos = eventPointToGrid(point: point) else {
+    guard let gridPos = eventPointToGrid(point: point), let ammoLeft = game.player.ammoC?.value, ammoLeft > 0 else {
       if _lastTargetedPoint != nil {
         _lastTargetedPoint = nil
         _hideTargetingLaser()

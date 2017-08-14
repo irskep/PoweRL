@@ -17,7 +17,7 @@ class GameViewController: NSViewController {
 
     // Present the scene
     let skView = self.view as! SKView
-    skView.presentScene(WinScene.create())
+    skView.presentScene(GameScene.create())
 
     skView.ignoresSiblingOrder = true
   }

@@ -19,7 +19,16 @@ class GameScene: PixelatedScene {
   }
 
   override func motionIndicate(point: CGPoint) {
-    self.motionAccept()
+    guard
+      let startNode = self.childNode(withName: "//start") as? SKLabelNode,
+      let helpNode = self.childNode(withName: "//help") as? SKLabelNode
+      else { return }
+    if startNode.frame.contains(point) {
+      self.motionAccept()
+      return
+    } else if helpNode.frame.contains(point) {
+      self.view?.presentScene(HelpScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+    }
   }
 
   override func setup() {
@@ -28,9 +37,5 @@ class GameScene: PixelatedScene {
     let gameName = "Power-Q"
     (self.childNode(withName: "//logo1") as? SKLabelNode)?.text = gameName
     (self.childNode(withName: "//logo2") as? SKLabelNode)?.text = gameName
-
-    #if os(iOS)
-      (self.childNode(withName: "//clicktoshoot") as? SKLabelNode)?.text = "Tap to shoot"
-    #endif
   }
 }
