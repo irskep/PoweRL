@@ -28,4 +28,19 @@ class HelpScene: PixelatedScene {
       (self.childNode(withName: "//howtomove") as? SKLabelNode)?.text = "Swipe to move"
     #endif
   }
+
+  override func layoutForPortrait() {
+    super.layoutForPortrait()
+    if let logo1 = self.childNode(withName: "//logo1") {
+      logo1.setScale(0.35)
+      logo1.position = CGPoint(x: 0, y: 200)
+    }
+    if let logo2 = self.childNode(withName: "//logo2") {
+      logo2.setScale(0.35)
+      logo2.position = CGPoint(x: 8, y: 200 - 8)
+    }
+    if let content = self.childNode(withName: "//content") {
+      content.setScale(0.6)
+    }
+  }
 }

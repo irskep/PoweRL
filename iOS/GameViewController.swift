@@ -28,6 +28,11 @@ class GameViewController: UIViewController {
     return true
   }
 
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    (self.view as! SKView).scene?.size = self.view.bounds.size
+  }
+
   override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
     if UIDevice.current.userInterfaceIdiom == .phone {
       return .allButUpsideDown

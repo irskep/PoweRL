@@ -37,6 +37,17 @@ class SuperAbstractScene: SKScene {
     self.setup()
   }
 
+  func visitAll(_ fn: @escaping (SKNode) -> ()) {
+    var visitor: ((SKNode) -> ())!
+    let visit = {
+      (child: SKNode) in
+      fn(child)
+      child.children.forEach(visitor)
+    }
+    visitor = visit
+    children.forEach(visit)
+  }
+
   func setup() {
     scaleMode = .aspectFit
   }

@@ -15,7 +15,18 @@ class MapScene: AbstractScene {
   var game: GameModel!
   var isDead = false
 
+  var isLandscape: Bool { return frame.size.width > frame.size.height }
+
+  var adjustedSize: CGSize {
+    if isLandscape {
+      return frame.size
+    } else {
+      return CGSize(width: frame.size.height, height: frame.size.width)
+    }
+  }
+
   let tileSize = CGSize(width: 16, height: 16)
+
   lazy var mapPixelSize: CGSize = {
     return CGSize(
       width: CGFloat(game.mapSize.x) * tileSize.width,
@@ -23,11 +34,11 @@ class MapScene: AbstractScene {
   }()
 
   var screenScale: CGFloat {
-    return self.frame.size.height / self.mapPixelSize.height
+    return self.adjustedSize.height / self.mapPixelSize.height
   }
 
   var screenPixelSize: CGSize {
-    return CGSize(width: self.frame.size.width / self.screenScale, height: self.mapPixelSize.height)
+    return CGSize(width: self.adjustedSize.width / self.screenScale, height: self.mapPixelSize.height)
   }
 
   let root = SKNode()

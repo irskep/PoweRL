@@ -8,6 +8,12 @@
 
 import SpriteKit
 
+extension SKScene {
+  func label(named: String) -> SKLabelNode? {
+    return self.childNode(withName: "//\(named)") as? SKLabelNode
+  }
+}
+
 class GameScene: PixelatedScene {
   fileprivate var label : SKLabelNode?
   fileprivate var spinnyNode : SKShapeNode?
@@ -35,7 +41,31 @@ class GameScene: PixelatedScene {
     super.setup()
 
     let gameName = "Power-Q"
-    (self.childNode(withName: "//logo1") as? SKLabelNode)?.text = gameName
-    (self.childNode(withName: "//logo2") as? SKLabelNode)?.text = gameName
+    self.label(named: "logo1")?.text = gameName
+    self.label(named: "logo2")?.text = gameName
+  }
+
+  override func layoutForPortrait() {
+    super.layoutForPortrait()
+    if let logo1 = self.childNode(withName: "//logo1") {
+      logo1.setScale(0.35)
+      logo1.position = CGPoint(x: 0, y: 200)
+    }
+    if let logo2 = self.childNode(withName: "//logo2") {
+      logo2.setScale(0.35)
+      logo2.position = CGPoint(x: 8, y: 200 - 8)
+    }
+    if let robot = self.childNode(withName: "//robot") {
+      robot.position = CGPoint(x: 0, y: 50)
+      robot.setScale(0.5)
+    }
+    if let help = self.childNode(withName: "//help") {
+      help.position = CGPoint(x: 0, y: -100)
+      help.setScale(0.5)
+    }
+    if let start = self.childNode(withName: "//start") {
+      start.position = CGPoint(x: 0, y: start.position.y)
+      start.setScale(0.5)
+    }
   }
 }
