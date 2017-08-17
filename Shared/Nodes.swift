@@ -156,7 +156,6 @@ class HUDNode: SKSpriteNode {
 
     super.init(texture: nil, color: SKColor.clear, size: size)
 
-    self.addGrid()
 
     self.addChild(line)
     self.addChild(levelNumberLabel)
@@ -173,33 +172,42 @@ class HUDNode: SKSpriteNode {
     levelNumberLabel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
     healthIcon.position = CGPoint(x: 0, y: _y(3))
     healthMeterNode.position = CGPoint(x: 9, y: _y(3))
-    healthMeterNode.zRotation = 0
     powerIcon.position = CGPoint(x: 0, y: _y(5) - 1)
     powerMeterNode.position = CGPoint(x: 9, y: _y(5) - 1)
-    powerMeterNode.zRotation = 0
     ammoLabel.position = CGPoint(x: self.frame.size.width / 2, y: _y(8.4))
     ammoLabel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
     musicIcon.position = CGPoint(x: 1, y: 1)
     line.size = CGSize(width: 1, height: self.height)
     line.position = CGPoint(x: self.width - 1, y: 0)
+
+    for meter in [healthMeterNode, powerMeterNode] {
+      meter.size = CGSize(width: self.width - 10, height: 8)
+    }
+
+    self.addGrid()
   }
 
   func layoutForPortrait() {
-    levelNumberLabel.position = CGPoint(x: 24, y: self.height - self.margin)
-    levelNumberLabel.anchorPoint = CGPoint(x: 0, y: 1)
-    ammoLabel.position = CGPoint(x: 24, y: self.height - self.margin * 4)
+    levelNumberLabel.position = CGPoint(x: 1, y: 1)
+    levelNumberLabel.anchorPoint = CGPoint(x: 0, y: 0)
+
+    ammoLabel.position = CGPoint(x: 0, y: self.height - self.margin * 5)
     ammoLabel.anchorPoint = CGPoint(x: 0, y: 1)
 
-    healthIcon.position = CGPoint(x: 4, y: 8)
-    healthMeterNode.position = CGPoint(x: 4, y: 9)
-    healthMeterNode.zRotation = CGFloat.pi / 2
-    powerIcon.position = CGPoint(x: 14, y: 8)
-    powerMeterNode.position = CGPoint(x: 14, y: 9)
-    powerMeterNode.zRotation = CGFloat.pi / 2
+    healthIcon.position = CGPoint(x: 0, y: self.height - 2)
+    healthMeterNode.position = CGPoint(x: 9, y: self.height - 2)
+    powerIcon.position = CGPoint(x: 0, y: self.height - 11)
+    powerMeterNode.position = CGPoint(x: 9, y: self.height - 11)
+
     musicIcon.position = CGPoint(x: width - 9, y: 1)
 
     line.size = CGSize(width: self.width, height: 1)
     line.position = CGPoint(x: 0, y: self.height - 1)
+
+    for meter in [healthMeterNode, powerMeterNode] {
+      meter.size = CGSize(width: 32, height: 8)
+    }
+
     addGrid()
   }
 

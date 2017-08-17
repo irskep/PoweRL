@@ -313,26 +313,32 @@ class MapScene: OrientationAwareAbstractScene {
       node.position = CGPoint(x: mapPixelSize.width / 2, y: mapPixelSize.height / 2)
     }
     node.position = self.convert(node.position, from: mapContainerNode)
+    if !isLandscape {
+      node.position += tileSize.point * screenScale * CGPoint(x: 1, y: 0)
+    }
     node.setScale(self.screenScale)
     node.zPosition = 2000
     self.addChild(node)
 
-    if let position = position, position.y > (game.gridGraph?.gridHeight ?? 0) - 2 {
-      node.position -= CGPoint(x: 0, y: tileSize.height * self.screenScale) / 2
-      node.run(
-        SKAction.group([
-          SKAction.fadeOut(withDuration: 1),
-          SKAction.moveBy(x: 0, y: -tileSize.height * self.screenScale, duration: 1)
-          ]),
-        completion: { node.removeFromParent() })
-    } else {
-      node.position += CGPoint(x: 0, y: tileSize.height * self.screenScale) / 2
-      node.run(
-        SKAction.group([
-          SKAction.fadeOut(withDuration: 1),
-          SKAction.moveBy(x: 0, y: tileSize.height * self.screenScale, duration: 1)
-          ]),
-        completion: { node.removeFromParent() })
+    let tileScreenSize = tileSize.width * screenScale
+
+    let options: [(CGPoint, (CGPoint) -> Bool)] = [
+      (CGPoint(x: 0, y: 1), { $0.y < self.frame.size.height - tileScreenSize * 2 }),
+      (CGPoint(x: 0, y: -1), { _ in return true }),
+    ]
+
+    for (option, predicate) in options {
+      let end = node.position + (option * tileScreenSize * 2)
+      if predicate(end) {
+        node.position += option * tileScreenSize
+        node.run(
+          SKAction.group([
+            SKAction.fadeOut(withDuration: 1),
+            SKAction.move(to: end, duration: 1)
+            ]),
+          completion: { node.removeFromParent() })
+        break
+      }
     }
   }
 
