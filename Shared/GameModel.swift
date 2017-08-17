@@ -60,6 +60,7 @@ class GameModel {
       {
       spriteComponent.sprite.position = scene.visualPoint(forPosition: gridPosition)
       scene.mapContainerNode.addChild(spriteComponent.sprite)
+      scene.setMapNodeTransform(spriteComponent.sprite)
     }
 
     entities.insert(entity)
@@ -171,11 +172,13 @@ extension GameModel {
     ammoC.add(value: -1)
 
     let bulletSprite = SKSpriteNode(imageNamed: "ammo-1").pixelized().withZ(Z.player)
-    bulletSprite.position = player.sprite!.position + (scene!.tileSize / 2).point
+    bulletSprite.position = player.sprite!.position
+    bulletSprite.anchorPoint = CGPoint.zero
+    scene?.setMapNodeTransform(bulletSprite)
 
     var actions = path.map({
       return SKAction.move(
-        to: scene!.visualPoint(forPosition: $0) + (scene!.tileSize / 2).point,
+        to: scene!.visualPoint(forPosition: $0),
         duration: MOVE_TIME / 2)
     })
     actions.append(SKAction.fadeOut(withDuration: MOVE_TIME / 2))

@@ -12,10 +12,59 @@ extension CGSize {
   var isLandscape: Bool { return width > height }
 }
 
-class PixelatedScene: AbstractScene {
+class OrientationAwareAbstractScene: AbstractScene {
+  var hasSetup = false
+
+  var isLandscape: Bool { return self.frame.size.isLandscape }
+
+  override func didMove(to view: SKView) {
+    super.didMove(to: view)
+    if frame.size.isLandscape {
+      layoutForLandscape()
+    } else {
+      layoutForPortrait()
+    }
+  }
+
+  override func setup() {
+    super.setup()
+    hasSetup = true
+  }
+
+  override func didChangeSize(_ oldSize: CGSize) {
+    if !hasSetup { return }
+    if frame.size.isLandscape {
+      self.layoutForLandscape()
+    } else {
+      self.layoutForPortrait()
+    }
+  }
+
+  func layoutForLandscape() {
+    // override
+  }
+
+  func layoutForPortrait() {
+    // override
+  }
+
+  func transformMotion(_ m: Motion) -> Motion {
+    if isLandscape {
+      return m
+    } else {
+      switch m {
+      case .down: return .left
+      case .left: return .up
+      case .up: return .right
+      case .right: return .down
+      }
+    }
+  }
+}
+
+class PixelatedScene: OrientationAwareAbstractScene {
   var positionCache: [String: CGPoint] = [:]
   var scaleCache: [String: CGFloat] = [:]
-  var hasSetup = false
 
   func restorePositionAndScale() {
     self.visitAll({
@@ -24,13 +73,6 @@ class PixelatedScene: AbstractScene {
       $0.xScale = self.scaleCache[name] ?? $0.xScale
       $0.yScale = self.scaleCache[name] ?? $0.xScale
     })
-  }
-
-  override func didMove(to view: SKView) {
-    super.didMove(to: view)
-    if !frame.size.isLandscape {
-      layoutForPortrait()
-    }
   }
 
   override func setup() {
@@ -46,19 +88,6 @@ class PixelatedScene: AbstractScene {
     })
 
     fixScale()
-
-    hasSetup = true
-  }
-
-  override func didChangeSize(_ oldSize: CGSize) {
-    if !hasSetup { return }
-    if frame.size.isLandscape {
-      restorePositionAndScale()
-      fixScale()
-    } else {
-      self.layoutForPortrait()
-      fixScale()
-    }
   }
 
   func fixScale() {
@@ -71,7 +100,12 @@ class PixelatedScene: AbstractScene {
     #endif
   }
 
-  func layoutForPortrait() {
-    // override
+  override func layoutForLandscape() {
+    fixScale()
+    restorePositionAndScale()
+  }
+
+  override func layoutForPortrait() {
+    fixScale()
   }
 }

@@ -23,5 +23,10 @@ class WinScene: PixelatedScene {
     super.setup()
     Player.shared.get("win").play()
   }
+
+  override func layoutForPortrait() {
+    super.layoutForPortrait()
+    childNode(withName: "//text")?.setScale(0.5)
+  }
 }
 

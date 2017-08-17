@@ -50,5 +50,10 @@ class DeathScene: PixelatedScene {
     (childNode(withName: "//graphic") as? SKSpriteNode)?.texture = SKTexture(imageNamed: "lose-\(deathReason.rawValue)").pixelized()
     Player.shared.get("gameover").play()
   }
+
+  override func layoutForPortrait() {
+    super.layoutForPortrait()
+    childNode(withName: "//text")?.setScale(0.5)
+  }
 }
 

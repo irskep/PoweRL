@@ -9,66 +9,42 @@
 import SpriteKit
 import GameplayKit
 
-class MapScene: AbstractScene {
+class MapScene: OrientationAwareAbstractScene {
   class func create() -> MapScene { return MapScene(fileNamed: "MapScene")! }
+
+  // MARK: vars
   
   var game: GameModel!
+  let root = SKNode()
   var isDead = false
 
-  var isLandscape: Bool { return frame.size.width > frame.size.height }
-
-  var adjustedSize: CGSize {
-    if isLandscape {
-      return frame.size
-    } else {
-      return CGSize(width: frame.size.height, height: frame.size.width)
-    }
-  }
-
+  var adjustedSize: CGSize { return isLandscape ? frame.size : CGSize(width: frame.size.height, height: frame.size.width) }
   let tileSize = CGSize(width: 16, height: 16)
-
-  lazy var mapPixelSize: CGSize = {
+  var mapPixelSize: CGSize {
     return CGSize(
       width: CGFloat(game.mapSize.x) * tileSize.width,
       height: CGFloat(game.mapSize.y) * tileSize.height)
-  }()
-
-  var screenScale: CGFloat {
-    return self.adjustedSize.height / self.mapPixelSize.height
   }
-
+  var screenScale: CGFloat { return self.adjustedSize.height / self.mapPixelSize.height }
   var screenPixelSize: CGSize {
     return CGSize(width: self.adjustedSize.width / self.screenScale, height: self.mapPixelSize.height)
   }
 
-  let root = SKNode()
-
   var gridNodes: [CGPoint: SKSpriteNode] = [:]
-
   var hudSize: CGSize { return self.screenPixelSize - CGSize(width: self.mapPixelSize.width, height: 0) }
-
-  lazy var hudContainerNode: HUDNode = {
+  lazy var hudNode: HUDNode = {
     return HUDNode(view: self.view, game: self.game, size: self.hudSize)
   }()
 
   lazy var mapContainerNode: SKSpriteNode = {
     let mapContainerNode = SKSpriteNode(color: SKColor.black, size: self.mapPixelSize)
-    mapContainerNode.position = CGPoint(x: self.hudSize.width, y: 0)
     mapContainerNode.anchorPoint = CGPoint.zero
     return mapContainerNode
   }()
 
-  lazy var hoverIndicatorSprites: [SKSpriteNode] = {
-    return Array((0..<30).map({
-      _ in
-      let node = SKSpriteNode(color: SKColor.yellow, size: self.tileSize)
-      node.alpha = 0.2
-      node.isHidden = true
-      node.zPosition = Z.player
-      node.anchorPoint = CGPoint.zero
-      return node
-    }))
-  }()
+  lazy var hoverIndicatorSprites: [SKSpriteNode] = { self._createHoverIndicatorSprites() }()
+
+  // MARK: init
 
   class func create(from mapScene: MapScene) -> MapScene {
     let scene: MapScene = MapScene.create()
@@ -84,12 +60,12 @@ class MapScene: AbstractScene {
     self.anchorPoint = CGPoint.zero
     self.addChild(root)
     root.addChild(mapContainerNode)
-    root.addChild(hudContainerNode)
+    root.addChild(hudNode)
     root.setScale(screenScale)
 
     hoverIndicatorSprites.forEach(mapContainerNode.addChild)
 
-    hudContainerNode.levelNumberLabel.text = "Level \(self.game.difficulty)"
+    hudNode.levelNumberLabel.text = "Level \(self.game.difficulty)"
 
     for x in 0..<game.mapSize.x {
       for y in 0..<game.mapSize.y {
@@ -105,9 +81,9 @@ class MapScene: AbstractScene {
     game.start(scene: self)
     self.updateVisuals(instant: true)
 
-    let screenCover = SKSpriteNode(color: SKColor.black, size: mapContainerNode.frame.size)
-    screenCover.anchorPoint = CGPoint.zero
-    screenCover.zPosition = 3000
+    let screenCover = SKSpriteNode(color: SKColor.black, size: mapContainerNode.frame.size * 2)
+    screenCover.position = mapContainerNode.frame.size.point / 2
+    screenCover.zPosition = Z.player - 1
     mapContainerNode.addChild(screenCover)
     screenCover.run(SKAction.fadeOut(withDuration: MOVE_TIME), completion: {
       screenCover.removeFromParent()
@@ -115,11 +91,49 @@ class MapScene: AbstractScene {
 
     MusicPlayer.shared.prepare(track: "1")
     MusicPlayer.shared.play()
-    self.hudContainerNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
+    self.hudNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
 
     Player.shared.get("up1", useCache: false).play()
-//    print(screenPixelSize)  // 170.66 x 96
   }
+
+  override func layoutForLandscape() {
+    super.layoutForLandscape()
+    mapContainerNode.position = CGPoint(x: self.hudSize.width, y: 0)
+    mapContainerNode.zRotation = 0
+    hudNode.size = hudSize
+    hudNode.layoutForLandscape()
+    for c in game.spriteSystem.components {
+      self.setMapNodeTransform(c.sprite)
+    }
+    for g in gridNodes.values {
+      g.anchorPoint = CGPoint.zero
+    }
+    for g in gridNodes.values {
+      self.setMapNodeTransform(g)
+    }
+    for s in hoverIndicatorSprites {
+      self.setMapNodeTransform(s)
+    }
+  }
+
+  override func layoutForPortrait() {
+    super.layoutForPortrait()
+    mapContainerNode.position = CGPoint(x: mapPixelSize.height - tileSize.width, y: self.hudSize.width)
+    mapContainerNode.zRotation = CGFloat.pi / 2
+    hudNode.size = CGSize(width: screenPixelSize.height, height: hudSize.width)
+    hudNode.layoutForPortrait()
+    for c in game.spriteSystem.components {
+      self.setMapNodeTransform(c.sprite)
+    }
+    for g in gridNodes.values {
+      self.setMapNodeTransform(g)
+    }
+    for s in hoverIndicatorSprites {
+      self.setMapNodeTransform(s)
+    }
+  }
+
+  // MARK: input
 
   func gridSprite(at position: int2) -> SKSpriteNode? {
     return gridNodes[CGPoint(position)]
@@ -131,6 +145,7 @@ class MapScene: AbstractScene {
 
   override func motion(_ m: Motion) {
     guard !isDead else { return }
+    let m = self.transformMotion(m)
     game.movePlayer(by: m.vector) {
       [weak self] in self?._moveAgain(m)
     }
@@ -153,7 +168,7 @@ class MapScene: AbstractScene {
 
   override func motionToggleMusic() {
     MusicPlayer.shared.toggleMusicSetting()
-    self.hudContainerNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
+    self.hudNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
   }
 
   private var _lastTargetedPoint: int2? = nil
@@ -161,10 +176,19 @@ class MapScene: AbstractScene {
     for s in hoverIndicatorSprites { s.isHidden = true }
   }
   func eventPointToGrid(point: CGPoint) -> int2? {
-    let visualPointInMap = self.convert(point, to: mapContainerNode)
-    let gridPos = int2(
-      Int32(visualPointInMap.x / tileSize.width),
-      Int32(visualPointInMap.y / tileSize.height))
+    let gridPos: int2
+    if isLandscape {
+      let visualPointInMap = self.convert(point, to: mapContainerNode)
+      gridPos = int2(
+        Int32(visualPointInMap.x / tileSize.width),
+        Int32(visualPointInMap.y / tileSize.height))
+    } else {
+      let visualPointInMapInvertedY = self.convert(point, to: hudNode) - CGPoint(x: 0, y: hudSize.width)
+      let visualPointInMap = CGPoint(x: mapContainerNode.frame.size.width - visualPointInMapInvertedY.x, y: visualPointInMapInvertedY.y)
+      gridPos = int2(
+        Int32(visualPointInMap.y / tileSize.width),
+        Int32(visualPointInMap.x / tileSize.height))
+    }
     guard gridPos.x >= 0 && gridPos.y >= 0 && gridPos.x < game.gridGraph.gridWidth && gridPos.y < game.gridGraph.gridHeight else { return nil }
     return gridPos
   }
@@ -194,7 +218,7 @@ class MapScene: AbstractScene {
     if let gridPos = eventPointToGrid(point: point) {
       self.handleGridIndicate(point: point, gridPos: gridPos)
     } else {
-      hudContainerNode.motionIndicate(self.convert(point, to: hudContainerNode))
+      hudNode.motionIndicate(self.convert(point, to: hudNode))
     }
   }
 
@@ -215,6 +239,8 @@ class MapScene: AbstractScene {
     }
   }
 
+  // MARK: update()
+
   var lastTime: TimeInterval? = nil
   override func update(_ currentTime: TimeInterval) {
     guard let lastTime = lastTime else {
@@ -228,13 +254,13 @@ class MapScene: AbstractScene {
   }
 
   func updateVisuals(instant: Bool = false) {
-    hudContainerNode.update(instant: instant)
+    hudNode.update(instant: instant)
 
     let power: Float = Float(game.player.powerC?.getFractionRemaining() ?? 1)
     if power > 0.3 {
       MusicPlayer.shared.player?.rate = 1
     } else {
-      MusicPlayer.shared.player?.rate = 0.2
+      MusicPlayer.shared.player?.rate = 0.9
     }
   }
 
@@ -266,6 +292,16 @@ class MapScene: AbstractScene {
     self.view?.presentScene(DeathScene.create(reason: reason), transition: SKTransition.crossFade(withDuration: 0.5))
   }
 
+  // MARK: utils
+
+  func setMapNodeTransform(_ node: SKNode) {
+    if isLandscape && node.zRotation != 0 {
+      node.zRotation = 0
+    } else if !isLandscape && node.zRotation == 0 {
+      node.zRotation = -CGFloat.pi / 2
+    }
+  }
+
   func flashMessage(_ text: String, color: SKColor = SKColor.red) {
     let node = PixelyLabelNode(view: view, text: text, color: color.blended(withFraction: 0.2, of: SKColor.white)!)
 
@@ -276,27 +312,31 @@ class MapScene: AbstractScene {
     } else {
       node.position = CGPoint(x: mapPixelSize.width / 2, y: mapPixelSize.height / 2)
     }
+    node.position = self.convert(node.position, from: mapContainerNode)
+    node.setScale(self.screenScale)
     node.zPosition = 2000
-    mapContainerNode.addChild(node)
+    self.addChild(node)
 
     if let position = position, position.y > (game.gridGraph?.gridHeight ?? 0) - 2 {
-      node.position -= CGPoint(x: 0, y: tileSize.height) / 2
+      node.position -= CGPoint(x: 0, y: tileSize.height * self.screenScale) / 2
       node.run(
         SKAction.group([
           SKAction.fadeOut(withDuration: 1),
-          SKAction.moveBy(x: 0, y: -tileSize.height * 3, duration: 1)
+          SKAction.moveBy(x: 0, y: -tileSize.height * self.screenScale, duration: 1)
           ]),
         completion: { node.removeFromParent() })
     } else {
-      node.position += CGPoint(x: 0, y: tileSize.height) / 2
+      node.position += CGPoint(x: 0, y: tileSize.height * self.screenScale) / 2
       node.run(
         SKAction.group([
           SKAction.fadeOut(withDuration: 1),
-          SKAction.moveBy(x: 0, y: tileSize.height * 3, duration: 1)
+          SKAction.moveBy(x: 0, y: tileSize.height * self.screenScale, duration: 1)
           ]),
         completion: { node.removeFromParent() })
     }
   }
+
+  // MARK: mouse input
 
   #if os(OSX)
   var trackingArea: NSTrackingArea?
@@ -323,4 +363,18 @@ class MapScene: AbstractScene {
     super.willMove(from: view)
   }
   #endif
+}
+
+extension MapScene {
+  func _createHoverIndicatorSprites() -> [SKSpriteNode] {
+    return Array((0..<30).map({
+      _ in
+      let node = SKSpriteNode(color: SKColor.yellow, size: self.tileSize)
+      node.alpha = 0.2
+      node.isHidden = true
+      node.anchorPoint = CGPoint.zero
+      node.zPosition = Z.player
+      return node
+    }))
+  }
 }
