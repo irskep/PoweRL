@@ -28,6 +28,13 @@ class MeterNode: SKSpriteNode {
     self.position = position
   }
 
+  func setSize(newSize: CGSize) {
+    let oldScale = xScale
+    xScale = 1
+    size = newSize
+    xScale = oldScale
+  }
+
   func update(instant: Bool) {
     let frac = getter()
     guard frac != targetScale else { return }
@@ -35,6 +42,7 @@ class MeterNode: SKSpriteNode {
       self.xScale = frac
       return
     }
+    print(frac)
     let action = SKAction.scaleX(to: frac, duration: MOVE_TIME)
     action.timingMode = .easeInEaseOut
     targetScale = frac
@@ -181,7 +189,7 @@ class HUDNode: SKSpriteNode {
     line.position = CGPoint(x: self.width - 1, y: 0)
 
     for meter in [healthMeterNode, powerMeterNode] {
-      meter.size = CGSize(width: self.width - 10, height: 8)
+      meter.setSize(newSize: CGSize(width: self.width - 10, height: 8))
     }
 
     self.addGrid()
@@ -205,7 +213,7 @@ class HUDNode: SKSpriteNode {
     line.position = CGPoint(x: 0, y: self.height - 1)
 
     for meter in [healthMeterNode, powerMeterNode] {
-      meter.size = CGSize(width: 32, height: 8)
+      meter.setSize(newSize: CGSize(width: 32, height: 8))
     }
 
     addGrid()
