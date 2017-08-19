@@ -22,6 +22,7 @@ class WinScene: PixelatedScene {
   override func setup() {
     super.setup()
     Player.shared.get("win").play()
+    (childNode(withName: "//robot") as? SKSpriteNode)?.texture = Assets16.get(.player)
   }
 
   override func layoutForPortrait() {

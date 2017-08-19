@@ -43,6 +43,8 @@ class GameScene: PixelatedScene {
     let gameName = "Power-Q"
     self.label(named: "logo1")?.text = gameName
     self.label(named: "logo2")?.text = gameName
+
+    (self.childNode(withName: "//robot") as? SKSpriteNode)?.texture = Assets16.get(.player)
   }
 
   override func layoutForPortrait() {

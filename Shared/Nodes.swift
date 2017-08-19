@@ -42,7 +42,6 @@ class MeterNode: SKSpriteNode {
       self.xScale = frac
       return
     }
-    print(frac)
     let action = SKAction.scaleX(to: frac, duration: MOVE_TIME)
     action.timingMode = .easeInEaseOut
     targetScale = frac
