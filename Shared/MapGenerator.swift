@@ -11,8 +11,10 @@ import GameplayKit
 
 
 struct MobSpec {
-  let char: String
+  let char: _Assets16
   let health: CGFloat
+  let isSlow: Bool
+  let pathfinds: Bool
   let moves: [int2]
 }
 
@@ -26,6 +28,10 @@ struct Z {
 
 
 class PWRSpriteNode: SKSpriteNode {
+  convenience init(_ t: _Assets16) {
+    self.init(texture: Assets16.get(t))
+  }
+
   required override init(texture: SKTexture?, color: SKColor, size: CGSize) {
     super.init(texture: texture, color: color, size: size)
     self.texture?.filteringMode = .nearest
@@ -98,7 +104,7 @@ class MapGenerator {
       game.gridGraph.remove([wallNode])
       let wall = GKEntity()
       wall.addComponent(GridNodeComponent(gridNode: wallNode))
-      let sprite = PWRSpriteNode(imageNamed: "wall").withZ(Z.wall)
+      let sprite = PWRSpriteNode(.bgWall).withZ(Z.wall)
       wall.addComponent(SpriteComponent(sprite: sprite))
       game.register(entity: wall)
     }
@@ -106,7 +112,7 @@ class MapGenerator {
     let playerNode = getSomeNodes(1)[0]
     if game.player == nil {
       game.player = GKEntity()
-      let sprite = PWRSpriteNode(imageNamed: "robot").withZ(Z.player)
+      let sprite = PWRSpriteNode(.player).withZ(Z.player)
       sprite.zPosition = Z.player
       game.player.addComponent(GridNodeComponent(gridNode: playerNode))
       game.player.addComponent(SpriteComponent(sprite: sprite))
@@ -124,7 +130,7 @@ class MapGenerator {
 
     game.exit = GKEntity()
     game.exit.addComponent(GridNodeComponent(gridNode: getNodeWithScore(1, { $0.gridPosition.manhattanDistanceTo(playerNode.gridPosition) })))
-    game.exit.addComponent(SpriteComponent(sprite: PWRSpriteNode(imageNamed: "exit").withZ(Z.pickup)))
+    game.exit.addComponent(SpriteComponent(sprite: PWRSpriteNode(.exit).withZ(Z.pickup)))
 
 
     if !isEverythingReachable(graph: game.gridGraph, start: game.player.gridNode!, canMovePast: {$0 != game.exit.gridNode}) {
@@ -137,7 +143,7 @@ class MapGenerator {
     for batteryGridNode in getSomeNodes(numBatteries) {
       let battery = GKEntity()
       battery.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: batteryGridNode.gridPosition)))
-      battery.addComponent(SpriteComponent(sprite: PWRSpriteNode(imageNamed: "powerup-battery").withZ(Z.pickup)))
+      battery.addComponent(SpriteComponent(sprite: PWRSpriteNode(.powerupBattery).withZ(Z.pickup)))
       battery.addComponent(PowerComponent(power: 25, isBattery: true))
       battery.addComponent(PickupConsumableComponent())
       game.register(entity: battery)
@@ -148,7 +154,7 @@ class MapGenerator {
       let ammo = GKEntity()
       let value = game.random.nextInt(upperBound: 2) + 1
       ammo.addComponent(GridNodeComponent(gridNode: ammoNode))
-      ammo.addComponent(SpriteComponent(sprite: PWRSpriteNode(imageNamed: "ammo-\(value)").withZ(Z.pickup)))
+      ammo.addComponent(SpriteComponent(sprite: PWRSpriteNode(value == 1 ? .ammo1 : .ammo2).withZ(Z.pickup)))
       ammo.addComponent(PickupConsumableComponent())
       ammo.addComponent(AmmoComponent(value: 2, damage: 40))
       game.register(entity: ammo)
@@ -158,20 +164,20 @@ class MapGenerator {
     for healthNode in healthNodes {
       let health = GKEntity()
       health.addComponent(GridNodeComponent(gridNode: healthNode))
-      health.addComponent(SpriteComponent(sprite: PWRSpriteNode(imageNamed: "powerup-health").withZ(Z.pickup)))
+      health.addComponent(SpriteComponent(sprite: PWRSpriteNode(.powerupHealth).withZ(Z.pickup)))
       health.addComponent(PickupConsumableComponent())
       health.addComponent(HealthComponent(health: 50))
       game.register(entity: health)
     }
 
     var mobSpecs: [MobSpec] = [
-      MobSpec(char: "butterfly", health: 40, moves: [
+      MobSpec(char: .mobButterfly, health: 40, isSlow: false, pathfinds: false, moves: [
         int2(-1, -1),
         int2(1, 1),
         int2(-1, 1),
         int2(1, -1),
       ]),
-      MobSpec(char: "turtle", health: 40, moves: [
+      MobSpec(char: .mobTurtle, health: 40, isSlow: true, pathfinds: true, moves: [
         int2(-1, 0),
         int2(1, 0),
         int2(0, 1),
@@ -179,7 +185,7 @@ class MapGenerator {
         ]),
     ]
     if game.difficulty > 3 {
-      mobSpecs.append(MobSpec(char: "rabbit", health: 40, moves: [
+      mobSpecs.append(MobSpec(char: .mobRabbit, health: 40, isSlow: false, pathfinds: false, moves: [
         int2(-1, -2),
         int2(1, -2),
         int2(-1, 2),
@@ -197,13 +203,15 @@ class MapGenerator {
       mob.addComponent(HealthComponent(health: spec.health))
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
-      if spec.char == "turtle" {
+      if spec.isSlow {
         mob.addComponent(SpeedLimiterComponent(bucketSize: 2, stepCost: 1))
-        mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves, pathfinding: true))
       } else {
         mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       }
-      let sprite = PWRSpriteNode(imageNamed: spec.char).withZ(Z.mob)
+      if spec.pathfinds {
+        mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves, pathfinding: true))
+      }
+      let sprite = PWRSpriteNode(spec.char).withZ(Z.mob)
       let spriteC = SpriteComponent(sprite: sprite)
       sprite.color = SKColor.red
       spriteC.shouldAnimateAway = true
@@ -214,7 +222,7 @@ class MapGenerator {
 
     for drainNode in getSomeNodes(numDrains) {
       let drain = GKEntity()
-      drain.addComponent(SpriteComponent(sprite: PWRSpriteNode(imageNamed: "drain").withZ(Z.wall)))
+      drain.addComponent(SpriteComponent(sprite: PWRSpriteNode(.bgDrain).withZ(Z.wall)))
       drain.addComponent(PowerComponent(power: -7, isBattery: true))
       drain.addComponent(GridNodeComponent(gridNode: drainNode))
       drain.addComponent(PickupConsumableComponent())

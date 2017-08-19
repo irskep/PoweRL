@@ -24,6 +24,9 @@
 		AA27C7271F2D9FFD004419F6 /* up3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA27C7191F2D9FFC004419F6 /* up3.mp3 */; };
 		AA27C7281F2D9FFE004419F6 /* up3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA27C7091F2D9FC1004419F6 /* up3.mp3 */; };
 		AA27C7291F2D9FFF004419F6 /* up3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA27C7091F2D9FC1004419F6 /* up3.mp3 */; };
+		AA3864E41F47A0DF000753E5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3864E31F47A0DF000753E5 /* Assets.swift */; };
+		AA3864E51F47A0DF000753E5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3864E31F47A0DF000753E5 /* Assets.swift */; };
+		AA3864E61F47A0DF000753E5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3864E31F47A0DF000753E5 /* Assets.swift */; };
 		AA70E4B91F2C1BB9005F1DD0 /* MapScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70E4B81F2C1BB9005F1DD0 /* MapScene.swift */; };
 		AA70E4BA1F2C1BBD005F1DD0 /* MapScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70E4B81F2C1BB9005F1DD0 /* MapScene.swift */; };
 		AA70E4BB1F2C1BBD005F1DD0 /* MapScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA70E4B81F2C1BB9005F1DD0 /* MapScene.swift */; };
@@ -88,9 +91,6 @@
 		AAA323E21F381A790039D299 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E11F381A790039D299 /* Nodes.swift */; };
 		AAA323E31F381A7B0039D299 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E11F381A790039D299 /* Nodes.swift */; };
 		AAA323E41F381A7D0039D299 /* Nodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E11F381A790039D299 /* Nodes.swift */; };
-		AAA323EA1F382CFC0039D299 /* BitmapFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E91F382CFC0039D299 /* BitmapFont.swift */; };
-		AAA323EB1F382CFC0039D299 /* BitmapFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E91F382CFC0039D299 /* BitmapFont.swift */; };
-		AAA323EC1F382CFC0039D299 /* BitmapFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA323E91F382CFC0039D299 /* BitmapFont.swift */; };
 		AAC0F8871F1AD30900D55037 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F8861F1AD30900D55037 /* AppDelegate.swift */; };
 		AAC0F8891F1AD30900D55037 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F8881F1AD30900D55037 /* GameViewController.swift */; };
 		AAC0F88C1F1AD30900D55037 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AAC0F88A1F1AD30900D55037 /* Main.storyboard */; };
@@ -183,6 +183,7 @@
 		AA27C7171F2D9FFC004419F6 /* up1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up1.mp3; sourceTree = "<group>"; };
 		AA27C7181F2D9FFC004419F6 /* up2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up2.mp3; sourceTree = "<group>"; };
 		AA27C7191F2D9FFC004419F6 /* up3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up3.mp3; sourceTree = "<group>"; };
+		AA3864E31F47A0DF000753E5 /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
 		AA70E4B81F2C1BB9005F1DD0 /* MapScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapScene.swift; sourceTree = "<group>"; };
 		AA70E4BC1F2C1BFB005F1DD0 /* AbstractScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractScene.swift; sourceTree = "<group>"; };
 		AA7332411F2C2712006ECA4D /* MapScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MapScene.sks; sourceTree = "<group>"; };
@@ -205,7 +206,6 @@
 		AA945B781F2D3D95006C6DEA /* Bresenham.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bresenham.swift; sourceTree = "<group>"; };
 		AAA323DD1F381A570039D299 /* Swift+utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Swift+utils.swift"; sourceTree = "<group>"; };
 		AAA323E11F381A790039D299 /* Nodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nodes.swift; sourceTree = "<group>"; };
-		AAA323E91F382CFC0039D299 /* BitmapFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFont.swift; sourceTree = "<group>"; };
 		AAC0F87B1F1AD30900D55037 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		AAC0F87C1F1AD30900D55037 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		AAC0F87D1F1AD30900D55037 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -313,6 +313,7 @@
 				AAD6B9FD1F2D741000D0900E /* Sounds */,
 				AAD6B9BA1F2D481400D0900E /* Components */,
 				AAE9194A1F3186A7009840C5 /* Scenes */,
+				AA3864E31F47A0DF000753E5 /* Assets.swift */,
 				AA7332471F2C3613006ECA4D /* Geom.swift */,
 				AA945B781F2D3D95006C6DEA /* Bresenham.swift */,
 				AAC0F87B1F1AD30900D55037 /* Actions.sks */,
@@ -324,7 +325,6 @@
 				AAD6B9C31F2D5E5E00D0900E /* UIColor+compat.swift */,
 				AAA323DD1F381A570039D299 /* Swift+utils.swift */,
 				AAA323E11F381A790039D299 /* Nodes.swift */,
-				AAA323E91F382CFC0039D299 /* BitmapFont.swift */,
 				AA75EE8C1F40E67100B9CA0F /* MusicPlayer.swift */,
 			);
 			path = Shared;
@@ -660,6 +660,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B31F1AD30900D55037 /* GameScene.swift in Sources */,
+				AA3864E41F47A0DF000753E5 /* Assets.swift in Sources */,
 				AA75EE891F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */,
 				AAA323E21F381A790039D299 /* Nodes.swift in Sources */,
 				AA945B751F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
@@ -671,7 +672,6 @@
 				AA70E4BD1F2C1BFB005F1DD0 /* AbstractScene.swift in Sources */,
 				AAA323DE1F381A570039D299 /* Swift+utils.swift in Sources */,
 				AA75EE8D1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
-				AAA323EA1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA7332501F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C41F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
 				AA945B791F2D3D95006C6DEA /* Bresenham.swift in Sources */,
@@ -689,6 +689,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B41F1AD30900D55037 /* GameScene.swift in Sources */,
+				AA3864E51F47A0DF000753E5 /* Assets.swift in Sources */,
 				AA75EE8A1F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */,
 				AAA323E31F381A7B0039D299 /* Nodes.swift in Sources */,
 				AA945B761F2D2C11006C6DEA /* MapGenerator.swift in Sources */,
@@ -700,7 +701,6 @@
 				AA70E4BE1F2C1BFD005F1DD0 /* AbstractScene.swift in Sources */,
 				AAA323DF1F381A590039D299 /* Swift+utils.swift in Sources */,
 				AA75EE8E1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
-				AAA323EB1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA73324F1F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C51F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
 				AA945B7A1F2D3D95006C6DEA /* Bresenham.swift in Sources */,
@@ -718,6 +718,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F8B51F1AD30900D55037 /* GameScene.swift in Sources */,
+				AA3864E61F47A0DF000753E5 /* Assets.swift in Sources */,
 				AA75EE8B1F40DB1F00B9CA0F /* PixelatedScene.swift in Sources */,
 				AAA323E41F381A7D0039D299 /* Nodes.swift in Sources */,
 				AA70E4BB1F2C1BBD005F1DD0 /* MapScene.swift in Sources */,
@@ -729,7 +730,6 @@
 				AA7332461F2C2DBE006ECA4D /* LD39WindowController.swift in Sources */,
 				AAA323E01F381A5A0039D299 /* Swift+utils.swift in Sources */,
 				AA75EE8F1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
-				AAA323EC1F382CFC0039D299 /* BitmapFont.swift in Sources */,
 				AA70E4BF1F2C1BFE005F1DD0 /* AbstractScene.swift in Sources */,
 				AAC0F8A61F1AD30900D55037 /* AppDelegate.swift in Sources */,
 				AA7332541F2D0BDC006ECA4D /* Components.swift in Sources */,

@@ -69,7 +69,7 @@ class MapScene: OrientationAwareAbstractScene {
 
     for x in 0..<game.mapSize.x {
       for y in 0..<game.mapSize.y {
-        let node = SKSpriteNode(imageNamed: "ground1").pixelized()
+        let node = SKSpriteNode(texture: Assets16.get(.bgGround)).pixelized()
         node.position = self.visualPoint(forPosition: int2(x, y))
         node.anchorPoint = CGPoint.zero
         node.zPosition = 0
@@ -91,9 +91,13 @@ class MapScene: OrientationAwareAbstractScene {
 
     MusicPlayer.shared.prepare(track: "1")
     MusicPlayer.shared.play()
-    self.hudNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
+    _updateMusicTexture()
 
     Player.shared.get("up1", useCache: false).play()
+  }
+
+  private func _updateMusicTexture() {
+    self.hudNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
   }
 
   override func layoutForLandscape() {
@@ -168,7 +172,7 @@ class MapScene: OrientationAwareAbstractScene {
 
   override func motionToggleMusic() {
     MusicPlayer.shared.toggleMusicSetting()
-    self.hudNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
+    _updateMusicTexture()
   }
 
   private var _lastTargetedPoint: int2? = nil

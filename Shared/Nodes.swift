@@ -230,7 +230,7 @@ class HUDNode: SKSpriteNode {
     flavorParent.zPosition = -1
     self.addChild(flavorParent)
     var x: CGFloat = 0
-    let tex = SKTexture(imageNamed: "hud-bg")
+    let tex = Assets16.get(.bgHUD)
     tex.filteringMode = .nearest
     while x < size.width {
       var y: CGFloat = 0

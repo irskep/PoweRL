@@ -171,7 +171,7 @@ extension GameModel {
     }
     ammoC.add(value: -1)
 
-    let bulletSprite = SKSpriteNode(imageNamed: "ammo-1").pixelized().withZ(Z.player)
+    let bulletSprite = SKSpriteNode(texture: Assets16.get(.ammo1)).pixelized().withZ(Z.player)
     bulletSprite.position = player.sprite!.position
     bulletSprite.anchorPoint = CGPoint.zero
     scene?.setMapNodeTransform(bulletSprite)
