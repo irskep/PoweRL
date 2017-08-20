@@ -86,7 +86,7 @@ class AmmoTransferRule: GridNodeSharingRule {
       let amt = ammo.value
       game.player.ammoC?.transfer(from: ammo)
       Player.shared.get("up3", useCache: false).play()
-      game.scene?.flashMessage("+\(amt) ammo", color: SKColor.magenta)
+      game.scene?.flashMessage("+\(amt) ammo", color: SKColor(red: 218 / 255, green: 1, blue: 0, alpha: 1))
       if let pickupC = ammo.entity?.component(ofType: PickupConsumableComponent.self) {
         pickupC.isPickedUp = true
       }

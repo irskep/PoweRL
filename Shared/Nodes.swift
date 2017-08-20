@@ -53,7 +53,7 @@ class PixelyLabelNode: SKSpriteNode {
   lazy var backingLabel: SKLabelNode = {
     let label = SKLabelNode(fontNamed: "Coolville")
     label.fontSize = 10
-    label.color = SKColor.white
+    label.color = self.color
     label.verticalAlignmentMode = .top
     return label
   }()
@@ -63,9 +63,8 @@ class PixelyLabelNode: SKSpriteNode {
   required init(view: SKView?, text: String = "", color: SKColor = SKColor.white) {
     self.text = text
     self.view = view
-    super.init(texture: nil, color: SKColor.white, size: CGSize.zero)
+    super.init(texture: nil, color: color, size: CGSize.zero)
 
-    backingLabel.fontColor = color
     if !text.isEmpty {
       self._updateTexture()
     }
@@ -77,6 +76,7 @@ class PixelyLabelNode: SKSpriteNode {
 
   private func _updateTexture() {
     backingLabel.text = text
+    backingLabel.fontColor = color
     self.texture = self.view?.texture(from: backingLabel)
     if let tex = self.texture {
       tex.filteringMode = .nearest
@@ -85,6 +85,10 @@ class PixelyLabelNode: SKSpriteNode {
   }
 
   var text: String {
+    didSet { self._updateTexture() }
+  }
+
+  override var color: SKColor {
     didSet { self._updateTexture() }
   }
 }
@@ -137,9 +141,18 @@ class HUDNode: SKSpriteNode {
       getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 }).withZ(2)
   }()
 
+  lazy var ammoIcon: SKSpriteNode = {
+    let node = SKSpriteNode(imageNamed: "icon-ammo").pixelized().withZ(1)
+    node.position = CGPoint(x: 0, y: _y(7) - 1)
+    node.anchorPoint = CGPoint(x: 0, y: 1)
+    return node
+  }()
+
   lazy var ammoLabel: PixelyLabelNode = {
     let label = PixelyLabelNode(view: self.view)
-    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(8.4))
+    label.color = SKColor(red: 218 / 255, green: 1, blue: 0, alpha: 1)
+    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(7) - 1)
+    label.anchorPoint = CGPoint(x: 0, y: 1)
     return label
   }()
 
@@ -171,6 +184,7 @@ class HUDNode: SKSpriteNode {
     self.addChild(powerMeterNode)
     self.addChild(healthIcon)
     self.addChild(powerIcon)
+    self.addChild(ammoIcon)
     self.addChild(ammoLabel)
     self.addChild(musicIcon)
   }
@@ -182,8 +196,8 @@ class HUDNode: SKSpriteNode {
     healthMeterNode.position = CGPoint(x: 9, y: _y(3))
     powerIcon.position = CGPoint(x: 0, y: _y(5) - 1)
     powerMeterNode.position = CGPoint(x: 9, y: _y(5) - 1)
-    ammoLabel.position = CGPoint(x: self.frame.size.width / 2, y: _y(8.4))
-    ammoLabel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+    ammoIcon.position = CGPoint(x: 0, y: _y(7) - 1)
+    ammoLabel.position = CGPoint(x: 8, y: _y(7) - 2)
     musicIcon.position = CGPoint(x: 1, y: 1)
     line.size = CGSize(width: 1, height: self.height)
     line.position = CGPoint(x: self.width - 1, y: 0)
@@ -199,13 +213,13 @@ class HUDNode: SKSpriteNode {
     levelNumberLabel.position = CGPoint(x: 1, y: 1)
     levelNumberLabel.anchorPoint = CGPoint(x: 0, y: 0)
 
-    ammoLabel.position = CGPoint(x: 0, y: self.height - self.margin * 5)
-    ammoLabel.anchorPoint = CGPoint(x: 0, y: 1)
-
     healthIcon.position = CGPoint(x: 0, y: self.height - 2)
     healthMeterNode.position = CGPoint(x: 9, y: self.height - 2)
     powerIcon.position = CGPoint(x: 0, y: self.height - 11)
     powerMeterNode.position = CGPoint(x: 9, y: self.height - 11)
+
+    ammoIcon.position = CGPoint(x: 0, y: self.height - 20)
+    ammoLabel.position = CGPoint(x: 8, y: self.height - 21)
 
     musicIcon.position = CGPoint(x: width - 9, y: 1)
 
@@ -253,7 +267,7 @@ class HUDNode: SKSpriteNode {
   func update(instant: Bool) {
     powerMeterNode.update(instant: instant)
     healthMeterNode.update(instant: instant)
-    ammoLabel.text = "Ammo: \(game.player.ammoC?.value ?? 0)"
+    ammoLabel.text = "\(game.player.ammoC?.value ?? 0)"
   }
 
   func motionIndicate(_ point: CGPoint) {
