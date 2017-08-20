@@ -114,7 +114,7 @@ class GameModel {
     componentSystems.forEach({ $0.update(deltaTime: deltaTime) })
   }
 
-  func executeTurn() {
+  func executeTurn(autotransition: Bool = true) {
     guard let playerNode = player.gridNode else { return }
     print("------------")
     ruleSystem.state["game"] = self
@@ -147,7 +147,9 @@ class GameModel {
     for component in turtleAnimSystem.components {
       (component as? TurtleAnimationComponent)?.updateSprite()
     }
-    scene?.evaluatePossibleTransitions()
+    if autotransition {
+      scene?.evaluatePossibleTransitions()
+    }
   }
 
   func getTargetingLaserPoints(to gridPos: int2) -> [int2] {
@@ -302,9 +304,10 @@ extension GameModel {
     }
 
     self.move(entity: entity, toGridNode: gridNode) {
-      self.executeTurn()
       completion?()
+      self.scene?.evaluatePossibleTransitions()
     }
+    self.executeTurn(autotransition: false)
   }
 }
 
