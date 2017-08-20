@@ -37,7 +37,7 @@ extension GKEntity {
   var sprite: SKNode? {
     get {
       let spriteComponent: SpriteComponent? = self.get()
-      return spriteComponent!.sprite
+      return spriteComponent?.sprite
     }
   }
 }

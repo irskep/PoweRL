@@ -153,6 +153,7 @@ class HUDNode: SKSpriteNode {
   lazy var line: SKSpriteNode = {
     let line = PWRSpriteNode(texture: nil, color: SKColor.lightGray, size: CGSize(width: 1, height: self.height))
     line.position = CGPoint(x: self.width - 1, y: 0)
+    line.anchorPoint = CGPoint.zero
     line.zPosition = 1001
     return line
   }()

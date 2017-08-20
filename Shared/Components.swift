@@ -261,11 +261,11 @@ class SpeedLimiterComponent: GKComponent {
   var stepCost: Int = 1
   var bucketLeft: Int = 2
 
-  convenience init(bucketSize: Int, stepCost: Int) {
+  convenience init(bucketSize: Int, stepCost: Int, bucketLeft: Int) {
     self.init()
     self.bucketSize = bucketSize
     self.stepCost = stepCost
-    self.bucketLeft = bucketSize
+    self.bucketLeft = bucketLeft
   }
 
   func tryToStep() -> Bool {
@@ -284,5 +284,15 @@ class SpeedLimiterComponent: GKComponent {
     if bucketLeft <= 0 {
       bucketLeft = bucketSize
     }
+  }
+}
+
+class TurtleAnimationComponent: GKComponent {
+  func updateSprite() {
+    guard
+      let entity = self.entity,
+      let sprite = entity.sprite as? SKSpriteNode,
+      let speedC: SpeedLimiterComponent = entity.get() else { return }
+    sprite.texture = Assets16.get(speedC.bucketLeft == 2 ? .mobTurtle1 : .mobTurtle2)
   }
 }

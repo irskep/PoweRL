@@ -40,7 +40,7 @@ class AssetBin<T: AssetClass> {
 enum _Assets16: AssetClass {
   case ammo1, ammo2, powerupBattery, powerupHealth
   case bgHUD, bgGround, bgWall, bgDrain
-  case mobButterfly, mobRabbit, mobTurtle
+  case mobButterfly, mobRabbit, mobTurtle1, mobTurtle2
   case player, exit
 
   var coord: (CGFloat, CGFloat) {
@@ -55,7 +55,8 @@ enum _Assets16: AssetClass {
     case .bgDrain: return (3, 2)
     case .mobButterfly: return (0, 1)
     case .mobRabbit: return (1, 1)
-    case .mobTurtle: return (2, 1)
+    case .mobTurtle1: return (2, 1)
+    case .mobTurtle2: return (3, 1)
     case .player: return (0, 0)
     case .exit: return (1, 0)
     }

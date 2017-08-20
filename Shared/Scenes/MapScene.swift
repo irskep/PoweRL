@@ -30,7 +30,7 @@ class MapScene: OrientationAwareAbstractScene {
     return CGSize(width: self.adjustedSize.width / self.screenScale, height: self.mapPixelSize.height)
   }
 
-  var gridNodes: [CGPoint: SKSpriteNode] = [:]
+  var gridNodes: [CGPoint: PWRSpriteNode] = [:]
   var hudSize: CGSize { return self.screenPixelSize - CGSize(width: self.mapPixelSize.width, height: 0) }
   lazy var hudNode: HUDNode = {
     return HUDNode(view: self.view, game: self.game, size: self.hudSize)
@@ -42,7 +42,7 @@ class MapScene: OrientationAwareAbstractScene {
     return mapContainerNode
   }()
 
-  lazy var hoverIndicatorSprites: [SKSpriteNode] = { self._createHoverIndicatorSprites() }()
+  lazy var hoverIndicatorSprites: [PWRSpriteNode] = { self._createHoverIndicatorSprites() }()
 
   // MARK: init
 
@@ -69,9 +69,8 @@ class MapScene: OrientationAwareAbstractScene {
 
     for x in 0..<game.mapSize.x {
       for y in 0..<game.mapSize.y {
-        let node = SKSpriteNode(texture: Assets16.get(.bgGround)).pixelized()
-        node.position = self.visualPoint(forPosition: int2(x, y))
-        node.anchorPoint = CGPoint.zero
+        let node = PWRSpriteNode(.bgGround)
+        node.position = self.spritePoint(forPosition: int2(x, y))
         node.zPosition = 0
         self.mapContainerNode.addChild(node)
         self.gridNodes[CGPoint(x: CGFloat(x), y: CGFloat(y))] = node
@@ -139,12 +138,20 @@ class MapScene: OrientationAwareAbstractScene {
 
   // MARK: input
 
-  func gridSprite(at position: int2) -> SKSpriteNode? {
+  func gridSprite(at position: int2) -> PWRSpriteNode? {
     return gridNodes[CGPoint(position)]
   }
 
   func visualPoint(forPosition position: int2) -> CGPoint {
     return CGPoint(position) * self.tileSize.point
+  }
+
+  func spritePoint(forPosition position: int2) -> CGPoint {
+    if isLandscape {
+      return visualPoint(forPosition: position) + tileSize.point / 2
+    } else {
+      return visualPoint(forPosition: position) + CGPoint(x: tileSize.width * 0.5, y: tileSize.height * -0.5)
+    }
   }
 
   override func motion(_ m: Motion) {
@@ -312,14 +319,11 @@ class MapScene: OrientationAwareAbstractScene {
     let position = game.player?.gridNode?.gridPosition
 
     if let position = position {
-      node.position = visualPoint(forPosition: position) + tileSize.point / 2
+      node.position = spritePoint(forPosition: position)
     } else {
       node.position = CGPoint(x: mapPixelSize.width / 2, y: mapPixelSize.height / 2)
     }
     node.position = self.convert(node.position, from: mapContainerNode)
-    if !isLandscape {
-      node.position += tileSize.point * screenScale * CGPoint(x: 1, y: 0)
-    }
     node.setScale(self.screenScale)
     node.zPosition = 2000
     self.addChild(node)
@@ -376,13 +380,12 @@ class MapScene: OrientationAwareAbstractScene {
 }
 
 extension MapScene {
-  func _createHoverIndicatorSprites() -> [SKSpriteNode] {
+  func _createHoverIndicatorSprites() -> [PWRSpriteNode] {
     return Array((0..<30).map({
       _ in
-      let node = SKSpriteNode(color: SKColor.yellow, size: self.tileSize)
+      let node = PWRSpriteNode(color: SKColor.yellow, size: self.tileSize)
       node.alpha = 0.2
       node.isHidden = true
-      node.anchorPoint = CGPoint.zero
       node.zPosition = Z.player
       return node
     }))

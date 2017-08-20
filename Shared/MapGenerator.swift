@@ -35,13 +35,13 @@ class PWRSpriteNode: SKSpriteNode {
   required override init(texture: SKTexture?, color: SKColor, size: CGSize) {
     super.init(texture: texture, color: color, size: size)
     self.texture?.filteringMode = .nearest
-    self.anchorPoint = CGPoint.zero
+//    self.anchorPoint = CGPoint.zero
   }
 
   required init?(coder aDecoder: NSCoder) {
     super.init(coder: aDecoder)
     self.texture?.filteringMode = .nearest
-    self.anchorPoint = CGPoint.zero
+//    self.anchorPoint = CGPoint.zero
   }
 }
 
@@ -177,7 +177,7 @@ class MapGenerator {
         int2(-1, 1),
         int2(1, -1),
       ]),
-      MobSpec(char: .mobTurtle, health: 40, isSlow: true, pathfinds: true, moves: [
+      MobSpec(char: .mobTurtle1, health: 40, isSlow: true, pathfinds: true, moves: [
         int2(-1, 0),
         int2(1, 0),
         int2(0, 1),
@@ -204,12 +204,18 @@ class MapGenerator {
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
       if spec.isSlow {
-        mob.addComponent(SpeedLimiterComponent(bucketSize: 2, stepCost: 1))
+        mob.addComponent(SpeedLimiterComponent(
+          bucketSize: 2,
+          stepCost: 1,
+          bucketLeft: game.random.nextInt(upperBound: 2) + 1))
       } else {
         mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       }
       if spec.pathfinds {
         mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves, pathfinding: true))
+      }
+      if spec.char == .mobTurtle1 {
+        mob.addComponent(TurtleAnimationComponent())
       }
       let sprite = PWRSpriteNode(spec.char).withZ(Z.mob)
       let spriteC = SpriteComponent(sprite: sprite)

@@ -35,11 +35,13 @@ class GameModel {
   lazy var gridSystem: GridSystem = { return GridSystem() }()
   lazy var spriteSystem: SpriteSystem = { return SpriteSystem() }()
   lazy var mobMoveSystem: GKComponentSystem = { return GKComponentSystem(componentClass: MoveTowardPlayerComponent.self) }()
+  lazy var turtleAnimSystem: GKComponentSystem = { return GKComponentSystem(componentClass: TurtleAnimationComponent.self) }()
   lazy var componentSystems: [GKComponentSystem] = {
     return [
       self.gridSystem,
       self.spriteSystem,
       self.mobMoveSystem,
+      self.turtleAnimSystem,
       ] as! [GKComponentSystem]
   }()
   var gridGraph: GKGridGraph<GridNode>!
@@ -58,9 +60,12 @@ class GameModel {
       let gridComponent: GridNodeComponent = entity.get(),
       let gridPosition = gridComponent.gridNode?.gridPosition
       {
-      spriteComponent.sprite.position = scene.visualPoint(forPosition: gridPosition)
+      spriteComponent.sprite.position = scene.spritePoint(forPosition: gridPosition)
       scene.mapContainerNode.addChild(spriteComponent.sprite)
       scene.setMapNodeTransform(spriteComponent.sprite)
+    }
+    if let turtleC: TurtleAnimationComponent = entity.get() {
+      turtleC.updateSprite()
     }
 
     entities.insert(entity)
@@ -123,12 +128,24 @@ class GameModel {
             continue
           }
         }
+        if let currentNode = component.entity?.gridNode, let sprite = component.entity?.sprite {
+          if nextNode.gridPosition.x > currentNode.gridPosition.x && sprite.xScale < 0 {
+            // face left
+            sprite.xScale *= -1
+          } else if nextNode.gridPosition.x < currentNode.gridPosition.x && sprite.xScale > 0 {
+            // face right
+            sprite.xScale *= -1
+          }
+        }
         if nextNode == player.gridNode {
           self.damagePlayer(withEntity: component.entity!)
         } else {
           self.move(entity: component.entity!, toGridNode: nextNode)
         }
       }
+    }
+    for component in turtleAnimSystem.components {
+      (component as? TurtleAnimationComponent)?.updateSprite()
     }
     scene?.evaluatePossibleTransitions()
   }
@@ -171,14 +188,13 @@ extension GameModel {
     }
     ammoC.add(value: -1)
 
-    let bulletSprite = SKSpriteNode(texture: Assets16.get(.ammo1)).pixelized().withZ(Z.player)
+    let bulletSprite = PWRSpriteNode(.ammo1).withZ(Z.player)
     bulletSprite.position = player.sprite!.position
-    bulletSprite.anchorPoint = CGPoint.zero
     scene?.setMapNodeTransform(bulletSprite)
 
     var actions = path.map({
       return SKAction.move(
-        to: scene!.visualPoint(forPosition: $0),
+        to: scene!.spritePoint(forPosition: $0),
         duration: MOVE_TIME / 2)
     })
     actions.append(SKAction.fadeOut(withDuration: MOVE_TIME / 2))
@@ -257,7 +273,7 @@ extension GameModel {
     isAcceptingInput = false
     entity.gridNode = gridNode
 
-    let action = SKAction.move(to: scene.visualPoint(forPosition: gridNode.gridPosition), duration: MOVE_TIME)
+    let action = SKAction.move(to: scene.spritePoint(forPosition: gridNode.gridPosition), duration: MOVE_TIME)
     action.timingMode = .easeIn
     entity.sprite?.run(action) {
       self.isAcceptingInput = true
