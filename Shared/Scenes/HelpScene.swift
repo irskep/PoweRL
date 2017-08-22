@@ -22,11 +22,16 @@ class HelpScene: PixelatedScene {
   override func setup() {
     super.setup()
 
-
     #if os(iOS)
       (self.childNode(withName: "//clicktoshoot") as? SKLabelNode)?.text = "Tap to shoot"
       (self.childNode(withName: "//howtomove") as? SKLabelNode)?.text = "Swipe to move"
     #endif
+
+    visitAll {
+      guard let node = $0 as? SKSpriteNode, let asset = _Assets16(rawValue: node.name ?? "n/a")
+        else { return }
+      node.texture = Assets16.get(asset)
+    }
   }
 
   override func layoutForPortrait() {

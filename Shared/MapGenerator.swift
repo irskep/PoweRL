@@ -27,25 +27,6 @@ struct Z {
 }
 
 
-class PWRSpriteNode: SKSpriteNode {
-  convenience init(_ t: _Assets16) {
-    self.init(texture: Assets16.get(t))
-  }
-
-  required override init(texture: SKTexture?, color: SKColor, size: CGSize) {
-    super.init(texture: texture, color: color, size: size)
-    self.texture?.filteringMode = .nearest
-//    self.anchorPoint = CGPoint.zero
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-    self.texture?.filteringMode = .nearest
-//    self.anchorPoint = CGPoint.zero
-  }
-}
-
-
 func isEverythingReachable(graph: GKGridGraph<GridNode>, start: GridNode, canMovePast: (GridNode) -> Bool) -> Bool {
   var unvisitedNodes = Set<GridNode>(graph.nodes as! [GridNode])
   var stack: Array<GridNode> = [start]
@@ -203,6 +184,7 @@ class MapGenerator {
       mob.addComponent(HealthComponent(health: spec.health))
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
+      mob.addComponent(PointValueComponent())
       if spec.isSlow {
         mob.addComponent(SpeedLimiterComponent(
           bucketSize: 2,

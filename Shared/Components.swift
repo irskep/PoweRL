@@ -296,3 +296,7 @@ class TurtleAnimationComponent: GKComponent {
     sprite.texture = Assets16.get(speedC.bucketLeft == 2 ? .mobTurtle1 : .mobTurtle2)
   }
 }
+
+class PointValueComponent: GKComponent {
+  var points: Int = 1
+}

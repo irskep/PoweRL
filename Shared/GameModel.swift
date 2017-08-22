@@ -13,6 +13,15 @@ import SpriteKit
 let MOVE_TIME: TimeInterval = 0.1
 
 
+private func pluralize(_ n: Int, _ s: String, _ p: String) -> String {
+  if n == 1 {
+    return "1 \(s)"
+  } else {
+    return "\(n) \(p)"
+  }
+}
+
+
 private func createRuleSystem(_ game: GameModel) -> GKRuleSystem {
   let rs = GKRuleSystem()
   rs.state["game"] = game
@@ -26,6 +35,7 @@ private func createRuleSystem(_ game: GameModel) -> GKRuleSystem {
 
 class GameModel {
   var difficulty: Int = 1
+  var score: Int = 0
   var isAcceptingInput: Bool = true
 
   var mapSize: int2 = int2(8, 6)
@@ -71,9 +81,10 @@ class GameModel {
     entities.insert(entity)
   }
 
-  init(difficulty: Int, player: GKEntity?) {
+  init(difficulty: Int, player: GKEntity?, score: Int) {
     self.difficulty = difficulty
     self.player = player
+    self.score = score
   }
 
   func delete(entity: GKEntity) {
@@ -253,6 +264,10 @@ extension GameModel {
   func damageEnemy(entity: GKEntity, amt: CGFloat) {
     entity.healthC?.hit(amt)
     if entity.healthC?.isDead == true {
+      if let ptsC = entity.component(ofType: PointValueComponent.self) {
+        self.score += ptsC.points
+        scene?.flashMessage("+\(pluralize(ptsC.points, "point", "points"))", color: SKColor.green)
+      }
       self.delete(entity: entity)
     }
   }

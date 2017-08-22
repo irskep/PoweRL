@@ -49,50 +49,6 @@ class MeterNode: SKSpriteNode {
   }
 }
 
-class PixelyLabelNode: SKSpriteNode {
-  lazy var backingLabel: SKLabelNode = {
-    let label = SKLabelNode(fontNamed: "Coolville")
-    label.fontSize = 10
-    label.color = self.color
-    label.verticalAlignmentMode = .top
-    return label
-  }()
-
-  weak var view: SKView?
-
-  required init(view: SKView?, text: String = "", color: SKColor = SKColor.white) {
-    self.text = text
-    self.view = view
-    super.init(texture: nil, color: color, size: CGSize.zero)
-
-    if !text.isEmpty {
-      self._updateTexture()
-    }
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
-  private func _updateTexture() {
-    backingLabel.text = text
-    backingLabel.fontColor = color
-    self.texture = self.view?.texture(from: backingLabel)
-    if let tex = self.texture {
-      tex.filteringMode = .nearest
-      self.size = tex.size()
-    }
-  }
-
-  var text: String {
-    didSet { self._updateTexture() }
-  }
-
-  override var color: SKColor {
-    didSet { self._updateTexture() }
-  }
-}
-
 class HUDNode: SKSpriteNode {
   private let game: GameModel
   private weak var view: SKView?
@@ -104,19 +60,12 @@ class HUDNode: SKSpriteNode {
 
   private func _y(_ n: CGFloat) -> CGFloat { return floor(self.height) - self.margin * n }
 
-  lazy var levelNumberLabel: PixelyLabelNode = {
-    let label = PixelyLabelNode(view: view)
-    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(1.4))
-    return label
-  }()
+  lazy var levelNumberLabel: PixelyLabelNode = { return PixelyLabelNode(view: view) }()
+  lazy var scoreLabel: PixelyLabelNode = { return PixelyLabelNode(view: view) }()
 
   lazy var healthIcon: SKSpriteNode = {
-    let node = SKSpriteNode(imageNamed: "icon-health").pixelized().withZ(1)
-    node.position = CGPoint(x: 0, y: _y(3))
-    node.anchorPoint = CGPoint(x: 0, y: 1)
-    return node
+    return SKSpriteNode(imageNamed: "icon-health").pixelized().withZ(1).withAnchor(0, 1)
   }()
-
   lazy var healthMeterNode: MeterNode = {
     return MeterNode(
       imageName: "health",
@@ -127,10 +76,7 @@ class HUDNode: SKSpriteNode {
   }()
 
   lazy var powerIcon: SKSpriteNode = {
-    let node = SKSpriteNode(imageNamed: "icon-battery").pixelized().withZ(1)
-    node.position = CGPoint(x: 0, y: _y(5) - 1)
-    node.anchorPoint = CGPoint(x: 0, y: 1)
-    return node
+    return SKSpriteNode(imageNamed: "icon-battery").pixelized().withZ(1).withAnchor(0, 1)
   }()
   lazy var powerMeterNode: MeterNode = {
     return MeterNode(
@@ -142,33 +88,23 @@ class HUDNode: SKSpriteNode {
   }()
 
   lazy var ammoIcon: SKSpriteNode = {
-    let node = SKSpriteNode(imageNamed: "icon-ammo").pixelized().withZ(1)
-    node.position = CGPoint(x: 0, y: _y(7) - 1)
-    node.anchorPoint = CGPoint(x: 0, y: 1)
-    return node
+    return SKSpriteNode(imageNamed: "icon-ammo").pixelized().withZ(1).withAnchor(0, 1)
   }()
 
   lazy var ammoLabel: PixelyLabelNode = {
-    let label = PixelyLabelNode(view: self.view)
+    let label = PixelyLabelNode(view: self.view).withAnchor(0, 1)
     label.color = SKColor(red: 218 / 255, green: 1, blue: 0, alpha: 1)
-    label.position = CGPoint(x: self.frame.size.width / 2, y: _y(7) - 1)
-    label.anchorPoint = CGPoint(x: 0, y: 1)
     return label
   }()
 
   lazy var musicIcon: SKSpriteNode = {
-    let node = SKSpriteNode(imageNamed: "icon-music-on").pixelized().withZ(1)
-    node.position = CGPoint(x: 1, y: 1)
-    node.anchorPoint = CGPoint.zero
-    return node
+    return SKSpriteNode(imageNamed: "icon-music-on").pixelized().withZ(1).withAnchor(0, 0)
   }()
 
   lazy var line: SKSpriteNode = {
-    let line = PWRSpriteNode(texture: nil, color: SKColor.lightGray, size: CGSize(width: 1, height: self.height))
-    line.position = CGPoint(x: self.width - 1, y: 0)
-    line.anchorPoint = CGPoint.zero
-    line.zPosition = 1001
-    return line
+    return PWRSpriteNode(
+      texture: nil, color: SKColor.lightGray, size: CGSize(width: 1, height: self.height)
+    ).withAnchor(0, 0).withZ(1001)
   }()
 
   required init(view: SKView?, game: GameModel, size: CGSize) {
@@ -177,9 +113,11 @@ class HUDNode: SKSpriteNode {
 
     super.init(texture: nil, color: SKColor.clear, size: size)
 
+    scoreLabel.color = SKColor.green
 
     self.addChild(line)
     self.addChild(levelNumberLabel)
+    self.addChild(scoreLabel)
     self.addChild(healthMeterNode)
     self.addChild(powerMeterNode)
     self.addChild(healthIcon)
@@ -190,14 +128,25 @@ class HUDNode: SKSpriteNode {
   }
 
   func layoutForLandscape() {
-    levelNumberLabel.position = CGPoint(x: self.frame.size.width / 2, y: _y(1.4))
-    levelNumberLabel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-    healthIcon.position = CGPoint(x: 0, y: _y(3))
-    healthMeterNode.position = CGPoint(x: 9, y: _y(3))
-    powerIcon.position = CGPoint(x: 0, y: _y(5) - 1)
-    powerMeterNode.position = CGPoint(x: 9, y: _y(5) - 1)
-    ammoIcon.position = CGPoint(x: 0, y: _y(7) - 1)
-    ammoLabel.position = CGPoint(x: 8, y: _y(7) - 2)
+    var y: CGFloat = 0
+    levelNumberLabel.position = CGPoint(x: self.frame.size.width / 2, y: _y(y) - 1)
+    levelNumberLabel.anchorPoint = CGPoint(x: 0.5, y: 1)
+
+    y += 2
+    scoreLabel.position = CGPoint(x: self.frame.size.width / 2, y: _y(y))
+    scoreLabel.anchorPoint = CGPoint(x: 0.5, y: 1)
+
+    y += 2
+    healthIcon.position = CGPoint(x: 0, y: _y(y))
+    healthMeterNode.position = CGPoint(x: 9, y: _y(y))
+
+    y += 2
+    powerIcon.position = CGPoint(x: 0, y: _y(y) - 1)
+    powerMeterNode.position = CGPoint(x: 9, y: _y(y) - 1)
+
+    y += 2
+    ammoIcon.position = CGPoint(x: 0, y: _y(y) - 1)
+    ammoLabel.position = CGPoint(x: 8, y: _y(y) - 2)
     musicIcon.position = CGPoint(x: 1, y: 1)
     line.size = CGSize(width: 1, height: self.height)
     line.position = CGPoint(x: self.width - 1, y: 0)
@@ -267,6 +216,7 @@ class HUDNode: SKSpriteNode {
   func update(instant: Bool) {
     powerMeterNode.update(instant: instant)
     healthMeterNode.update(instant: instant)
+    scoreLabel.text = "Pts: \(game.score)"
     ammoLabel.text = "\(game.player.ammoC?.value ?? 0)"
   }
 

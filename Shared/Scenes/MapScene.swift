@@ -52,12 +52,12 @@ class MapScene: OrientationAwareAbstractScene {
 
   class func create(from mapScene: MapScene) -> MapScene {
     let scene: MapScene = MapScene.create()
-    scene.game = GameModel(difficulty: mapScene.game.difficulty + 1, player: mapScene.game.player)
+    scene.game = GameModel(difficulty: mapScene.game.difficulty + 1, player: mapScene.game.player, score: mapScene.game.score)
     return scene
   }
 
   override func setup() {
-    if game == nil { game = GameModel(difficulty: 1, player: nil) }
+    if game == nil { game = GameModel(difficulty: 1, player: nil, score: 0) }
     super.setup()
     scaleMode = .aspectFit
 

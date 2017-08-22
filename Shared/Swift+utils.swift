@@ -7,7 +7,79 @@
 //
 
 import Foundation
+import SpriteKit
 import GameplayKit
+
+
+class PWRSpriteNode: SKSpriteNode {
+  @IBInspectable
+  var asset16Name: String? {
+    didSet {
+      if let val = asset16Name, let asset = _Assets16(rawValue: val) {
+        self.texture = Assets16.get(asset)
+      }
+    }
+  }
+
+  convenience init(_ t: _Assets16) {
+    self.init(texture: Assets16.get(t))
+  }
+
+  required override init(texture: SKTexture?, color: SKColor, size: CGSize) {
+    super.init(texture: texture, color: color, size: size)
+    self.texture?.filteringMode = .nearest
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+    self.texture?.filteringMode = .nearest
+  }
+}
+
+
+class PixelyLabelNode: SKSpriteNode {
+  lazy var backingLabel: SKLabelNode = {
+    let label = SKLabelNode(fontNamed: "Coolville")
+    label.fontSize = 10
+    label.color = self.color
+    label.verticalAlignmentMode = .top
+    return label
+  }()
+
+  weak var view: SKView?
+
+  required init(view: SKView?, text: String = "", color: SKColor = SKColor.white) {
+    self.text = text
+    self.view = view
+    super.init(texture: nil, color: color, size: CGSize.zero)
+
+    if !text.isEmpty {
+      self._updateTexture()
+    }
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  private func _updateTexture() {
+    backingLabel.text = text
+    backingLabel.fontColor = color
+    self.texture = self.view?.texture(from: backingLabel)
+    if let tex = self.texture {
+      tex.filteringMode = .nearest
+      self.size = tex.size()
+    }
+  }
+
+  var text: String {
+    didSet { self._updateTexture() }
+  }
+
+  override var color: SKColor {
+    didSet { self._updateTexture() }
+  }
+}
 
 
 extension UserDefaults {
@@ -54,6 +126,11 @@ extension SKSpriteNode {
 
   func withZ(_ z: CGFloat) -> Self {
     self.zPosition = z
+    return self
+  }
+
+  func withAnchor(_ x: CGFloat, _ y: CGFloat) -> Self {
+    self.anchorPoint = CGPoint(x: x, y: y)
     return self
   }
 }

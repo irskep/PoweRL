@@ -33,15 +33,17 @@ class AssetBin<T: AssetClass> {
   }
 
   func get(_ t: T) -> SKTexture {
-    return _tex(t.x, t.y)
+    return _tex(t.x, t.y).pixelized()
   }
 }
 
-enum _Assets16: AssetClass {
-  case ammo1, ammo2, powerupBattery, powerupHealth
-  case bgHUD, bgGround, bgWall, bgDrain
-  case mobButterfly, mobRabbit, mobTurtle1, mobTurtle2
-  case player, exit
+enum _Assets16: String, AssetClass {
+  case ammo1 = "ammo1", ammo2 = "ammo2"
+  case powerupBattery = "powerupBattery", powerupHealth = "powerupHealth"
+  case bgHUD = "bgHUD", bgGround = "bgGround", bgWall = "bgWall", bgDrain = "bgDrain"
+  case mobButterfly = "mobButterfly", mobRabbit = "mobRabbit"
+  case mobTurtle1 = "mobTurtle1", mobTurtle2 = "mobTurtle2"
+  case player = "player", exit = "exit"
 
   var coord: (CGFloat, CGFloat) {
     switch self {
