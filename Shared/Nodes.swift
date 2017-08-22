@@ -61,6 +61,8 @@ class HUDNode: SKSpriteNode {
   private func _y(_ n: CGFloat) -> CGFloat { return floor(self.height) - self.margin * n }
 
   lazy var levelNumberLabel: PixelyLabelNode = { return PixelyLabelNode(view: view) }()
+
+  lazy var scoreIcon: SKSpriteNode = { return SKSpriteNode(imageNamed: "score").pixelized().withZ(1).withAnchor(0, 1) }()
   lazy var scoreLabel: PixelyLabelNode = { return PixelyLabelNode(view: view) }()
 
   lazy var healthIcon: SKSpriteNode = {
@@ -117,6 +119,7 @@ class HUDNode: SKSpriteNode {
 
     self.addChild(line)
     self.addChild(levelNumberLabel)
+    self.addChild(scoreIcon)
     self.addChild(scoreLabel)
     self.addChild(healthMeterNode)
     self.addChild(powerMeterNode)
@@ -133,8 +136,9 @@ class HUDNode: SKSpriteNode {
     levelNumberLabel.anchorPoint = CGPoint(x: 0.5, y: 1)
 
     y += 2
-    scoreLabel.position = CGPoint(x: self.frame.size.width / 2, y: _y(y))
-    scoreLabel.anchorPoint = CGPoint(x: 0.5, y: 1)
+    scoreIcon.position = CGPoint(x: 9, y: _y(y) - 1)
+    scoreLabel.position = CGPoint(x: scoreIcon.position.x + 20, y: _y(y))
+    scoreLabel.anchorPoint = CGPoint(x: 0, y: 1)
 
     y += 2
     healthIcon.position = CGPoint(x: 0, y: _y(y))
@@ -216,7 +220,7 @@ class HUDNode: SKSpriteNode {
   func update(instant: Bool) {
     powerMeterNode.update(instant: instant)
     healthMeterNode.update(instant: instant)
-    scoreLabel.text = "Pts: \(game.score)"
+    scoreLabel.text = "\(game.score)"
     ammoLabel.text = "\(game.player.ammoC?.value ?? 0)"
   }
 

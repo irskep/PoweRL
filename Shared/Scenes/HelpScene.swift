@@ -30,6 +30,7 @@ class HelpScene: PixelatedScene {
     visitAll {
       guard let node = $0 as? SKSpriteNode, let asset = _Assets16(rawValue: node.name ?? "n/a")
         else { return }
+      print("a", asset)
       node.texture = Assets16.get(asset)
     }
   }

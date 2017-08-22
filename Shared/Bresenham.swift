@@ -63,7 +63,7 @@ func bresenham(_ P1: CGPoint, _ P2: CGPoint) -> [intPoint] {
 }
 
 
-func bresenham2(_ slf: CGPoint, _ other: CGPoint) -> [intPoint] {
+func bresenham2(_ slf: CGPoint, _ other: CGPoint) -> [int2] {
   var delta = other - slf
   let xsign: CGFloat = delta.x > 0 ? 1 : -1
   let ysign: CGFloat = delta.y > 0 ? 1 : -1
@@ -88,11 +88,11 @@ func bresenham2(_ slf: CGPoint, _ other: CGPoint) -> [intPoint] {
   var D = 2*delta.y - delta.x
   var y = 0
 
-  var results: [intPoint] = []
+  var results: [int2] = []
   for x in 0..<(Int(delta.x) + 1) {
     let rx: CGFloat = slf.x + CGFloat(x)*xx + CGFloat(y)*yx
     let ry: CGFloat = slf.y + CGFloat(x)*xy + CGFloat(y)*yy
-    results.append((Int(rx), Int(ry)))
+    results.append(int2(Int32(rx), Int32(ry)))
     if D > 0 {
       y += 1
       D -= delta.x

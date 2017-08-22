@@ -166,8 +166,7 @@ class GameModel {
   func getTargetingLaserPoints(to gridPos: int2) -> [int2] {
     guard let startOfLine = player.gridNode?.gridPosition else { return [] }
     var results: [int2] = []
-    for point in bresenham2(CGPoint(startOfLine), CGPoint(gridPos)) {
-      let p = int2(Int32(point.0), Int32(point.1))
+    for p in bresenham2(CGPoint(startOfLine), CGPoint(gridPos)) {
       if startOfLine == p {
         continue
       }
