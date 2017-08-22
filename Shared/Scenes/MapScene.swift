@@ -39,6 +39,10 @@ class MapScene: OrientationAwareAbstractScene {
   lazy var mapContainerNode: SKSpriteNode = {
     let mapContainerNode = SKSpriteNode(color: SKColor.black, size: self.mapPixelSize)
     mapContainerNode.anchorPoint = CGPoint.zero
+    let mapFrame = SKSpriteNode(color: SKColor.red, size: mapContainerNode.size + CGSize(width: 2, height: 2))
+    mapFrame.anchorPoint = CGPoint.zero
+    mapContainerNode.addChild(mapFrame)
+    mapFrame.position = CGPoint(x: -1, y: -1)
     return mapContainerNode
   }()
 
@@ -103,13 +107,11 @@ class MapScene: OrientationAwareAbstractScene {
     super.layoutForLandscape()
     mapContainerNode.position = CGPoint(x: self.hudSize.width, y: 0)
     mapContainerNode.zRotation = 0
+    mapContainerNode.anchorPoint = CGPoint.zero
     hudNode.size = hudSize
     hudNode.layoutForLandscape()
     for c in game.spriteSystem.components {
       self.setMapNodeTransform(c.sprite)
-    }
-    for g in gridNodes.values {
-      g.anchorPoint = CGPoint.zero
     }
     for g in gridNodes.values {
       self.setMapNodeTransform(g)
@@ -121,8 +123,9 @@ class MapScene: OrientationAwareAbstractScene {
 
   override func layoutForPortrait() {
     super.layoutForPortrait()
-    mapContainerNode.position = CGPoint(x: mapPixelSize.height - tileSize.width, y: self.hudSize.width)
+    mapContainerNode.position = CGPoint(x: mapPixelSize.height, y: self.hudSize.width)
     mapContainerNode.zRotation = CGFloat.pi / 2
+    mapContainerNode.anchorPoint = CGPoint.zero
     hudNode.size = CGSize(width: screenPixelSize.height, height: hudSize.width)
     hudNode.layoutForPortrait()
     for c in game.spriteSystem.components {
@@ -138,10 +141,6 @@ class MapScene: OrientationAwareAbstractScene {
 
   // MARK: input
 
-  func gridSprite(at position: int2) -> PWRSpriteNode? {
-    return gridNodes[CGPoint(position)]
-  }
-
   func visualPoint(forPosition position: int2) -> CGPoint {
     return CGPoint(position) * self.tileSize.point
   }
@@ -150,7 +149,7 @@ class MapScene: OrientationAwareAbstractScene {
     if isLandscape {
       return visualPoint(forPosition: position) + tileSize.point / 2
     } else {
-      return visualPoint(forPosition: position) + CGPoint(x: tileSize.width * 0.5, y: tileSize.height * -0.5)
+      return visualPoint(forPosition: position) + tileSize.point / 2
     }
   }
 
@@ -215,10 +214,8 @@ class MapScene: OrientationAwareAbstractScene {
     }
     _hideTargetingLaser()
     for (i, p) in game.getTargetingLaserPoints(to: gridPos).enumerated() {
-      if let s = gridSprite(at: p) {
-        hoverIndicatorSprites[i].position = s.position
-        hoverIndicatorSprites[i].isHidden = false
-      }
+      hoverIndicatorSprites[i].position = self.spritePoint(forPosition: p)
+      hoverIndicatorSprites[i].isHidden = false
     }
     _lastTargetedPoint = gridPos
   }

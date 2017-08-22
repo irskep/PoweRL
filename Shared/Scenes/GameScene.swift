@@ -29,6 +29,7 @@ class GameScene: PixelatedScene {
       let startNode = self.childNode(withName: "//start") as? SKLabelNode,
       let helpNode = self.childNode(withName: "//help") as? SKLabelNode
       else { return }
+    let point = self.convert(point, to: children.first!)
     if startNode.frame.contains(point) {
       self.motionAccept()
       return
@@ -44,7 +45,7 @@ class GameScene: PixelatedScene {
     self.label(named: "logo1")?.text = gameName
     self.label(named: "logo2")?.text = gameName
 
-    (self.childNode(withName: "//robot") as? SKSpriteNode)?.texture = Assets16.get(.player)
+    (self.childNode(withName: "//robot") as? SKSpriteNode)?.texture = Assets16.get(.player).pixelized()
   }
 
   override func layoutForPortrait() {
