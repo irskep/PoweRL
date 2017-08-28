@@ -59,6 +59,13 @@ class MapScene: OrientationAwareAbstractScene {
   override func setup() {
     if game == nil { game = GameModel(difficulty: 1, player: nil, score: 0) }
     super.setup()
+//    if let filter = CIFilter(name: "CIColorMonochrome") {
+//      // colorblind test
+//      self.shouldEnableEffects = true
+//      filter.setDefaults()
+//      filter.setValue(CIColor(color: SKColor.white), forKey: kCIInputColorKey)
+//      self.filter = filter
+//    }
     scaleMode = .aspectFit
 
     self.anchorPoint = CGPoint.zero
@@ -272,15 +279,17 @@ class MapScene: OrientationAwareAbstractScene {
     }
   }
 
-  func evaluatePossibleTransitions() {  // aka 'turnDidEnd'
+  func evaluatePossibleTransitions() -> Bool {  // aka 'turnDidEnd'
     _hideTargetingLaser()
 
     if let playerPower = game.player.powerC?.power, playerPower <= 0 {
       self.isDead = true
       self.gameOver(reason: .power)
+      return true
     } else if let playerHealth = game.player.healthC?.health, playerHealth <= 0 {
       self.isDead = true
       self.gameOver(reason: .health)
+      return true
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
       self.isDead = true
       game.end()
@@ -291,13 +300,15 @@ class MapScene: OrientationAwareAbstractScene {
       } else {
         self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
       }
+      return true
     }
+    return false
   }
 
   func gameOver(reason: DeathReason) {
     MusicPlayer.shared.player?.stop()
     game.end()
-    self.view?.presentScene(DeathScene.create(reason: reason), transition: SKTransition.crossFade(withDuration: 0.5))
+    self.view?.presentScene(DeathScene.create(reason: reason), transition: SKTransition.crossFade(withDuration: 3))
   }
 
   // MARK: utils

@@ -160,6 +160,9 @@
 		AAD6BA321F2D777A00D0900E /* down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6BA2E1F2D777A00D0900E /* down.mp3 */; };
 		AAD6BA331F2D777A00D0900E /* down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6BA2E1F2D777A00D0900E /* down.mp3 */; };
 		AAD6BA341F2D777A00D0900E /* down.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAD6BA2E1F2D777A00D0900E /* down.mp3 */; };
+		AADA92D41F4CE052006A4C41 /* AI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADA92D31F4CE052006A4C41 /* AI.swift */; };
+		AADA92D51F4CE052006A4C41 /* AI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADA92D31F4CE052006A4C41 /* AI.swift */; };
+		AADA92D61F4CE052006A4C41 /* AI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AADA92D31F4CE052006A4C41 /* AI.swift */; };
 		AAE9193F1F2F893C009840C5 /* Mac.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAE9193E1F2F893C009840C5 /* Mac.xcassets */; };
 		AAE919411F2F899D009840C5 /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAE919401F2F899D009840C5 /* iOS.xcassets */; };
 		AAE919471F3174EA009840C5 /* Coolville.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAE919461F3174EA009840C5 /* Coolville.ttf */; };
@@ -242,6 +245,7 @@
 		AAD6BA081F2D741000D0900E /* up1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up1.mp3; sourceTree = "<group>"; };
 		AAD6BA2D1F2D777A00D0900E /* up2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up2.mp3; sourceTree = "<group>"; };
 		AAD6BA2E1F2D777A00D0900E /* down.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = down.mp3; sourceTree = "<group>"; };
+		AADA92D31F4CE052006A4C41 /* AI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AI.swift; sourceTree = "<group>"; };
 		AAE9193E1F2F893C009840C5 /* Mac.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Mac.xcassets; sourceTree = "<group>"; };
 		AAE919401F2F899D009840C5 /* iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = iOS.xcassets; sourceTree = "<group>"; };
 		AAE919461F3174EA009840C5 /* Coolville.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Coolville.ttf; sourceTree = "<group>"; };
@@ -326,6 +330,7 @@
 				AAA323DD1F381A570039D299 /* Swift+utils.swift */,
 				AAA323E11F381A790039D299 /* Nodes.swift */,
 				AA75EE8C1F40E67100B9CA0F /* MusicPlayer.swift */,
+				AADA92D31F4CE052006A4C41 /* AI.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -677,6 +682,7 @@
 				AA945B791F2D3D95006C6DEA /* Bresenham.swift in Sources */,
 				AA7332521F2CF511006ECA4D /* Entities.swift in Sources */,
 				AAD6B9BC1F2D482100D0900E /* PowerComponent.swift in Sources */,
+				AADA92D41F4CE052006A4C41 /* AI.swift in Sources */,
 				AA945B6D1F2D2840006C6DEA /* DeathScene.swift in Sources */,
 				AA945B6B1F2D1A8A006C6DEA /* Components.swift in Sources */,
 				AAC0F8871F1AD30900D55037 /* AppDelegate.swift in Sources */,
@@ -706,6 +712,7 @@
 				AA945B7A1F2D3D95006C6DEA /* Bresenham.swift in Sources */,
 				AA7332511F2CF511006ECA4D /* Entities.swift in Sources */,
 				AAD6B9BD1F2D482100D0900E /* PowerComponent.swift in Sources */,
+				AADA92D51F4CE052006A4C41 /* AI.swift in Sources */,
 				AA945B6E1F2D2840006C6DEA /* DeathScene.swift in Sources */,
 				AA945B6A1F2D1A8A006C6DEA /* Components.swift in Sources */,
 				AAC0F8981F1AD30900D55037 /* AppDelegate.swift in Sources */,
@@ -735,6 +742,7 @@
 				AA7332541F2D0BDC006ECA4D /* Components.swift in Sources */,
 				AA945B6F1F2D2840006C6DEA /* DeathScene.swift in Sources */,
 				AAD6B9BE1F2D482100D0900E /* PowerComponent.swift in Sources */,
+				AADA92D61F4CE052006A4C41 /* AI.swift in Sources */,
 				AA73324C1F2CF4E1006ECA4D /* Entities.swift in Sources */,
 				AA7332481F2C3613006ECA4D /* Geom.swift in Sources */,
 				AAD6B9C21F2D551700D0900E /* Rules.swift in Sources */,

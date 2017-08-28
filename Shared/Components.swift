@@ -108,7 +108,7 @@ class SpriteComponent: GKComponent {
   func nudge(_ direction: int2, completion: OptionalCallback) {
     let vector = CGPoint(
       x: CGFloat(direction.x) * sprite.frame.size.width / 4,
-      y: -1 * CGFloat(direction.y) * sprite.frame.size.height / 4)
+      y: CGFloat(direction.y) * sprite.frame.size.height / 4)
     let actionOut = SKAction.move(to: sprite.position + vector, duration: MOVE_TIME / 2)
     let actionIn = SKAction.move(to: sprite.position, duration: MOVE_TIME / 2)
     sprite.run(SKAction.sequence([actionOut, actionIn]), completion: { completion?() })

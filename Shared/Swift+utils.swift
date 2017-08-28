@@ -133,6 +133,15 @@ extension SKSpriteNode {
     self.anchorPoint = CGPoint(x: x, y: y)
     return self
   }
+
+  func nudge(_ direction: int2, amt: CGFloat = 0.5, t: TimeInterval = MOVE_TIME) -> SKAction {
+    let vector = CGPoint(
+      x: CGFloat(direction.x) * frame.size.width * amt,
+      y: CGFloat(direction.y) * frame.size.height * amt)
+    let actionOut = SKAction.move(to: position + vector, duration: t / 2)
+    let actionIn = SKAction.move(to: position, duration: t / 2)
+    return SKAction.sequence([actionOut, actionIn])
+  }
 }
 
 extension int2 {
