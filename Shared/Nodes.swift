@@ -63,7 +63,7 @@ class HUDNode: SKSpriteNode {
   lazy var levelNumberLabel: PixelyLabelNode = { return PixelyLabelNode(view: view) }()
 
   lazy var scoreIcon: SKSpriteNode = { return SKSpriteNode(imageNamed: "score").pixelized().withZ(1).withAnchor(0, 1) }()
-  lazy var scoreLabel: PixelyLabelNode = { return PixelyLabelNode(view: view) }()
+  lazy var scoreLabel: PixelyLabelNode = { return PixelyLabelNode(view: view).withAnchor(0, 1) }()
 
   lazy var healthIcon: SKSpriteNode = {
     return SKSpriteNode(imageNamed: "icon-health").pixelized().withZ(1).withAnchor(0, 1)
@@ -137,8 +137,7 @@ class HUDNode: SKSpriteNode {
 
     y += 2
     scoreIcon.position = CGPoint(x: 9, y: _y(y) - 1)
-    scoreLabel.position = CGPoint(x: scoreIcon.position.x + 20, y: _y(y))
-    scoreLabel.anchorPoint = CGPoint(x: 0, y: 1)
+    scoreLabel.position = CGPoint(x: scoreIcon.position.x + 20, y: scoreIcon.position.y + 1)
 
     y += 2
     healthIcon.position = CGPoint(x: 0, y: _y(y))
@@ -165,14 +164,17 @@ class HUDNode: SKSpriteNode {
   func layoutForPortrait() {
     levelNumberLabel.position = CGPoint(x: 1, y: 1)
     levelNumberLabel.anchorPoint = CGPoint(x: 0, y: 0)
+    
+    ammoIcon.position = CGPoint(x: 43, y: self.height - 2)
+    ammoLabel.position = CGPoint(x: 51, y: self.height - 3)
 
     healthIcon.position = CGPoint(x: 0, y: self.height - 2)
     healthMeterNode.position = CGPoint(x: 9, y: self.height - 2)
     powerIcon.position = CGPoint(x: 0, y: self.height - 11)
     powerMeterNode.position = CGPoint(x: 9, y: self.height - 11)
-
-    ammoIcon.position = CGPoint(x: 0, y: self.height - 20)
-    ammoLabel.position = CGPoint(x: 8, y: self.height - 21)
+    
+    scoreIcon.position = CGPoint(x: 1, y: self.height - 24)
+    scoreLabel.position = CGPoint(x: scoreIcon.position.x + 20, y: scoreIcon.position.y + 1)
 
     musicIcon.position = CGPoint(x: width - 9, y: 1)
 
