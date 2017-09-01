@@ -19,6 +19,8 @@ class GameViewController: NSViewController {
     let skView = self.view as! SKView
     skView.presentScene(GameScene.create())
 //    skView.presentScene(MapScene.create())
+//    skView.presentScene(DeathScene.create(reason: .health, score: 99))
+//    skView.presentScene(WinScene.create(score: 99))
 
     skView.ignoresSiblingOrder = true
   }

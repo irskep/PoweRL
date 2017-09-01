@@ -31,10 +31,18 @@ enum DeathReason: String {
 }
 class DeathScene: PixelatedScene {
   var deathReason: DeathReason = .health
-  class func create(reason: DeathReason) -> DeathScene {
+  class func create(reason: DeathReason, score: Int) -> DeathScene {
     let scene = DeathScene(fileNamed: "DeathScene")!
     scene.deathReason = reason
+    scene.score = score
     return scene
+  }
+
+  var score: Int {
+    get { return 0 }
+    set {
+      (childNode(withName: "//score") as? SKLabelNode)?.text = "Score: \(newValue)"
+    }
   }
 
   override func motionAccept() {

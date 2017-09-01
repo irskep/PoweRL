@@ -296,7 +296,7 @@ class MapScene: OrientationAwareAbstractScene {
 
       if game.difficulty > 7 {
         MusicPlayer.shared.player?.stop()
-        self.view?.presentScene(WinScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
+        self.view?.presentScene(WinScene.create(score: game.score), transition: SKTransition.crossFade(withDuration: 0.5))
       } else {
         self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
       }
@@ -308,7 +308,7 @@ class MapScene: OrientationAwareAbstractScene {
   func gameOver(reason: DeathReason) {
     MusicPlayer.shared.player?.stop()
     game.end()
-    self.view?.presentScene(DeathScene.create(reason: reason), transition: SKTransition.crossFade(withDuration: 3))
+    self.view?.presentScene(DeathScene.create(reason: reason, score: game.score), transition: SKTransition.crossFade(withDuration: 3))
   }
 
   // MARK: utils

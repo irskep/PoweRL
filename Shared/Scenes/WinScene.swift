@@ -9,7 +9,18 @@
 import SpriteKit
 
 class WinScene: PixelatedScene {
-  class func create() -> WinScene { return WinScene(fileNamed: "WinScene")! }
+  class func create(score: Int) -> WinScene {
+    let scene = WinScene(fileNamed: "WinScene")!
+    scene.score = score
+    return scene
+  }
+
+  var score: Int {
+    get { return 0 }
+    set {
+      (childNode(withName: "//score") as? SKLabelNode)?.text = "Score: \(newValue)"
+    }
+  }
   
   override func motionAccept() {
     self.view?.presentScene(GameScene.create(), transition: SKTransition.crossFade(withDuration: 0.5))
