@@ -39,10 +39,10 @@ class MapScene: OrientationAwareAbstractScene {
   lazy var mapContainerNode: SKSpriteNode = {
     let mapContainerNode = SKSpriteNode(color: SKColor.black, size: self.mapPixelSize)
     mapContainerNode.anchorPoint = CGPoint.zero
-    let mapFrame = SKSpriteNode(color: SKColor.red, size: mapContainerNode.size + CGSize(width: 2, height: 2))
-    mapFrame.anchorPoint = CGPoint.zero
-    mapContainerNode.addChild(mapFrame)
-    mapFrame.position = CGPoint(x: -1, y: -1)
+//    let mapFrame = SKSpriteNode(color: SKColor.red, size: mapContainerNode.size + CGSize(width: 2, height: 2))
+//    mapFrame.anchorPoint = CGPoint.zero
+//    mapContainerNode.addChild(mapFrame)
+//    mapFrame.position = CGPoint(x: -1, y: -1)
     return mapContainerNode
   }()
 

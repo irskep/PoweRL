@@ -1,5 +1,8 @@
 .PHONY: deploy
 
+status:
+	butler status irskep/powerq
+
 archive:
 	xcodebuild archive -project LD39.xcodeproj -scheme macOS -archivePath build/Power-Q.xcarchive
 
