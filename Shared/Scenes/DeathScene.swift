@@ -42,6 +42,7 @@ class DeathScene: PixelatedScene {
     get { return 0 }
     set {
       (childNode(withName: "//score") as? SKLabelNode)?.text = "Score: \(newValue)"
+      HighScoreModel.shared.addScore(newValue)
     }
   }
 
@@ -62,6 +63,7 @@ class DeathScene: PixelatedScene {
   override func layoutForPortrait() {
     super.layoutForPortrait()
     childNode(withName: "//text")?.setScale(0.5)
+    childNode(withName: "//score")?.setScale(0.5)
   }
 }
 

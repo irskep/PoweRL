@@ -25,8 +25,8 @@ class HighScoreModel {
     func addScore(_ i: Int) -> Bool {
         let scores = self.scores
         guard i > (scores.last ?? 0) else { return false }
-        let newScores = (scores + [i]).sorted().prefix(upTo: 100)
-        UserDefaults.standard.set(newScores, forKey: k)
+        let newScores = (scores + [i]).sorted().reversed().prefix(100)
+        UserDefaults.standard.set(newScores.map({ NSNumber(value: $0) }), forKey: k)
         return true
     }
 }

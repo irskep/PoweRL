@@ -46,6 +46,12 @@ class GameScene: PixelatedScene {
     self.label(named: "logo2")?.text = gameName
 
     (self.childNode(withName: "//robot") as? SKSpriteNode)?.texture = Assets16.get(.player)
+    if HighScoreModel.shared.scores.count > 0 {
+      let highScore = HighScoreModel.shared.scores.first ?? 0
+      (self.childNode(withName: "//score") as? SKLabelNode)?.text = "High Score: \(highScore)"
+    } else {
+      (self.childNode(withName: "//score") as? SKLabelNode)?.text = ""
+    }
   }
 
   override func layoutForPortrait() {
@@ -69,6 +75,11 @@ class GameScene: PixelatedScene {
     if let start = self.childNode(withName: "//start") {
       start.position = CGPoint(x: 0, y: start.position.y)
       start.setScale(0.5)
+
+      if let score = self.childNode(withName: "//score") as? SKLabelNode {
+        score.position = start.position + CGPoint(x: 0, y: -40)
+        score.setScale(0.5)
+      }
     }
   }
 }
