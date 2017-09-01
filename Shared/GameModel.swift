@@ -273,10 +273,14 @@ extension GameModel {
       movePlayer(toGridNode: nextGridNode, completion: finish)
     } else {
       let amt = player.component(ofType: BumpDamageComponent.self)?.value ?? 0
+      var isEnemyDead = false
       for e in entitiesToDamage {
         self.damageEnemy(entity: e, amt: amt)
+        if e.healthC?.isDead == true {
+          isEnemyDead = true
+        }
       }
-      self.bump(delta, entity: player, completion: {
+      self.bump(delta, entity: player, sound: isEnemyDead ? "kill" : "bump", completion: {
         self.executeTurn(completion: finish)
       })
     }
@@ -309,11 +313,11 @@ extension GameModel {
     }
   }
 
-  func bump(_ delta: int2, entity: GKEntity? = nil, completion: OptionalCallback) {
+  func bump(_ delta: int2, entity: GKEntity? = nil, sound: String = "bump", completion: OptionalCallback) {
     let entity: GKEntity = entity ?? self.player
     isAcceptingInput = false
     if entity == self.player {
-      Player.shared.get("bump", useCache: false).play()
+      Player.shared.get(sound, useCache: false).play()
     }
     entity.component(ofType: SpriteComponent.self)?.nudge(delta) {
       self.isAcceptingInput = true
