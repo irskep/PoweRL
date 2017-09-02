@@ -19,7 +19,7 @@ class WinScene: PixelatedScene {
     get { return 0 }
     set {
       (childNode(withName: "//score") as? SKLabelNode)?.text = "Score: \(newValue)"
-      HighScoreModel.shared.addScore(newValue)
+      _ = HighScoreModel.shared.addScore(newValue)
     }
   }
   
