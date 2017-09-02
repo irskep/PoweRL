@@ -96,6 +96,12 @@
 		AAC0F8B31F1AD30900D55037 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F87D1F1AD30900D55037 /* GameScene.swift */; };
 		AAC0F8B41F1AD30900D55037 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F87D1F1AD30900D55037 /* GameScene.swift */; };
 		AAC0F8B51F1AD30900D55037 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0F87D1F1AD30900D55037 /* GameScene.swift */; };
+		AAC40BAC1F5B0EA9004F4ABD /* loading.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAC40BAA1F5B0EA9004F4ABD /* loading.mp3 */; };
+		AAC40BAD1F5B0EA9004F4ABD /* slow-travel.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAC40BAB1F5B0EA9004F4ABD /* slow-travel.mp3 */; };
+		AAC40BAE1F5B118C004F4ABD /* slow-travel.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAC40BAB1F5B0EA9004F4ABD /* slow-travel.mp3 */; };
+		AAC40BAF1F5B118D004F4ABD /* slow-travel.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAC40BAB1F5B0EA9004F4ABD /* slow-travel.mp3 */; };
+		AAC40BB01F5B1190004F4ABD /* loading.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAC40BAA1F5B0EA9004F4ABD /* loading.mp3 */; };
+		AAC40BB11F5B1190004F4ABD /* loading.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AAC40BAA1F5B0EA9004F4ABD /* loading.mp3 */; };
 		AAD6B9BC1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
 		AAD6B9BD1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
 		AAD6B9BE1F2D482100D0900E /* PowerComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */; };
@@ -206,6 +212,8 @@
 		AAC0F8A71F1AD30900D55037 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		AAC0F8AA1F1AD30900D55037 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AAC0F8AC1F1AD30900D55037 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AAC40BAA1F5B0EA9004F4ABD /* loading.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = loading.mp3; path = "../../../../../Desktop/Power-Q assets/loading.mp3"; sourceTree = "<group>"; };
+		AAC40BAB1F5B0EA9004F4ABD /* slow-travel.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "slow-travel.mp3"; path = "../../../../../Desktop/Power-Q assets/slow-travel.mp3"; sourceTree = "<group>"; };
 		AAD6B9BB1F2D482100D0900E /* PowerComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerComponent.swift; sourceTree = "<group>"; };
 		AAD6B9BF1F2D551700D0900E /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rules.swift; sourceTree = "<group>"; };
 		AAD6B9C31F2D5E5E00D0900E /* UIColor+compat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+compat.swift"; sourceTree = "<group>"; };
@@ -353,6 +361,8 @@
 		AAD6B9FB1F2D741000D0900E /* Music */ = {
 			isa = PBXGroup;
 			children = (
+				AAC40BAA1F5B0EA9004F4ABD /* loading.mp3 */,
+				AAC40BAB1F5B0EA9004F4ABD /* slow-travel.mp3 */,
 				AAD6B9FC1F2D741000D0900E /* 1.mp3 */,
 			);
 			path = Music;
@@ -527,8 +537,10 @@
 				AAD6BA241F2D741000D0900E /* select2.mp3 in Resources */,
 				AA9449EF1F2E9B86003E7315 /* Assets.xcassets in Resources */,
 				AAD6BA211F2D741000D0900E /* select.mp3 in Resources */,
+				AAC40BAD1F5B0EA9004F4ABD /* slow-travel.mp3 in Resources */,
 				AAD6BA0F1F2D741000D0900E /* bump.mp3 in Resources */,
 				AA75EE911F4123EE00B9CA0F /* HelpScene.sks in Resources */,
+				AAC40BAC1F5B0EA9004F4ABD /* loading.mp3 in Resources */,
 				AAD6BA151F2D741000D0900E /* gameover.mp3 in Resources */,
 				AAD6BA0C1F2D741000D0900E /* bounce.mp3 in Resources */,
 				AAD6BA1E1F2D741000D0900E /* hit3.mp3 in Resources */,
@@ -556,6 +568,7 @@
 				AAD6BA331F2D777A00D0900E /* down.mp3 in Resources */,
 				AAE919481F3174EA009840C5 /* Coolville.ttf in Resources */,
 				AAD6BA0D1F2D741000D0900E /* bounce.mp3 in Resources */,
+				AAC40BAE1F5B118C004F4ABD /* slow-travel.mp3 in Resources */,
 				AAD6BA191F2D741000D0900E /* hit1.mp3 in Resources */,
 				AAD6BA221F2D741000D0900E /* select.mp3 in Resources */,
 				AAD6BA131F2D741000D0900E /* drain.mp3 in Resources */,
@@ -565,6 +578,7 @@
 				AA75EE921F4123EE00B9CA0F /* HelpScene.sks in Resources */,
 				AA9449EC1F2E7DBC003E7315 /* win.mp3 in Resources */,
 				AAD6BA281F2D741000D0900E /* toggle.mp3 in Resources */,
+				AAC40BB01F5B1190004F4ABD /* loading.mp3 in Resources */,
 				AAC0F8AE1F1AD30900D55037 /* Actions.sks in Resources */,
 				AAD6BA2B1F2D741000D0900E /* up1.mp3 in Resources */,
 				AA7332431F2C2712006ECA4D /* MapScene.sks in Resources */,
@@ -597,6 +611,8 @@
 				AAE919491F3174EA009840C5 /* Coolville.ttf in Resources */,
 				AAD6BA311F2D777A00D0900E /* up2.mp3 in Resources */,
 				AAF75A2F1F591824001DEA56 /* kill.mp3 in Resources */,
+				AAC40BB11F5B1190004F4ABD /* loading.mp3 in Resources */,
+				AAC40BAF1F5B118D004F4ABD /* slow-travel.mp3 in Resources */,
 				AA9449ED1F2E7DBC003E7315 /* win.mp3 in Resources */,
 				AAD6BA291F2D741000D0900E /* toggle.mp3 in Resources */,
 				AAC0F8AF1F1AD30900D55037 /* Actions.sks in Resources */,

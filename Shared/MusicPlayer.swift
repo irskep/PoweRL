@@ -28,7 +28,16 @@ class MusicPlayer {
   }
 
   func prepare(track: String?) {
+    if let currentTrack = currentTrack {
+      if currentTrack == track { return }
+      if currentTrack == "loading" {
+        self.player?.setVolume(0, fadeDuration: 0)
+      } else {
+        self.player?.setVolume(0, fadeDuration: 1)
+      }
+    }
     currentTrack = track
+    self.player?.currentTime = 0
   }
 
   func getPlayer(forTrack track: String) -> AVAudioPlayer? {
@@ -48,6 +57,7 @@ class MusicPlayer {
   func play() {
     guard let currentTrack = currentTrack, UserDefaults.pwr_isMusicEnabled else { return }
     getPlayer(forTrack: currentTrack)?.play()
+    getPlayer(forTrack: currentTrack)?.volume = 0.5
   }
 
   func pause() {

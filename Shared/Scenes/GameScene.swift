@@ -41,6 +41,11 @@ class GameScene: PixelatedScene {
   override func setup() {
     super.setup()
 
+    if UserDefaults.pwr_isMusicEnabled {
+      MusicPlayer.shared.prepare(track: "loading")
+      MusicPlayer.shared.play()
+    }
+
     let gameName = "Power-Q"
     self.label(named: "logo1")?.text = gameName
     self.label(named: "logo2")?.text = gameName
