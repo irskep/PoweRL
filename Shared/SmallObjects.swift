@@ -16,6 +16,7 @@ struct MobSpec {
   let health: CGFloat
   let isSlow: Bool
   let pathfinds: Bool
+  let minDifficulty: Int
   let moves: [int2]
 }
 extension MobSpec {
@@ -26,13 +27,14 @@ extension MobSpec {
       let health = dict["health"] as? CGFloat,
       let isSlow = dict["isSlow"] as? Bool,
       let pathfinds = dict["pathfinds"] as? Bool,
+      let minDifficulty = dict["minDifficulty"] as? Int,
       let movesList = dict["moves"] as? [[String: Any]]
       else {
         return nil
     }
     let moves = movesList.flatMap({ int2(dict: $0) })
     guard moves.count == movesList.count else { return nil }
-    self.init(char: char, health: health, isSlow: isSlow, pathfinds: pathfinds, moves: moves)
+    self.init(char: char, health: health, isSlow: isSlow, pathfinds: pathfinds, minDifficulty: minDifficulty, moves: moves)
   }
 
   func toDict() -> [String: Any] {
@@ -41,6 +43,7 @@ extension MobSpec {
       "health": health,
       "isSlow": isSlow,
       "pathfinds": pathfinds,
+      "minDifficulty": minDifficulty,
       "moves": moves.map({ $0.toDict() }),
     ]
   }

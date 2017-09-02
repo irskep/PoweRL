@@ -136,7 +136,8 @@ class GameModel {
   func start(scene: MapScene) {
     self.scene = scene
     self.reset()
-    MapGenerator.generate(scene: scene, game: self, playerTemplate: playerTemplate)
+    let mapState = MapGenerator.generate(difficulty: difficulty, size: self.mapSize, playerTemplate: playerTemplate, random: self.random)
+    mapState.apply(toGame: self)
     isAcceptingInput = true
   }
 

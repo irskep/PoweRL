@@ -39,6 +39,14 @@ class GridSystem: GKComponentSystem<GridNodeComponent> {
   }
 }
 
+class InitialGridPositionComponent: GKComponent {
+  var position: int2?
+  convenience init(position: int2) {
+    self.init()
+    self.position = position
+  }
+}
+
 class GridNodeComponent: GKComponent {
   private var _gridNode: GridNode?
   var gridNode: GridNode? {
@@ -181,19 +189,21 @@ class HealthComponent: GKComponent {
     health = max(0, health - amount)
 
     if self.entity?.component(ofType: PlayerComponent.self) != nil { return }
+
     if let sprite = self.entity?.sprite as? SKLabelNode {
       sprite.colorBlendFactor = 1 - getFractionRemaining()
     } else if let sprite = self.entity?.sprite as? SKSpriteNode {
       sprite.colorBlendFactor = 1 - getFractionRemaining()
+
+      if let spriteTypeC = self.entity?.component(ofType: SpriteTypeComponent.self) {
+        spriteTypeC.colorBlendFactor = sprite.colorBlendFactor
+      }
     }
   }
 
   func heal(_ amount: CGFloat) {
     health = min(maxHealth, health + amount)
-
-    if let sprite = self.entity?.sprite as? SKLabelNode {
-      sprite.colorBlendFactor = 1 - getFractionRemaining()
-    }
+    // this never happens for enemies so don't worry about updating visuals (we never change the player's color, only the player heals)
   }
 }
 
@@ -210,6 +220,14 @@ class TakesUpSpaceComponent: GKComponent { }
 // MARK: special player stuff
 
 class PlayerComponent: GKComponent { }
+
+// MARK: special exit stuff
+
+class ExitComponent: GKComponent { }
+
+// MARK: special wall stuff
+
+class WallComponent: GKComponent { }
 
 // MARK: ammo
 
@@ -488,5 +506,39 @@ class MobSpecComponent: GKComponent {
 
   func toDict() -> [String: Any] {
     return spec.toDict()
+  }
+}
+
+// Generic sprite type
+
+class SpriteTypeComponent: GKComponent {
+  let asset: _Assets16
+  let z: CGFloat
+  let shouldAnimateAway: Bool
+  var colorBlendFactor: CGFloat
+  required init(asset: _Assets16, z: CGFloat, shouldAnimateAway: Bool = true, colorBlendFactor: CGFloat = 0) {
+    self.asset = asset
+    self.z = z
+    self.shouldAnimateAway = shouldAnimateAway
+    self.colorBlendFactor = colorBlendFactor
+    super.init()
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError()
+  }
+
+  convenience init?(dict: [String: Any]) {
+    guard
+      let z = dict["z"] as? CGFloat,
+      let colorBlendFactor = dict["colorBlendFactor"] as? CGFloat,
+      let shouldAnimateAway = dict["shouldAnimateAway"] as? Bool,
+      let assetString = dict["asset"] as? String,
+      let asset = _Assets16(rawValue: assetString) else { return nil }
+    self.init(asset: asset, z: z, shouldAnimateAway: shouldAnimateAway, colorBlendFactor: colorBlendFactor)
+  }
+
+  func toDict() -> [String: Any] {
+    return ["asset": asset.rawValue, "z": z, "shouldAnimateAway": shouldAnimateAway, "colorBlendFactor": colorBlendFactor]
   }
 }

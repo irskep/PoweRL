@@ -9,17 +9,82 @@
 import SpriteKit
 import GameplayKit
 
+let mobSpecs: [MobSpec] = [
+  MobSpec(char: .mobButterfly, health: 40, isSlow: false, pathfinds: false, minDifficulty: 0, moves: [
+    int2(-1, -1),
+    int2(1, 1),
+    int2(-1, 1),
+    int2(1, -1),
+    ]),
+  MobSpec(char: .mobTurtle1, health: 40, isSlow: true, pathfinds: true, minDifficulty: 0, moves: [
+    int2(-1, 0),
+    int2(1, 0),
+    int2(0, 1),
+    int2(0, -1),
+    ]),
+  MobSpec(char: .mobRabbit, health: 40, isSlow: false, pathfinds: false, minDifficulty: 3, moves: [
+    int2(-1, -2),
+    int2(1, -2),
+    int2(-1, 2),
+    int2(1, 2),
+    int2(-2, -1),
+    int2(2, -1),
+    int2(-2, 1),
+    int2(2, 1),
+    ]),
+]
 
-func isEverythingReachable(graph: GKGridGraph<GridNode>, start: GridNode, canMovePast: (GridNode) -> Bool) -> Bool {
-  var unvisitedNodes = Set<GridNode>(graph.nodes as! [GridNode])
-  var stack: Array<GridNode> = [start]
 
-  while let node = stack.popLast() {
-    if !unvisitedNodes.contains(node) { continue }
-    unvisitedNodes.remove(node)
+func make2dArray<T>(cols: Int, rows: Int, val: T) -> Array<Array<T>> {
+  var outer: [[T]] = []
+  for col in 0..<cols {
+    var inner: [T] = []
+    for row in 0..<rows {
+      inner.append(val)
+    }
+    outer.append(inner)
+  }
+  return outer
+}
+extension int2: Hashable {
+  public var hashValue: Int {
+    return CGPoint(x: CGFloat(x), y: CGFloat(y)).hashValue
+  }
+}
+func isEverythingReachable(size: int2, entities: [GKEntity]) -> Bool {
+  var grid = make2dArray(cols: Int(size.x), rows: Int(size.y), val: true)
+  let get: (int2) -> Bool = {
+    if $0.x < 0 || Int($0.x) >= grid.count { return false }
+    if $0.y < 0 || Int($0.y) >= grid[0].count { return false }
+    return grid[Int($0.x)][Int($0.y)]
+  }
 
-    if !canMovePast(node) { continue }
-    for neighbor in node.connectedNodes as! [GridNode] {
+  var maybePlayerPos: int2? = nil
+  for e in entities {
+    if let p = e.component(ofType: InitialGridPositionComponent.self)?.position {
+      if e.component(ofType: WallComponent.self) != nil {
+        grid[Int(p.x)][Int(p.y)] = false
+      }
+
+      if e.component(ofType: PlayerComponent.self) != nil {
+        maybePlayerPos = p
+      }
+    }
+  }
+  guard let playerPos = maybePlayerPos else {
+    return false
+  }
+
+  var unvisitedNodes = Set<int2>()
+  for x in 0..<size.x { for y in 0..<size.y { unvisitedNodes.insert(int2(x: x, y: y)) } }
+  var stack: Array<int2> = [playerPos]
+
+  while let pos = stack.popLast() {
+    if !unvisitedNodes.contains(pos) { continue }
+    unvisitedNodes.remove(pos)
+
+    if !get(pos) { continue }
+    for neighbor in [pos + int2(-1, 0), pos + int2(1, 0), pos + int2(0, -1), pos + int2(0, 1)] {
       stack.append(neighbor)
     }
   }
@@ -28,9 +93,64 @@ func isEverythingReachable(graph: GKGridGraph<GridNode>, start: GridNode, canMov
 }
 
 
+func addSprite(toEntity entity: GKEntity) {
+  if let specC = entity.component(ofType: MobSpecComponent.self) {
+    let sprite = PWRSpriteNode(specC.spec.char).withZ(Z.mob)
+    let spriteC = SpriteComponent(sprite: sprite)
+    sprite.color = SKColor.red
+    spriteC.shouldAnimateAway = true
+    entity.addComponent(spriteC)
+  } else if let spriteTypeC = entity.component(ofType: SpriteTypeComponent.self) {
+    let sprite = PWRSpriteNode(spriteTypeC.asset).withZ(spriteTypeC.z)
+    let c = SpriteComponent(sprite: sprite)
+    c.shouldAnimateAway = spriteTypeC.shouldAnimateAway
+    entity.addComponent(c)
+  }
+}
+
+
+func addGridNode(toEntity entity: GKEntity, inGame game: GameModel) {
+  guard
+    let posC = entity.component(ofType: InitialGridPositionComponent.self),
+    let position = posC.position,
+    let gridNode = game.gridGraph.node(atGridPosition: position)
+    else { return }
+  entity.removeComponent(ofType: InitialGridPositionComponent.self)
+  entity.addComponent(GridNodeComponent(gridNode: gridNode))
+}
+
+
+class MapState {
+  var entities: [GKEntity] = []
+
+  init(entities: [GKEntity]) {
+    self.entities = entities
+  }
+
+  func apply(toGame game: GameModel) {
+    for entity in entities {
+      addSprite(toEntity: entity)
+      addGridNode(toEntity: entity, inGame: game)
+      if entity.component(ofType: WallComponent.self) != nil, let gridNode = entity.gridNode {
+        game.gridGraph.remove([gridNode])
+      }
+
+      game.register(entity: entity)
+      if entity.component(ofType: PlayerComponent.self) != nil {
+        game.player = entity
+      }
+      if entity.component(ofType: ExitComponent.self) != nil {
+        game.exit = entity
+      }
+    }
+  }
+}
+
+
 class MapGenerator {
-  class func generate(scene: MapScene, game: GameModel, n: Int = 0, playerTemplate: GKEntity?) {
-    let area: Int = game.gridGraph.gridWidth * game.gridGraph.gridHeight
+  class func generate(difficulty: Int, size: int2, playerTemplate: GKEntity?, random: GKRandomSource, n: Int = 0) -> MapState {
+    assert(n < 20)
+    let area: Int32 = size.x * size.y
     let getAreaFraction = { (frac: CGFloat) -> Int in return Int(CGFloat(area) * frac) }
     let numBatteries = 2
     let numAmmos = 2
@@ -38,131 +158,106 @@ class MapGenerator {
     // 25% of cells are walls
     let numWalls = getAreaFraction(0.25)
     // 10% + difficulty * 1.5% are power drains
-    let numDrains = getAreaFraction(0.1 + 0.015 * CGFloat(game.difficulty))
+    let numDrains = getAreaFraction(0.1 + 0.015 * CGFloat(difficulty))
 
-    let numEnemies = game.difficulty
+    let numEnemies = difficulty
 
-    var shuffledGridNodes = game.random.arrayByShufflingObjects(in: game.gridGraph.nodes ?? []) as! [GridNode]
+    var shuffledGridPositions: [int2] = []
+    for x in 0..<size.x {
+      for y in 0..<size.y {
+        shuffledGridPositions.append(int2(x: x, y: y))
+      }
+    }
+    shuffledGridPositions = random.arrayByShufflingObjects(in: shuffledGridPositions) as! [int2]
 
-    let getSomeNodes = { (n: Int) -> [GridNode] in
-      let val = Array(shuffledGridNodes[0..<min(shuffledGridNodes.count, n)])
-      shuffledGridNodes = Array(shuffledGridNodes.dropFirst(n))
+    let getSomePositions = { (n: Int) -> [int2] in
+      let val = Array(shuffledGridPositions[0..<min(shuffledGridPositions.count, n)])
+      shuffledGridPositions = Array(shuffledGridPositions.dropFirst(n))
       return val
     }
 
-    let getNodeWithScore = { (n: Int, getScore: (GridNode) -> Int) -> GridNode in
-      var maxScore: Int = getScore(shuffledGridNodes[0])
-      var bestNode = shuffledGridNodes[0]
-      for node in shuffledGridNodes {
+    let getBestPosition = { (n: Int, getScore: (int2) -> Int) -> int2 in
+      var maxScore: Int = getScore(shuffledGridPositions[0])
+      var bestNode = shuffledGridPositions[0]
+      for node in shuffledGridPositions {
         let score = getScore(node)
         if score > maxScore {
           maxScore = score
           bestNode = node
         }
       }
-      shuffledGridNodes = Array(shuffledGridNodes.filter({ $0 != bestNode }))
+      shuffledGridPositions = Array(shuffledGridPositions.filter({ $0 != bestNode }))
       return bestNode
     }
 
-    for wallNode in getSomeNodes(numWalls) {
-      game.gridGraph.remove([wallNode])
+    var allEntities: [GKEntity] = []
+
+    allEntities += getSomePositions(numWalls).map({
       let wall = GKEntity()
-      wall.addComponent(GridNodeComponent(gridNode: wallNode))
-      let sprite = PWRSpriteNode(.bgWall).withZ(Z.wall)
-      wall.addComponent(SpriteComponent(sprite: sprite))
-      game.register(entity: wall)
-    }
+      wall.addComponent(WallComponent())
+      wall.addComponent(InitialGridPositionComponent(position: $0))
+      wall.addComponent(SpriteTypeComponent(asset: .bgWall, z: Z.wall))
+      return wall
+    })
 
-    if game.player != nil { game.player = nil }
-    if game.exit != nil { game.exit = nil }
-    let playerNode = getSomeNodes(1)[0]
-    game.player = GKEntity()
-    let sprite = PWRSpriteNode(.player).withZ(Z.player)
-    sprite.zPosition = Z.player
-    game.player.addComponent(GridNodeComponent(gridNode: playerNode))
-    game.player.addComponent(SpriteComponent(sprite: sprite))
-    game.player.component(ofType: SpriteComponent.self)!.shouldAnimateAway = false
-    game.player.addComponent(TakesUpSpaceComponent())
-    game.player.addComponent(PlayerComponent())
-    game.player.addComponent(BumpDamageComponent(value: 20))
-    game.player.addComponent(PowerComponent(power: playerTemplate?.powerC?.power ?? 100, isBattery: false, maxPower: 100))
-    game.player.addComponent(MassComponent(weight: playerTemplate?.massC?.weight ?? 100))
-    game.player.addComponent(AmmoComponent(value: playerTemplate?.ammoC?.value ?? 0, damage: 40))
-    game.player.addComponent(HealthComponent(health: playerTemplate?.healthC?.health ?? 100, maxHealth: 100))
+    let playerPosition = getSomePositions(1)[0]
+    let player = GKEntity()
+    player.addComponent(SpriteTypeComponent(asset: .player, z: Z.player))
+    player.addComponent(InitialGridPositionComponent(position: playerPosition))
+    player.addComponent(TakesUpSpaceComponent())
+    player.addComponent(PlayerComponent())
+    player.addComponent(BumpDamageComponent(value: 20))
+    player.addComponent(PowerComponent(power: playerTemplate?.powerC?.power ?? 100, isBattery: false, maxPower: 100))
+    player.addComponent(MassComponent(weight: playerTemplate?.massC?.weight ?? 100))
+    player.addComponent(AmmoComponent(value: playerTemplate?.ammoC?.value ?? 0, damage: 40))
+    player.addComponent(HealthComponent(health: playerTemplate?.healthC?.health ?? 100, maxHealth: 100))
+    allEntities += [player]
 
-    game.exit = GKEntity()
-    game.exit.addComponent(GridNodeComponent(gridNode: getNodeWithScore(1, { $0.gridPosition.manhattanDistanceTo(playerNode.gridPosition) })))
-    game.exit.addComponent(SpriteComponent(sprite: PWRSpriteNode(.exit).withZ(Z.pickup)))
+    let exit = GKEntity()
+    exit.addComponent(ExitComponent())
+    exit.addComponent(InitialGridPositionComponent(position: getBestPosition(1, { $0.manhattanDistanceTo(playerPosition) })))
+    exit.addComponent(SpriteTypeComponent(asset: .exit, z: Z.pickup))
+    allEntities += [exit]
 
-
-    if !isEverythingReachable(graph: game.gridGraph, start: game.player.gridNode!, canMovePast: {$0 != game.exit.gridNode}) {
+    if !isEverythingReachable(size: size, entities: allEntities) {
       print("Regenerating map due to reachability issue")
-      game.reset()
-      MapGenerator.generate(scene: scene, game: game, n: n + 1, playerTemplate: playerTemplate)
-      return
+      return MapGenerator.generate(difficulty: difficulty, size: size, playerTemplate: playerTemplate, random: random, n: n + 1)
     }
 
-    for batteryGridNode in getSomeNodes(numBatteries) {
+    allEntities += getSomePositions(numBatteries).map({
       let battery = GKEntity()
-      battery.addComponent(GridNodeComponent(gridNode: game.gridGraph.node(atGridPosition: batteryGridNode.gridPosition)))
-      battery.addComponent(SpriteComponent(sprite: PWRSpriteNode(.powerupBattery).withZ(Z.pickup)))
+      battery.addComponent(InitialGridPositionComponent(position: $0))
+      battery.addComponent(SpriteTypeComponent(asset: .powerupBattery, z: Z.pickup, shouldAnimateAway: false))
       battery.addComponent(PowerComponent(power: 25, isBattery: true))
       battery.addComponent(PickupConsumableComponent())
-      game.register(entity: battery)
-    }
+      return battery
+    })
 
-    let ammoNodes = getSomeNodes(numAmmos)
-    for ammoNode in ammoNodes {
+    allEntities += getSomePositions(numAmmos).map({
       let ammo = GKEntity()
-      let value = game.random.nextInt(upperBound: 2) + 1
-      ammo.addComponent(GridNodeComponent(gridNode: ammoNode))
-      ammo.addComponent(SpriteComponent(sprite: PWRSpriteNode(value == 1 ? .ammo1 : .ammo2).withZ(Z.pickup)))
+      let value = random.nextInt(upperBound: 2) + 1
+      ammo.addComponent(InitialGridPositionComponent(position: $0))
+      ammo.addComponent(SpriteTypeComponent(asset: value == 1 ? .ammo1 : .ammo2, z: Z.pickup))
       ammo.addComponent(PickupConsumableComponent())
       ammo.addComponent(AmmoComponent(value: 2, damage: 40))
-      game.register(entity: ammo)
-    }
+      return ammo
+    })
 
-    let healthNodes = getSomeNodes(numHealthPacks)
-    for healthNode in healthNodes {
+    allEntities += getSomePositions(numHealthPacks).map({
       let health = GKEntity()
-      health.addComponent(GridNodeComponent(gridNode: healthNode))
-      health.addComponent(SpriteComponent(sprite: PWRSpriteNode(.powerupHealth).withZ(Z.pickup)))
+      health.addComponent(InitialGridPositionComponent(position: $0))
+      health.addComponent(SpriteTypeComponent(asset: .powerupHealth, z: Z.pickup))
       health.addComponent(PickupConsumableComponent())
       health.addComponent(HealthComponent(health: 50))
-      game.register(entity: health)
-    }
+      return health
+    })
 
-    var mobSpecs: [MobSpec] = [
-      MobSpec(char: .mobButterfly, health: 40, isSlow: false, pathfinds: false, moves: [
-        int2(-1, -1),
-        int2(1, 1),
-        int2(-1, 1),
-        int2(1, -1),
-      ]),
-      MobSpec(char: .mobTurtle1, health: 40, isSlow: true, pathfinds: true, moves: [
-        int2(-1, 0),
-        int2(1, 0),
-        int2(0, 1),
-        int2(0, -1),
-        ]),
-    ]
-    if game.difficulty > 3 {
-      mobSpecs.append(MobSpec(char: .mobRabbit, health: 40, isSlow: false, pathfinds: false, moves: [
-        int2(-1, -2),
-        int2(1, -2),
-        int2(-1, 2),
-        int2(1, 2),
-        int2(-2, -1),
-        int2(2, -1),
-        int2(-2, 1),
-        int2(2, 1),
-      ]))
-    }
-    for mobNode in getSomeNodes(numEnemies) {
+    allEntities += getSomePositions(numEnemies).map({
       let mob = GKEntity()
-      let spec = mobSpecs[game.random.nextInt(upperBound: mobSpecs.count)]
+      let specsForThisLevel = mobSpecs.filter({ $0.minDifficulty <= difficulty })
+      let spec = specsForThisLevel[random.nextInt(upperBound: specsForThisLevel.count)]
       mob.addComponent(MobSpecComponent(spec: spec))
-      mob.addComponent(GridNodeComponent(gridNode: mobNode))
+      mob.addComponent(InitialGridPositionComponent(position: $0))
       mob.addComponent(HealthComponent(health: spec.health))
       mob.addComponent(BumpDamageComponent(value: 20))
       mob.addComponent(TakesUpSpaceComponent())
@@ -171,7 +266,7 @@ class MapGenerator {
         mob.addComponent(SpeedLimiterComponent(
           bucketSize: 2,
           stepCost: 1,
-          bucketLeft: game.random.nextInt(upperBound: 2) + 1))
+          bucketLeft: random.nextInt(upperBound: 2) + 1))
       } else {
         mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
       }
@@ -181,25 +276,18 @@ class MapGenerator {
       if spec.char == .mobTurtle1 {
         mob.addComponent(TurtleAnimationComponent())
       }
-      let sprite = PWRSpriteNode(spec.char).withZ(Z.mob)
-      let spriteC = SpriteComponent(sprite: sprite)
-      sprite.color = SKColor.red
-      spriteC.shouldAnimateAway = true
-      mob.addComponent(spriteC)
-      game.register(entity: mob)
-    }
+      return mob
+    })
 
-    for drainNode in getSomeNodes(numDrains) {
+    allEntities += getSomePositions(numDrains).map({
       let drain = GKEntity()
-      drain.addComponent(SpriteComponent(sprite: PWRSpriteNode(.bgDrain).withZ(Z.wall)))
+      drain.addComponent(SpriteTypeComponent(asset: .bgDrain, z: Z.wall))
       drain.addComponent(PowerComponent(power: -7, isBattery: true))
-      drain.addComponent(GridNodeComponent(gridNode: drainNode))
+      drain.addComponent(InitialGridPositionComponent(position: $0))
       drain.addComponent(PickupConsumableComponent())
-      game.register(entity: drain)
-    }
-    shuffledGridNodes = Array(shuffledGridNodes.dropFirst(numDrains))
+      return drain
+    })
 
-    game.register(entity: game.player)
-    game.register(entity: game.exit)
+    return MapState(entities: allEntities)
   }
 }
