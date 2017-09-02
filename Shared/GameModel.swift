@@ -56,6 +56,7 @@ class GameModel {
   }()
   var gridGraph: GKGridGraph<GridNode>!
   var player: GKEntity!
+  var playerTemplate: GKEntity?
   var exit: GKEntity!
   var entities = Set<GKEntity>()
   lazy var random: GKRandomSource = { GKRandomSource.sharedRandom() }()
@@ -103,12 +104,11 @@ class GameModel {
 
   init(difficulty: Int, player: GKEntity?, score: Int) {
     self.difficulty = difficulty
-    self.player = player
+    self.playerTemplate = player
     self.score = score
   }
 
   func delete(entity: GKEntity) {
-    print("delete \(entity)")
     for system in componentSystems {
       system.removeComponent(foundIn: entity)
     }
@@ -118,12 +118,31 @@ class GameModel {
   func start(scene: MapScene) {
     self.scene = scene
     self.reset()
-    MapGenerator.generate(scene: scene, game: self)
+    MapGenerator.generate(scene: scene, game: self, playerTemplate: playerTemplate)
     isAcceptingInput = true
   }
 
-  func end() {
-    self.delete(entity: player)
+  func startEndingLevel() {
+    print("starting end of \(self.difficulty)")
+  }
+
+  func finishEndingLevel() {
+    print("finishing end of \(self.difficulty)")
+    for g in gridSystem.components {
+      g.gridNode?.removeAllEntities()
+    }
+    while let e = self.entities.first {
+      self.delete(entity: e)
+    }
+    for sc in spriteSystem.components {
+      sc.sprite = nil
+    }
+    guard let mcn = scene?.mapContainerNode else { return }
+    while !mcn.children.isEmpty {
+      mcn.children.last!.removeFromParent()
+    }
+    self.player = nil
+    self.exit = nil
   }
 
   func reset() {

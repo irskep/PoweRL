@@ -292,14 +292,17 @@ class MapScene: OrientationAwareAbstractScene {
       return true
     } else if game.player.gridNode == game.exit.component(ofType: GridNodeComponent.self)?.gridNode {
       self.isDead = true
-      game.end()
+      game.startEndingLevel()
 
+      let nextScene: SKScene
       if game.difficulty > 7 {
         MusicPlayer.shared.player?.stop()
-        self.view?.presentScene(WinScene.create(score: game.score), transition: SKTransition.crossFade(withDuration: 0.5))
+        nextScene = WinScene.create(score: game.score)
       } else {
-        self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
+        nextScene = MapScene.create(from: self)
+
       }
+      self.view?.presentScene(nextScene, transition: SKTransition.crossFade(withDuration: 0.5))
       return true
     }
     return false
@@ -307,7 +310,7 @@ class MapScene: OrientationAwareAbstractScene {
 
   func gameOver(reason: DeathReason) {
     MusicPlayer.shared.player?.stop()
-    game.end()
+    game.startEndingLevel()
     self.view?.presentScene(DeathScene.create(reason: reason, score: game.score), transition: SKTransition.crossFade(withDuration: 3))
   }
 
@@ -382,6 +385,7 @@ class MapScene: OrientationAwareAbstractScene {
   override func willMove(from view: SKView) {
     view.removeTrackingArea(trackingArea!)
     NotificationCenter.default.removeObserver(self)
+    self.game?.finishEndingLevel()
     super.willMove(from: view)
   }
   #endif

@@ -46,7 +46,7 @@ func isEverythingReachable(graph: GKGridGraph<GridNode>, start: GridNode, canMov
 
 
 class MapGenerator {
-  class func generate(scene: MapScene, game: GameModel, n: Int = 0) {
+  class func generate(scene: MapScene, game: GameModel, n: Int = 0, playerTemplate: GKEntity?) {
     let area: Int = game.gridGraph.gridWidth * game.gridGraph.gridHeight
     let getAreaFraction = { (frac: CGFloat) -> Int in return Int(CGFloat(area) * frac) }
     let numBatteries = 2
@@ -90,24 +90,22 @@ class MapGenerator {
       game.register(entity: wall)
     }
 
+    if game.player != nil { game.player = nil }
+    if game.exit != nil { game.exit = nil }
     let playerNode = getSomeNodes(1)[0]
-    if game.player == nil {
-      game.player = GKEntity()
-      let sprite = PWRSpriteNode(.player).withZ(Z.player)
-      sprite.zPosition = Z.player
-      game.player.addComponent(GridNodeComponent(gridNode: playerNode))
-      game.player.addComponent(SpriteComponent(sprite: sprite))
-      game.player.addComponent(PowerComponent(power: 100, isBattery: false))
-      game.player.addComponent(MassComponent(weight: 100))
-      game.player.component(ofType: SpriteComponent.self)!.shouldAnimateAway = false
-      game.player.addComponent(AmmoComponent(value: 0, damage: 40))
-      game.player.addComponent(TakesUpSpaceComponent())
-      game.player.addComponent(PlayerComponent())
-      game.player.addComponent(HealthComponent(health: 100))
-      game.player.addComponent(BumpDamageComponent(value: 20))
-    } else {
-      game.player.gridNode = playerNode
-    }
+    game.player = GKEntity()
+    let sprite = PWRSpriteNode(.player).withZ(Z.player)
+    sprite.zPosition = Z.player
+    game.player.addComponent(GridNodeComponent(gridNode: playerNode))
+    game.player.addComponent(SpriteComponent(sprite: sprite))
+    game.player.component(ofType: SpriteComponent.self)!.shouldAnimateAway = false
+    game.player.addComponent(TakesUpSpaceComponent())
+    game.player.addComponent(PlayerComponent())
+    game.player.addComponent(BumpDamageComponent(value: 20))
+    game.player.addComponent(PowerComponent(power: playerTemplate?.powerC?.power ?? 100, isBattery: false))
+    game.player.addComponent(MassComponent(weight: playerTemplate?.massC?.weight ?? 100))
+    game.player.addComponent(AmmoComponent(value: playerTemplate?.ammoC?.value ?? 0, damage: 40))
+    game.player.addComponent(HealthComponent(health: playerTemplate?.healthC?.health ?? 100))
 
     game.exit = GKEntity()
     game.exit.addComponent(GridNodeComponent(gridNode: getNodeWithScore(1, { $0.gridPosition.manhattanDistanceTo(playerNode.gridPosition) })))
@@ -117,7 +115,7 @@ class MapGenerator {
     if !isEverythingReachable(graph: game.gridGraph, start: game.player.gridNode!, canMovePast: {$0 != game.exit.gridNode}) {
       print("Regenerating map due to reachability issue")
       game.reset()
-      MapGenerator.generate(scene: scene, game: game, n: n + 1)
+      MapGenerator.generate(scene: scene, game: game, n: n + 1, playerTemplate: playerTemplate)
       return
     }
 

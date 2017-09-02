@@ -74,7 +74,7 @@ class HUDNode: SKSpriteNode {
       color: SKColor.red,
       position: CGPoint(x: 9, y: _y(3)),
       size: CGSize(width: self.width - 10, height: 8),
-      getter: { self.game.player.healthC?.getFractionRemaining() ?? 0 }).withZ(2)
+      getter: { [weak self] in self?.game.player.healthC?.getFractionRemaining() ?? 0 }).withZ(2)
   }()
 
   lazy var powerIcon: SKSpriteNode = {
@@ -86,7 +86,7 @@ class HUDNode: SKSpriteNode {
       color: SKColor.cyan,
       position: CGPoint(x: 9, y: _y(5) - 1),
       size: CGSize(width: self.width - 10, height: 8),
-      getter: { self.game.player.powerC?.getFractionRemaining() ?? 0 }).withZ(2)
+      getter: { [weak self] in self?.game.player.powerC?.getFractionRemaining() ?? 0 }).withZ(2)
   }()
 
   lazy var ammoIcon: SKSpriteNode = {

@@ -20,6 +20,10 @@ class GridNode: GKGridGraphNode {
   func remove(_ entity: GKEntity) {
     entities.remove(entity)
   }
+
+  func removeAllEntities() {
+    self.entities = Set()
+  }
 }
 func +(left: int2, right: int2) -> int2 {
   return int2(left.x + right.x, left.y + right.y)
@@ -79,7 +83,7 @@ class SpriteSystem: GKComponentSystem<SpriteComponent> {
 
   override func removeComponent(_ component: SpriteComponent) {
     if component.shouldAnimateAway {
-      component.animateAway(completion: { component.sprite.removeFromParent() })
+      component.animateAway(completion: { [weak component] in component?.sprite.removeFromParent() })
     } else {
       component.sprite.removeFromParent()
     }
@@ -89,7 +93,7 @@ class SpriteSystem: GKComponentSystem<SpriteComponent> {
 
 class SpriteComponent: GKComponent {
   var shouldAnimateAway = true
-  var sprite: SKNode
+  var sprite: SKNode!
 
   required init(sprite: SKNode) {
     self.sprite = sprite
