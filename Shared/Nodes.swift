@@ -220,6 +220,11 @@ class HUDNode: SKSpriteNode {
   }
 
   func update(instant: Bool) {
+    if frame.size.width > 40 {
+      levelNumberLabel.text = "Level \(self.game.difficulty)"
+    } else {
+      levelNumberLabel.text = "L \(self.game.difficulty)"
+    }
     powerMeterNode.update(instant: instant)
     healthMeterNode.update(instant: instant)
     scoreLabel.text = "\(game.score)"

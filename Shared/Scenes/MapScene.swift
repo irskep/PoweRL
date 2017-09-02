@@ -76,8 +76,6 @@ class MapScene: OrientationAwareAbstractScene {
 
     hoverIndicatorSprites.forEach(mapContainerNode.addChild)
 
-    hudNode.levelNumberLabel.text = "Level \(self.game.difficulty)"
-
     for x in 0..<game.mapSize.x {
       for y in 0..<game.mapSize.y {
         let node = PWRSpriteNode(.bgGround)
