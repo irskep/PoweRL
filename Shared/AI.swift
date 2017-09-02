@@ -29,10 +29,11 @@ func getEntityCommand(game: GameModel, moveComponent: GKComponent) -> EntityComm
   }
   if let currentNode = entity.gridNode, let sprite = entity.sprite {
     if nextNode.gridPosition.x > currentNode.gridPosition.x && sprite.xScale < 0 {
-      // face left
-      sprite.xScale *= -1
+      // ok
     } else if nextNode.gridPosition.x < currentNode.gridPosition.x && sprite.xScale > 0 {
-      // face right
+      // ok
+    } else {
+      // need to flip
       sprite.xScale *= -1
     }
   }
