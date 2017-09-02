@@ -133,10 +133,10 @@ class HealthComponent: GKComponent {
   var maxHealth: CGFloat = 0
   var isDead: Bool { return health <= 0 }
 
-  convenience init(health: CGFloat) {
+  convenience init(health: CGFloat, maxHealth: CGFloat? = nil) {
     self.init()
     self.health = health
-    self.maxHealth = health
+    self.maxHealth = maxHealth ?? health
   }
 
   func getFractionRemaining() -> CGFloat { return health / maxHealth }

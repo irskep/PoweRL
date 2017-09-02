@@ -16,10 +16,10 @@ class PowerComponent: GKComponent {
   var isFull: Bool { return power >= maxPower }
   var neverChanges: Bool = false
 
-  convenience init(power: CGFloat, isBattery: Bool, neverChanges: Bool = false) {
+  convenience init(power: CGFloat, isBattery: Bool, maxPower: CGFloat? = nil, neverChanges: Bool = false) {
     self.init()
     self.power = power
-    self.maxPower = power
+    self.maxPower = maxPower ?? power
     self.isBattery = isBattery
     self.neverChanges = neverChanges
   }

@@ -102,10 +102,10 @@ class MapGenerator {
     game.player.addComponent(TakesUpSpaceComponent())
     game.player.addComponent(PlayerComponent())
     game.player.addComponent(BumpDamageComponent(value: 20))
-    game.player.addComponent(PowerComponent(power: playerTemplate?.powerC?.power ?? 100, isBattery: false))
+    game.player.addComponent(PowerComponent(power: playerTemplate?.powerC?.power ?? 100, isBattery: false, maxPower: 100))
     game.player.addComponent(MassComponent(weight: playerTemplate?.massC?.weight ?? 100))
     game.player.addComponent(AmmoComponent(value: playerTemplate?.ammoC?.value ?? 0, damage: 40))
-    game.player.addComponent(HealthComponent(health: playerTemplate?.healthC?.health ?? 100))
+    game.player.addComponent(HealthComponent(health: playerTemplate?.healthC?.health ?? 100, maxHealth: 100))
 
     game.exit = GKEntity()
     game.exit.addComponent(GridNodeComponent(gridNode: getNodeWithScore(1, { $0.gridPosition.manhattanDistanceTo(playerNode.gridPosition) })))
