@@ -84,7 +84,8 @@ class GameModel {
 
   func getTargetingLaserPoints(to gridPos: int2) -> [int2] {
     guard let startOfLine = player.gridNode?.gridPosition else { return [] }
-    var results: [int2] = []
+
+    var resultsForward: [int2] = []
     for p in bresenham2(CGPoint(startOfLine), CGPoint(gridPos)) {
       if startOfLine == p {
         continue
@@ -93,13 +94,43 @@ class GameModel {
         break
       }
       let node = gridGraph.node(atGridPosition: p)!
-      results.append(p)
+      resultsForward.append(p)
       if !node.entities.filter({ $0.component(ofType: TakesUpSpaceComponent.self) != nil }).isEmpty {
         // Include last point so player can see
         break
       }
     }
-    return results
+
+    // run bresenham backward for a slightly different result, so that the
+    // game is more liberal about finding a path to shoot from A to B.
+    var resultsBackward: [int2] = []
+    for p in bresenham2(CGPoint(gridPos), CGPoint(startOfLine)) {
+      if startOfLine == p {
+        continue
+      }
+      if gridPos == p {
+        resultsBackward.append(p)
+        continue
+      }
+      if gridGraph.node(atGridPosition: p) == nil {
+        resultsBackward = []
+        break
+      }
+      let node = gridGraph.node(atGridPosition: p)!
+      if !node.entities.filter({ $0.component(ofType: TakesUpSpaceComponent.self) != nil }).isEmpty {
+        resultsBackward = []
+        break
+      }
+      resultsBackward.append(p)
+    }
+
+    if resultsForward.count > resultsBackward.count {
+      return resultsForward
+    } else if resultsBackward.count > 0 {
+      return resultsBackward.reversed()
+    } else {
+      return []
+    }
   }
 
   init(difficulty: Int, player: GKEntity?, score: Int) {
