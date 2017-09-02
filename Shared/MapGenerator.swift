@@ -10,23 +10,6 @@ import SpriteKit
 import GameplayKit
 
 
-struct MobSpec {
-  let char: _Assets16
-  let health: CGFloat
-  let isSlow: Bool
-  let pathfinds: Bool
-  let moves: [int2]
-}
-
-struct Z {
-  static let floor: CGFloat = 0
-  static let wall: CGFloat = 100
-  static let pickup: CGFloat = 200
-  static let mob: CGFloat = 300
-  static let player: CGFloat = 4000
-}
-
-
 func isEverythingReachable(graph: GKGridGraph<GridNode>, start: GridNode, canMovePast: (GridNode) -> Bool) -> Bool {
   var unvisitedNodes = Set<GridNode>(graph.nodes as! [GridNode])
   var stack: Array<GridNode> = [start]
@@ -178,6 +161,7 @@ class MapGenerator {
     for mobNode in getSomeNodes(numEnemies) {
       let mob = GKEntity()
       let spec = mobSpecs[game.random.nextInt(upperBound: mobSpecs.count)]
+      mob.addComponent(MobSpecComponent(spec: spec))
       mob.addComponent(GridNodeComponent(gridNode: mobNode))
       mob.addComponent(HealthComponent(health: spec.health))
       mob.addComponent(BumpDamageComponent(value: 20))
@@ -202,7 +186,6 @@ class MapGenerator {
       sprite.color = SKColor.red
       spriteC.shouldAnimateAway = true
       mob.addComponent(spriteC)
-      (mob.sprite as? SKLabelNode)?.color = SKColor.red
       game.register(entity: mob)
     }
 

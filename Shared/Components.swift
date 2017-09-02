@@ -9,26 +9,19 @@
 import SpriteKit
 import GameplayKit
 
-
-class GridNode: GKGridGraphNode {
-  var entities = Set<GKEntity>()
-
-  func add(_ entity: GKEntity) {
-    entities.insert(entity)
-  }
-
-  func remove(_ entity: GKEntity) {
-    entities.remove(entity)
-  }
-
-  func removeAllEntities() {
-    self.entities = Set()
-  }
-}
+// MARK: grid
 func +(left: int2, right: int2) -> int2 {
   return int2(left.x + right.x, left.y + right.y)
 }
-
+extension int2 {
+  init?(dict: [String: Any]) {
+    guard let x = dict["x"] as? Int32, let y = dict["y"] as? Int32 else { return nil }
+    self.init(x, y)
+  }
+  func toDict() -> [String: Any] {
+    return ["x": self.x, "y": self.y]
+  }
+}
 
 class GridSystem: GKComponentSystem<GridNodeComponent> {
   override init() {
@@ -64,6 +57,17 @@ class GridNodeComponent: GKComponent {
     self.gridNode = gridNode
   }
 
+  convenience init?(graph: GKGridGraph<GridNode>, dict: [String: Any]) {
+    guard let intDict = dict["gridPosition"] as? [String: Any], let gridPosition = int2(dict: intDict) else { return nil }
+    self.init()
+    self.gridNode = graph.node(atGridPosition: gridPosition)
+  }
+
+  func toDict() -> [String: Any] {
+    guard let gridNode = gridNode else { return [:] }
+    return ["gridPosition": gridNode.gridPosition.toDict()]
+  }
+
   override func didAddToEntity() {
     guard let entity = entity else { return }
     _gridNode?.add(entity)
@@ -75,10 +79,27 @@ class GridNodeComponent: GKComponent {
   }
 }
 
+// MARK: sprites
 
 class SpriteSystem: GKComponentSystem<SpriteComponent> {
-  override init() {
+  weak var scene: MapScene?
+  required init(scene: MapScene?) {
+    self.scene = scene
     super.init(componentClass: SpriteComponent.self)
+  }
+
+  override func addComponent(_ component: SpriteComponent) {
+    super.addComponent(component)
+    guard let entity = component.entity else { return }
+
+    if let scene = scene,
+      let gridComponent: GridNodeComponent = entity.get(),
+      let gridPosition = gridComponent.gridNode?.gridPosition
+    {
+      component.sprite.position = scene.spritePoint(forPosition: gridPosition)
+      scene.mapContainerNode.addChild(component.sprite)
+      scene.setMapNodeTransform(component.sprite)
+    }
   }
 
   override func removeComponent(_ component: SpriteComponent) {
@@ -119,6 +140,8 @@ class SpriteComponent: GKComponent {
   }
 }
 
+// MARK: mass
+
 class MassComponent: GKComponent {
   var weight: CGFloat = 0
 
@@ -127,6 +150,8 @@ class MassComponent: GKComponent {
     self.weight = weight
   }
 }
+
+// MARK: health
 
 class HealthComponent: GKComponent {
   var health: CGFloat = 0
@@ -137,6 +162,17 @@ class HealthComponent: GKComponent {
     self.init()
     self.health = health
     self.maxHealth = maxHealth ?? health
+  }
+
+  convenience init?(dict: [String: Any]) {
+    guard let health = dict["health"] as? CGFloat, let maxHealth = dict["maxHealth"] as? CGFloat else { return nil }
+    self.init()
+    self.health = health
+    self.maxHealth = maxHealth
+  }
+
+  func toDict() -> [String: Any] {
+    return ["health": health, "maxHealth": maxHealth]
   }
 
   func getFractionRemaining() -> CGFloat { return health / maxHealth }
@@ -161,12 +197,21 @@ class HealthComponent: GKComponent {
   }
 }
 
+// MARK: pickup
+
 class PickupConsumableComponent: GKComponent {
   var isPickedUp = false
 }
 
+// MARK: map space
+
 class TakesUpSpaceComponent: GKComponent { }
+
+// MARK: special player stuff
+
 class PlayerComponent: GKComponent { }
+
+// MARK: ammo
 
 class AmmoComponent: GKComponent {
   var value: Int = 1
@@ -176,6 +221,17 @@ class AmmoComponent: GKComponent {
     self.init()
     self.value = value
     self.damage = damage
+  }
+
+  convenience init?(dict: [String: Any]) {
+    guard let value = dict["value"] as? Int, let damage = dict["damage"] as? CGFloat else { return nil }
+    self.init()
+    self.value = value
+    self.damage = damage
+  }
+
+  func toDict() -> [String: Any] {
+    return ["value": value, "damage": damage]
   }
 
   func add(value v: Int) {
@@ -200,7 +256,19 @@ class BumpDamageComponent: GKComponent {
     self.init()
     self.value = value
   }
+
+  convenience init?(dict: [String: Any]) {
+    guard let value = dict["value"] as? CGFloat else { return nil }
+    self.init()
+    self.value = value
+  }
+
+  func toDict() -> [String: Any] {
+    return ["value": value]
+  }
 }
+
+// MARK: AI
 
 class MoveTowardPlayerComponent: GKComponent {
   var vectors: [int2] = []
@@ -260,6 +328,8 @@ class MoveTowardPlayerComponent: GKComponent {
   }
 }
 
+// MARK: speed
+
 class SpeedLimiterComponent: GKComponent {
   var bucketSize: Int = 2
   var stepCost: Int = 1
@@ -270,6 +340,18 @@ class SpeedLimiterComponent: GKComponent {
     self.bucketSize = bucketSize
     self.stepCost = stepCost
     self.bucketLeft = bucketLeft
+  }
+
+  convenience init?(dict: [String: Any]) {
+    guard let bucketSize = dict["bucketSize"] as? Int, let stepCost = dict["stepCost"] as? Int, let bucketLeft = dict["bucketLeft"] as? Int else { return nil }
+    self.init()
+    self.bucketSize = bucketSize
+    self.stepCost = stepCost
+    self.bucketLeft = bucketLeft
+  }
+
+  func toDict() -> [String: Any] {
+    return ["bucketSize": bucketSize, "stepCost": stepCost, "bucketLeft": bucketLeft]
   }
 
   func tryToStep() -> Bool {
@@ -291,6 +373,8 @@ class SpeedLimiterComponent: GKComponent {
   }
 }
 
+// MARK: turtle
+
 class TurtleAnimationComponent: GKComponent {
   func updateSprite() {
     guard
@@ -301,6 +385,108 @@ class TurtleAnimationComponent: GKComponent {
   }
 }
 
+class TurtleAnimationSystem: GKComponentSystem<TurtleAnimationComponent> {
+  override required init() {
+    super.init(componentClass: TurtleAnimationComponent.self)
+  }
+
+  override func addComponent(_ component: TurtleAnimationComponent) {
+    super.addComponent(component)
+    component.updateSprite()
+  }
+
+  func update() {
+    for c in components {
+      c.updateSprite()
+    }
+  }
+}
+
+// MARK: scoring
+
 class PointValueComponent: GKComponent {
   var points: Int = 1
+}
+
+// MARK: power
+
+class PowerComponent: GKComponent {
+  var power: CGFloat = 0
+  var maxPower: CGFloat = 0
+  var isBattery: Bool = false
+  var isFull: Bool { return power >= maxPower }
+  var neverChanges: Bool = false
+
+  convenience init(power: CGFloat, isBattery: Bool, maxPower: CGFloat? = nil, neverChanges: Bool = false) {
+    self.init()
+    self.power = power
+    self.maxPower = maxPower ?? power
+    self.isBattery = isBattery
+    self.neverChanges = neverChanges
+  }
+
+  convenience init?(dict: [String: Any]) {
+    guard let power = dict["power"] as? CGFloat, let maxPower = dict["maxPower"] as? CGFloat, let isBattery = dict["isBattery"] as? Bool, let neverChanges = dict["neverChanges"] as? Bool else { return nil }
+    self.init()
+    self.power = power
+    self.maxPower = maxPower
+    self.isBattery = isBattery
+    self.neverChanges = neverChanges
+  }
+
+  func toDict() -> [String: Any] {
+    return ["power": power, "maxPower": maxPower, "isBattery": isBattery, "neverChanges": neverChanges]
+  }
+
+  func getFractionRemaining() -> CGFloat { return power / maxPower }
+
+  func getPowerRequired(toMove distance: CGFloat) -> CGFloat {
+    return (self.entity?.massC?.weight ?? 0) * 0.02
+  }
+
+  func canUse(_ amount: CGFloat) -> Bool {
+    return power >= amount
+  }
+
+  func use(_ amount: CGFloat) -> Bool {
+    if !canUse(amount) { return false }
+    if !neverChanges {
+      power -= amount
+    }
+    return true
+  }
+
+  func charge(_ amount: CGFloat) {
+    power = max(min(maxPower, power + amount), 0)
+  }
+
+  func discharge() -> CGFloat {
+    guard !neverChanges else { return power }
+    let p = power
+    power = 0
+    return p
+  }
+}
+
+// Mob spec
+
+class MobSpecComponent: GKComponent {
+  let spec: MobSpec
+  required init(spec: MobSpec) {
+    self.spec = spec
+    super.init()
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError()
+  }
+
+  convenience init?(dict: [String: Any]) {
+    guard let spec = MobSpec(dict: dict) else { return nil }
+    self.init(spec: spec)
+  }
+
+  func toDict() -> [String: Any] {
+    return spec.toDict()
+  }
 }

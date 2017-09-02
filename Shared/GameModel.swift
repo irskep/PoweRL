@@ -43,9 +43,9 @@ class GameModel {
   lazy var ruleSystem: GKRuleSystem = { createRuleSystem(self) }()
 
   lazy var gridSystem: GridSystem = { return GridSystem() }()
-  lazy var spriteSystem: SpriteSystem = { return SpriteSystem() }()
+  lazy var spriteSystem: SpriteSystem = { return SpriteSystem(scene: self.scene) }()
   lazy var mobMoveSystem: GKComponentSystem = { return GKComponentSystem(componentClass: MoveTowardPlayerComponent.self) }()
-  lazy var turtleAnimSystem: GKComponentSystem = { return GKComponentSystem(componentClass: TurtleAnimationComponent.self) }()
+  lazy var turtleAnimSystem: TurtleAnimationSystem = { return TurtleAnimationSystem() }()
   lazy var componentSystems: [GKComponentSystem] = {
     return [
       self.gridSystem,
@@ -62,24 +62,18 @@ class GameModel {
   lazy var random: GKRandomSource = { GKRandomSource.sharedRandom() }()
 
   func register(entity: GKEntity) {
-    guard let scene = scene else { fatalError() }
     for system in componentSystems {
       system.addComponent(foundIn: entity)
     }
 
-    if let spriteComponent: SpriteComponent = entity.get(),
-      let gridComponent: GridNodeComponent = entity.get(),
-      let gridPosition = gridComponent.gridNode?.gridPosition
-      {
-      spriteComponent.sprite.position = scene.spritePoint(forPosition: gridPosition)
-      scene.mapContainerNode.addChild(spriteComponent.sprite)
-      scene.setMapNodeTransform(spriteComponent.sprite)
-    }
-    if let turtleC: TurtleAnimationComponent = entity.get() {
-      turtleC.updateSprite()
-    }
-
     entities.insert(entity)
+  }
+
+  func delete(entity: GKEntity) {
+    for system in componentSystems {
+      system.removeComponent(foundIn: entity)
+    }
+    entities.remove(entity)
   }
 
   func getTargetingLaserPoints(to gridPos: int2) -> [int2] {
@@ -137,13 +131,6 @@ class GameModel {
     self.difficulty = difficulty
     self.playerTemplate = player
     self.score = score
-  }
-
-  func delete(entity: GKEntity) {
-    for system in componentSystems {
-      system.removeComponent(foundIn: entity)
-    }
-    entities.remove(entity)
   }
 
   func start(scene: MapScene) {
@@ -215,9 +202,7 @@ class GameModel {
       case .attack(let entity, let gridNode): attacks.append((entity, gridNode))
       }
     }
-    for component in turtleAnimSystem.components {
-      (component as? TurtleAnimationComponent)?.updateSprite()
-    }
+    turtleAnimSystem.update()
     guard !attacks.isEmpty || didMove else {
       isAcceptingInput = true
       if autotransition { _ = scene?.evaluatePossibleTransitions() }
