@@ -78,6 +78,9 @@ icons:
 	convert art/icon_ios/icon-16.png -interpolate Nearest -filter point -resize 167x167 \
 		iOS/iOS.xcassets/AppIcon.appiconset/Icon-App-83.5x85.5@2x-1.png
 
+	convert art/icon_ios/icon-16.png -interpolate Nearest -filter point -resize 1024x1024 \
+		iOS/iOS.xcassets/AppIcon.appiconset/appstore.png
+
 	cp iOS/iOS.xcassets/AppIcon.appiconset/Icon-App-40x40@2x-1.png \
 		iOS/iOS.xcassets/AppIcon.appiconset/Icon-App-40x40@2x-2.png
 
