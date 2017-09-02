@@ -140,12 +140,18 @@ func addGridNode(toEntity entity: GKEntity, inGame game: GameModel) {
 
 class MapState {
   var entities: [GKEntity] = []
+  var difficulty: Int
+  var score: Int
 
-  init(entities: [GKEntity]) {
+  init(difficulty: Int, score: Int, entities: [GKEntity]) {
     self.entities = entities
+    self.difficulty = difficulty
+    self.score = score
   }
 
   func apply(toGame game: GameModel) {
+    game.difficulty = difficulty
+    game.score = score
     for entity in entities {
       if let spec = entity.component(ofType: MobSpecComponent.self)?.spec {
         setupMob(entity: entity, spec: spec, random: game.random)
@@ -172,7 +178,7 @@ class MapState {
 
 
 class MapGenerator {
-  class func generate(difficulty: Int, size: int2, playerTemplate: GKEntity?, random: GKRandomSource, n: Int = 0) -> MapState {
+  class func generate(difficulty: Int, score: Int, size: int2, playerTemplate: GKEntity?, random: GKRandomSource, n: Int = 0) -> MapState {
     assert(n < 20)
     let area: Int32 = size.x * size.y
     let getAreaFraction = { (frac: CGFloat) -> Int in return Int(CGFloat(area) * frac) }
@@ -245,7 +251,7 @@ class MapGenerator {
 
     if !isEverythingReachable(size: size, entities: allEntities) {
       print("Regenerating map due to reachability issue")
-      return MapGenerator.generate(difficulty: difficulty, size: size, playerTemplate: playerTemplate, random: random, n: n + 1)
+      return MapGenerator.generate(difficulty: difficulty, score: score, size: size, playerTemplate: playerTemplate, random: random, n: n + 1)
     }
 
     allEntities += getSomePositions(numBatteries).map({
@@ -294,6 +300,6 @@ class MapGenerator {
       return drain
     })
 
-    return MapState(entities: allEntities)
+    return MapState(difficulty: difficulty, score: score, entities: allEntities)
   }
 }

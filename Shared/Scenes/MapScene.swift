@@ -56,6 +56,12 @@ class MapScene: OrientationAwareAbstractScene {
     return scene
   }
 
+  class func create(mapState: MapState) -> MapScene {
+    let scene: MapScene = MapScene.create()
+    scene.game = GameModel(mapState: mapState)
+    return scene
+  }
+
   override func setup() {
     if game == nil { game = GameModel(difficulty: 1, player: nil, score: 0) }
     super.setup()
@@ -292,24 +298,28 @@ class MapScene: OrientationAwareAbstractScene {
       self.isDead = true
       game.startEndingLevel()
 
-      let nextScene: SKScene
       if game.difficulty > 7 {
-        MusicPlayer.shared.prepare(track: nil)
-        nextScene = WinScene.create(score: game.score)
+        self.youWin()
       } else {
-        nextScene = MapScene.create(from: self)
-
+        self.view?.presentScene(MapScene.create(from: self), transition: SKTransition.crossFade(withDuration: 0.5))
       }
-      self.view?.presentScene(nextScene, transition: SKTransition.crossFade(withDuration: 0.5))
       return true
     }
     return false
+  }
+
+  func youWin() {
+    MusicPlayer.shared.prepare(track: nil)
+    game.startEndingLevel()
+    self.view?.presentScene(WinScene.create(score: game.score), transition: SKTransition.crossFade(withDuration: 0.5))
+    self.deleteSave(id: "continuous")
   }
 
   func gameOver(reason: DeathReason) {
     MusicPlayer.shared.prepare(track: nil)
     game.startEndingLevel()
     self.view?.presentScene(DeathScene.create(reason: reason, score: game.score), transition: SKTransition.crossFade(withDuration: 3))
+    self.deleteSave(id: "continuous")
   }
 
   // MARK: utils

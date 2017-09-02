@@ -57,6 +57,7 @@ class GameModel {
   var gridGraph: GKGridGraph<GridNode>!
   var player: GKEntity!
   var playerTemplate: GKEntity?
+  var initialMapState: MapState?
   var exit: GKEntity!
   var entities = Set<GKEntity>()
   lazy var random: GKRandomSource = { GKRandomSource.sharedRandom() }()
@@ -133,11 +134,23 @@ class GameModel {
     self.score = score
   }
 
+  init(mapState: MapState) {
+    self.difficulty = mapState.difficulty
+    self.score = mapState.score
+    self.playerTemplate = nil
+    self.initialMapState = mapState
+  }
+
   func start(scene: MapScene) {
     self.scene = scene
     self.reset()
-    let mapState = MapGenerator.generate(difficulty: difficulty, size: self.mapSize, playerTemplate: playerTemplate, random: self.random)
-    mapState.apply(toGame: self)
+    if let initialMapState = initialMapState {
+      initialMapState.apply(toGame: self)
+    } else {
+      let mapState = MapGenerator.generate(difficulty: difficulty, score: self.score, size: self.mapSize, playerTemplate: playerTemplate, random: self.random)
+      self.scene?.upsertSave(id: "continuous", dict: mapState.toDict())
+      mapState.apply(toGame: self)
+    }
     isAcceptingInput = true
   }
 

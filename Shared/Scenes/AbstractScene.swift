@@ -72,6 +72,43 @@ class SuperAbstractScene: SKScene {
 
   func motionToggleMusic() {
   }
+
+  func getSavePath(id: String) -> URL? {
+    guard let docsPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return nil }
+    return docsPath.appendingPathComponent("\(id).json")
+  }
+
+  func upsertSave(id: String, dict: [String: Any]) {
+    guard let myURL = getSavePath(id: id) else { return }
+    print("Saving to \(myURL.path)")
+    guard let data = try? JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted) else { return }
+    try? data.write(to: myURL)
+  }
+
+  func loadSave(id: String) -> [String: Any]? {
+    guard let myURL = getSavePath(id: id) else { return nil }
+    print("Loading from \(myURL.path)")
+    guard let data = try? Data(contentsOf: myURL) else {
+      return nil
+
+    }
+    guard let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
+      return nil
+    }
+    return json as? [String: Any]
+  }
+
+  func getSaveExists(id: String) -> Bool {
+    guard let myURL = getSavePath(id: id) else { return false }
+    return FileManager.default.fileExists(atPath: myURL.path)
+  }
+
+  func deleteSave(id: String) {
+    guard let myURL = getSavePath(id: id) else { return }
+    if FileManager.default.fileExists(atPath: myURL.path) {
+      try? FileManager.default.removeItem(at: myURL)
+    }
+  }
 }
 
 #if os(iOS) || os(tvOS)

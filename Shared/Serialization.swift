@@ -69,8 +69,10 @@ extension GKEntity: Dictable {
       "components": self.components.flatMap({ (component) -> Any? in
         let name = "\(type(of: component))"
         if (component as? Reconstructable) != nil {
+          print("reconstructable", name)
           return ["name": name]
         } else if let dictable = component as? Dictable {
+          print("dictable", name)
           return ["name": name, "value": dictable.toDict()]
         } else {
           print("skipping", name)
@@ -84,14 +86,14 @@ extension GKEntity: Dictable {
 
 extension MapState: Dictable {
   convenience init?(dict: [String: Any]) {
-    guard let entityDicts = dict["entities"] as? [[String: Any]] else {
+    guard let entityDicts = dict["entities"] as? [[String: Any]], let difficulty = dict["difficulty"] as? Int, let score = dict["score"] as? Int else {
       return nil
     }
-    self.init(entities: entityDicts.flatMap({ return GKEntity(dict: $0) }))
+    self.init(difficulty: difficulty, score: score, entities: entityDicts.flatMap({ return GKEntity(dict: $0) }))
   }
 
   func toDict() -> [String: Any] {
-    return ["entities": self.entities.map({ $0.toDict() })]
+    return ["difficulty": difficulty, "score": score, "entities": self.entities.map({ $0.toDict() })]
   }
 
   func json() -> String {

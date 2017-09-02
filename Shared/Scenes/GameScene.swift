@@ -57,6 +57,10 @@ class GameScene: PixelatedScene {
     } else {
       (self.childNode(withName: "//score") as? SKLabelNode)?.text = ""
     }
+
+    if self.getSaveExists(id: "continuous"), let dict = self.loadSave(id: "continuous"), let mapState = MapState(dict: dict) {
+      self.view?.presentScene(MapScene.create(mapState: mapState), transition: SKTransition.crossFade(withDuration: 0.5))
+    }
   }
 
   override func layoutForPortrait() {
