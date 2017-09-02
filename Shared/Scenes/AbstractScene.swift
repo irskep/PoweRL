@@ -74,7 +74,12 @@ class SuperAbstractScene: SKScene {
   }
 
   func getSavePath(id: String) -> URL? {
-    guard let docsPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return nil }
+    #if os(iOS) || os(tvOS)
+      let dir: FileManager.SearchPathDirectory = .documentDirectory
+    #else
+      let dir: FileManager.SearchPathDirectory = .applicationSupportDirectory
+    #endif
+    guard let docsPath = FileManager.default.urls(for: dir, in: .userDomainMask).first else { return nil }
     return docsPath.appendingPathComponent("\(id).json")
   }
 
