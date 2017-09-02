@@ -172,6 +172,9 @@
 		AAFB24281F5B473A00D37D53 /* SmallObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFB24271F5B473A00D37D53 /* SmallObjects.swift */; };
 		AAFB24291F5B473A00D37D53 /* SmallObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFB24271F5B473A00D37D53 /* SmallObjects.swift */; };
 		AAFB242A1F5B473A00D37D53 /* SmallObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFB24271F5B473A00D37D53 /* SmallObjects.swift */; };
+		AAFB242C1F5B683000D37D53 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFB242B1F5B683000D37D53 /* Serialization.swift */; };
+		AAFB242D1F5B683000D37D53 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFB242B1F5B683000D37D53 /* Serialization.swift */; };
+		AAFB242E1F5B683000D37D53 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFB242B1F5B683000D37D53 /* Serialization.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -245,6 +248,7 @@
 		AAF75A281F58FF7C001DEA56 /* HighScoreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighScoreModel.swift; sourceTree = "<group>"; };
 		AAF75A2C1F591824001DEA56 /* kill.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = kill.mp3; sourceTree = "<group>"; };
 		AAFB24271F5B473A00D37D53 /* SmallObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallObjects.swift; sourceTree = "<group>"; };
+		AAFB242B1F5B683000D37D53 /* Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Serialization.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -307,6 +311,7 @@
 				AADA92D31F4CE052006A4C41 /* AI.swift */,
 				AAF75A281F58FF7C001DEA56 /* HighScoreModel.swift */,
 				AAFB24271F5B473A00D37D53 /* SmallObjects.swift */,
+				AAFB242B1F5B683000D37D53 /* Serialization.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -650,6 +655,7 @@
 				AAD6B9C01F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BD1F2C1BFB005F1DD0 /* AbstractScene.swift in Sources */,
 				AAA323DE1F381A570039D299 /* Swift+utils.swift in Sources */,
+				AAFB242C1F5B683000D37D53 /* Serialization.swift in Sources */,
 				AA75EE8D1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
 				AA7332501F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C41F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
@@ -681,6 +687,7 @@
 				AAD6B9C11F2D551700D0900E /* Rules.swift in Sources */,
 				AA70E4BE1F2C1BFD005F1DD0 /* AbstractScene.swift in Sources */,
 				AAA323DF1F381A590039D299 /* Swift+utils.swift in Sources */,
+				AAFB242D1F5B683000D37D53 /* Serialization.swift in Sources */,
 				AA75EE8E1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
 				AA73324F1F2CF50E006ECA4D /* GameModel.swift in Sources */,
 				AAD6B9C51F2D5E5E00D0900E /* UIColor+compat.swift in Sources */,
@@ -712,6 +719,7 @@
 				AAC0F8A81F1AD30900D55037 /* GameViewController.swift in Sources */,
 				AA7332461F2C2DBE006ECA4D /* LD39WindowController.swift in Sources */,
 				AAA323E01F381A5A0039D299 /* Swift+utils.swift in Sources */,
+				AAFB242E1F5B683000D37D53 /* Serialization.swift in Sources */,
 				AA75EE8F1F40E67100B9CA0F /* MusicPlayer.swift in Sources */,
 				AA70E4BF1F2C1BFE005F1DD0 /* AbstractScene.swift in Sources */,
 				AAC0F8A61F1AD30900D55037 /* AppDelegate.swift in Sources */,

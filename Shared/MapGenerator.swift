@@ -37,9 +37,9 @@ let mobSpecs: [MobSpec] = [
 
 func make2dArray<T>(cols: Int, rows: Int, val: T) -> Array<Array<T>> {
   var outer: [[T]] = []
-  for col in 0..<cols {
+  for _ in 0..<cols {
     var inner: [T] = []
-    for row in 0..<rows {
+    for _ in 0..<rows {
       inner.append(val)
     }
     outer.append(inner)
@@ -62,7 +62,7 @@ func isEverythingReachable(size: int2, entities: [GKEntity]) -> Bool {
   var maybePlayerPos: int2? = nil
   for e in entities {
     if let p = e.component(ofType: InitialGridPositionComponent.self)?.position {
-      if e.component(ofType: WallComponent.self) != nil {
+      if e.component(ofType: WallComponent.self) != nil || e.component(ofType: ExitComponent.self) != nil {
         grid[Int(p.x)][Int(p.y)] = false
       }
 
@@ -90,6 +90,24 @@ func isEverythingReachable(size: int2, entities: [GKEntity]) -> Bool {
   }
 
   return unvisitedNodes.isEmpty
+}
+
+
+func setupMob(entity: GKEntity, spec: MobSpec, random: GKRandomSource) {
+  entity.addComponent(HealthComponent(health: spec.health))
+  entity.addComponent(BumpDamageComponent(value: 20))
+  entity.addComponent(TakesUpSpaceComponent())
+  entity.addComponent(PointValueComponent())
+  if spec.isSlow {
+    entity.addComponent(SpeedLimiterComponent(
+      bucketSize: 2,
+      stepCost: 1,
+      bucketLeft: random.nextInt(upperBound: 2) + 1))
+  }
+  entity.addComponent(MoveTowardPlayerComponent(vectors: spec.moves, pathfinding: spec.pathfinds))
+  if spec.char == .mobTurtle1 {
+    entity.addComponent(TurtleAnimationComponent())
+  }
 }
 
 
@@ -129,13 +147,19 @@ class MapState {
 
   func apply(toGame game: GameModel) {
     for entity in entities {
+      if let spec = entity.component(ofType: MobSpecComponent.self)?.spec {
+        setupMob(entity: entity, spec: spec, random: game.random)
+      }
+
       addSprite(toEntity: entity)
       addGridNode(toEntity: entity, inGame: game)
       if entity.component(ofType: WallComponent.self) != nil, let gridNode = entity.gridNode {
         game.gridGraph.remove([gridNode])
       }
 
+      // this also does a bunch of stuff
       game.register(entity: entity)
+
       if entity.component(ofType: PlayerComponent.self) != nil {
         game.player = entity
       }
@@ -258,24 +282,6 @@ class MapGenerator {
       let spec = specsForThisLevel[random.nextInt(upperBound: specsForThisLevel.count)]
       mob.addComponent(MobSpecComponent(spec: spec))
       mob.addComponent(InitialGridPositionComponent(position: $0))
-      mob.addComponent(HealthComponent(health: spec.health))
-      mob.addComponent(BumpDamageComponent(value: 20))
-      mob.addComponent(TakesUpSpaceComponent())
-      mob.addComponent(PointValueComponent())
-      if spec.isSlow {
-        mob.addComponent(SpeedLimiterComponent(
-          bucketSize: 2,
-          stepCost: 1,
-          bucketLeft: random.nextInt(upperBound: 2) + 1))
-      } else {
-        mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves))
-      }
-      if spec.pathfinds {
-        mob.addComponent(MoveTowardPlayerComponent(vectors: spec.moves, pathfinding: true))
-      }
-      if spec.char == .mobTurtle1 {
-        mob.addComponent(TurtleAnimationComponent())
-      }
       return mob
     })
 

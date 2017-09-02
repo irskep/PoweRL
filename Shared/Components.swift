@@ -39,11 +39,22 @@ class GridSystem: GKComponentSystem<GridNodeComponent> {
   }
 }
 
-class InitialGridPositionComponent: GKComponent {
+class InitialGridPositionComponent: GKComponent, Dictable {
   var position: int2?
   convenience init(position: int2) {
     self.init()
     self.position = position
+  }
+
+  convenience init?(dict: [String: Any]) {
+    guard let position = int2(dict: dict) else { return nil }
+    self.init()
+    self.position = position
+  }
+
+  func toDict() -> [String: Any] {
+    guard let position = position else { fatalError() }
+    return position.toDict()
   }
 }
 
@@ -69,11 +80,6 @@ class GridNodeComponent: GKComponent {
     guard let intDict = dict["gridPosition"] as? [String: Any], let gridPosition = int2(dict: intDict) else { return nil }
     self.init()
     self.gridNode = graph.node(atGridPosition: gridPosition)
-  }
-
-  func toDict() -> [String: Any] {
-    guard let gridNode = gridNode else { return [:] }
-    return ["gridPosition": gridNode.gridPosition.toDict()]
   }
 
   override func didAddToEntity() {
@@ -150,18 +156,29 @@ class SpriteComponent: GKComponent {
 
 // MARK: mass
 
-class MassComponent: GKComponent {
+class MassComponent: GKComponent, Dictable {
   var weight: CGFloat = 0
 
   convenience init(weight: CGFloat) {
     self.init()
     self.weight = weight
   }
+
+  convenience init?(dict: [String: Any]) {
+    guard let weight = dict["weight"] as? CGFloat else { return nil }
+    self.init()
+    self.weight = weight
+  }
+
+  func toDict() -> [String: Any] {
+    return ["weight": weight]
+  }
+
 }
 
 // MARK: health
 
-class HealthComponent: GKComponent {
+class HealthComponent: GKComponent, Dictable {
   var health: CGFloat = 0
   var maxHealth: CGFloat = 0
   var isDead: Bool { return health <= 0 }
@@ -209,29 +226,29 @@ class HealthComponent: GKComponent {
 
 // MARK: pickup
 
-class PickupConsumableComponent: GKComponent {
-  var isPickedUp = false
+class PickupConsumableComponent: GKComponent, Reconstructable {
+  var isPickedUp = false  // only mutated within a rule system, always init to false
 }
 
 // MARK: map space
 
-class TakesUpSpaceComponent: GKComponent { }
+class TakesUpSpaceComponent: GKComponent, Reconstructable { }
 
 // MARK: special player stuff
 
-class PlayerComponent: GKComponent { }
+class PlayerComponent: GKComponent, Reconstructable { }
 
 // MARK: special exit stuff
 
-class ExitComponent: GKComponent { }
+class ExitComponent: GKComponent, Reconstructable { }
 
 // MARK: special wall stuff
 
-class WallComponent: GKComponent { }
+class WallComponent: GKComponent, Reconstructable { }
 
 // MARK: ammo
 
-class AmmoComponent: GKComponent {
+class AmmoComponent: GKComponent, Dictable {
   var value: Int = 1
   var damage: CGFloat = 20
 
@@ -267,7 +284,7 @@ class AmmoComponent: GKComponent {
   }
 }
 
-class BumpDamageComponent: GKComponent {
+class BumpDamageComponent: GKComponent, Dictable {
   var value: CGFloat = 20
 
   convenience init(value: CGFloat) {
@@ -348,7 +365,7 @@ class MoveTowardPlayerComponent: GKComponent {
 
 // MARK: speed
 
-class SpeedLimiterComponent: GKComponent {
+class SpeedLimiterComponent: GKComponent, Dictable {
   var bucketSize: Int = 2
   var stepCost: Int = 1
   var bucketLeft: Int = 2
@@ -393,7 +410,7 @@ class SpeedLimiterComponent: GKComponent {
 
 // MARK: turtle
 
-class TurtleAnimationComponent: GKComponent {
+class TurtleAnimationComponent: GKComponent, Reconstructable {
   func updateSprite() {
     guard
       let entity = self.entity,
@@ -422,13 +439,13 @@ class TurtleAnimationSystem: GKComponentSystem<TurtleAnimationComponent> {
 
 // MARK: scoring
 
-class PointValueComponent: GKComponent {
-  var points: Int = 1
+class PointValueComponent: GKComponent, Reconstructable {
+  var points: Int = 1  // screw it, everything is always 1 point
 }
 
 // MARK: power
 
-class PowerComponent: GKComponent {
+class PowerComponent: GKComponent, Dictable {
   var power: CGFloat = 0
   var maxPower: CGFloat = 0
   var isBattery: Bool = false
@@ -488,7 +505,7 @@ class PowerComponent: GKComponent {
 
 // Mob spec
 
-class MobSpecComponent: GKComponent {
+class MobSpecComponent: GKComponent, Dictable {
   let spec: MobSpec
   required init(spec: MobSpec) {
     self.spec = spec
@@ -511,7 +528,7 @@ class MobSpecComponent: GKComponent {
 
 // Generic sprite type
 
-class SpriteTypeComponent: GKComponent {
+class SpriteTypeComponent: GKComponent, Dictable {
   let asset: _Assets16
   let z: CGFloat
   let shouldAnimateAway: Bool
