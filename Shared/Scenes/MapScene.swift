@@ -270,7 +270,7 @@ class MapScene: OrientationAwareAbstractScene {
     hudNode.update(instant: instant)
 
     let power: Float = Float(game.player.powerC?.getFractionRemaining() ?? 1)
-    if power > 0.3 {
+    if power > 0.15 {
       MusicPlayer.shared.player?.rate = 1
     } else {
       MusicPlayer.shared.player?.rate = 0.9

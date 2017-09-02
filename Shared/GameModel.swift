@@ -240,6 +240,7 @@ extension GameModel {
       return
     }
     ammoC.add(value: -1)
+    Player.shared.get("fire_begin", useCache: false).play()
 
     let bulletSprite = PWRSpriteNode(.ammo1).withZ(Z.player)
     bulletSprite.position = player.sprite!.position
@@ -258,7 +259,7 @@ extension GameModel {
       for e in entitiesToShoot {
         self.damageEnemy(entity: e, amt: ammoC.damage)
       }
-      Player.shared.get("hit3", useCache: false).play()
+      Player.shared.get("fire_end", useCache: false).play()
       self.executeTurn()
     })
   }
