@@ -269,7 +269,7 @@ class MapGenerator {
       ammo.addComponent(InitialGridPositionComponent(position: $0))
       ammo.addComponent(SpriteTypeComponent(asset: value == 1 ? .ammo1 : .ammo2, z: Z.pickup))
       ammo.addComponent(PickupConsumableComponent())
-      ammo.addComponent(AmmoComponent(value: 2, damage: 40))
+      ammo.addComponent(AmmoComponent(value: value, damage: 40))
       return ammo
     })
 
