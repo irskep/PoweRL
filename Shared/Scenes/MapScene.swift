@@ -235,7 +235,9 @@ class MapScene: OrientationAwareAbstractScene {
         Int32(visualPointInMap.y / tileSize.height))
     } else {
       let visualPointInMapInvertedY = self.convert(point, to: hudNode) - CGPoint(x: 0, y: hudSize.width)
-      if visualPointInMapInvertedY.x < 0 || visualPointInMapInvertedY.y < 0 { return nil }
+      if visualPointInMapInvertedY.x < 0 || visualPointInMapInvertedY.y < 0 {
+        return nil
+      }
       let visualPointInMap = CGPoint(x: mapContainerNode.frame.size.width - visualPointInMapInvertedY.x, y: visualPointInMapInvertedY.y)
       gridPos = int2(
         Int32(visualPointInMap.y / tileSize.width),
@@ -265,7 +267,13 @@ class MapScene: OrientationAwareAbstractScene {
   var lastPointIndicated: int2? = nil
   override func motionIndicate(point: CGPoint) {
     guard !isDead else { return }
-    if let gridPos = eventPointToGrid(point: point), point.x >= mapContainerNode.position.x, point.y >= mapContainerNode.position.y {
+    var isAllowedToBeInGrid: Bool = false
+    if isLandscape {
+      isAllowedToBeInGrid = point.x >= mapContainerNode.position.x
+    } else {
+      isAllowedToBeInGrid = point.y >= mapContainerNode.position.y
+    }
+    if let gridPos = eventPointToGrid(point: point), isAllowedToBeInGrid {
       self.handleGridIndicate(point: point, gridPos: gridPos)
     } else {
       hudNode.motionIndicate(self.convert(point, to: hudNode))
