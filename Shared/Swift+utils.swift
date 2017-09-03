@@ -88,6 +88,11 @@ extension UserDefaults {
     get { return !UserDefaults.standard.bool(forKey: "isMusicDisabled") }
     set { UserDefaults.standard.set(!newValue, forKey: "isMusicDisabled") }
   }
+  static var pwr_isSoundEnabled: Bool {
+    // store inverted so default is true
+    get { return !UserDefaults.standard.bool(forKey: "isSoundDisabled") }
+    set { UserDefaults.standard.set(!newValue, forKey: "isSoundDisabled") }
+  }
 }
 
 extension CGSize {

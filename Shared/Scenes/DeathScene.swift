@@ -7,23 +7,6 @@
 //
 
 import SpriteKit
-import AVFoundation
-
-class Player {
-  
-  static var shared = { Player() }()
-
-  var cache: [String: AVAudioPlayer] = [:]
-
-  func get(_ name: String, useCache: Bool = true) -> AVAudioPlayer {
-    if useCache && cache[name] != nil { return cache[name]! }
-
-    let player = try! AVAudioPlayer(contentsOf: Bundle.main.url(forResource: name, withExtension: "mp3")!)
-    player.volume = 0.5
-    cache[name] = player
-    return player
-  }
-}
 
 enum DeathReason: String {
   case health = "health"
@@ -57,7 +40,7 @@ class DeathScene: PixelatedScene {
   override func setup() {
     super.setup()
     (childNode(withName: "//graphic") as? SKSpriteNode)?.texture = SKTexture(imageNamed: "lose-\(deathReason.rawValue)").pixelized()
-    Player.shared.get("gameover").play()
+    Player.shared.play("gameover")
   }
 
   override func layoutForPortrait() {

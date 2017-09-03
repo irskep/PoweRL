@@ -235,7 +235,7 @@ class GameModel {
         actions.append(SKAction.customAction(withDuration: 0, actionBlock: {
           _, _ in
           self.scene?.flashMessage("-\(Int(bumpDamageC.value)) hp")
-          Player.shared.get("hit1", useCache: false).play()
+          Player.shared.play("hit1", useCache: false)
           sprite.run(sprite.nudge(delta, amt: 0.5, t: MOVE_TIME * 2))
         }))
         actions.append(SKAction.wait(forDuration: MOVE_TIME * 2))
@@ -265,12 +265,12 @@ extension GameModel {
     let entitiesToShoot = node.entities.filter({ $0.healthC != nil })
     guard !entitiesToShoot.isEmpty else { return }
     guard ammoC.value > 0 else {
-      Player.shared.get("hit2", useCache: false).play()
+      Player.shared.play("hit2", useCache: false)
       scene?.flashMessage("No ammo")
       return
     }
     ammoC.add(value: -1)
-    Player.shared.get("fire_begin", useCache: false).play()
+    Player.shared.play("fire_begin", useCache: false)
 
     let bulletSprite = PWRSpriteNode(.ammo1).withZ(Z.player)
     bulletSprite.position = player.sprite!.position
@@ -289,7 +289,7 @@ extension GameModel {
       for e in entitiesToShoot {
         self.damageEnemy(entity: e, amt: ammoC.damage)
       }
-      Player.shared.get("fire_end", useCache: false).play()
+      Player.shared.play("fire_end", useCache: false)
       self.executeTurn()
     })
   }
@@ -367,7 +367,7 @@ extension GameModel {
     let entity: GKEntity = entity ?? self.player
     isAcceptingInput = false
     if entity == self.player {
-      Player.shared.get(sound, useCache: false).play()
+      Player.shared.play(sound, useCache: false)
     }
     entity.component(ofType: SpriteComponent.self)?.nudge(delta) {
       self.isAcceptingInput = true

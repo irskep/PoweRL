@@ -57,10 +57,10 @@ class BatteryChargeRule: GridNodeSharingRule {
       let amt = battery.powerC?.discharge() ?? 0
       game.player.powerC?.charge(amt)
       if amt > 0 {
-        Player.shared.get("up2", useCache: false).play()
+        Player.shared.play("up2", useCache: false)
         game.scene?.flashMessage("+\(Int(amt)) power", color: SKColor.cyan)
       } else {
-        Player.shared.get("down", useCache: false).play()
+        Player.shared.play("down", useCache: false)
         game.scene?.flashMessage("\(Int(amt)) power")
       }
       if let pickupC = battery.component(ofType: PickupConsumableComponent.self) {
@@ -85,7 +85,7 @@ class AmmoTransferRule: GridNodeSharingRule {
     for ammo in entities.flatMap({ $0.ammoC }) {
       let amt = ammo.value
       game.player.ammoC?.transfer(from: ammo)
-      Player.shared.get("up3", useCache: false).play()
+      Player.shared.play("up3", useCache: false)
       game.scene?.flashMessage("+\(amt) ammo", color: SKColor(red: 218 / 255, green: 1, blue: 0, alpha: 1))
       if let pickupC = ammo.entity?.component(ofType: PickupConsumableComponent.self) {
         pickupC.isPickedUp = true
@@ -113,7 +113,7 @@ class ConsumableHealthTransferRule: GridNodeSharingRule {
         continue  // ignore
       }
       game.player.healthC?.heal(health.health)
-      Player.shared.get("select2", useCache: false).play()
+      Player.shared.play("select2", useCache: false)
       game.scene?.flashMessage("+\(Int(health.health)) health", color: SKColor.green)
     }
   }

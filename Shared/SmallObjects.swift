@@ -9,6 +9,32 @@
 import Foundation
 import SpriteKit
 import GameplayKit
+import AVFoundation
+
+
+class Player {
+  static var shared = { Player() }()
+
+  var cache: [String: AVAudioPlayer] = [:]
+
+  func get(_ name: String, useCache: Bool = true) -> AVAudioPlayer {
+    if useCache && cache[name] != nil { return cache[name]! }
+
+    let player = try! AVAudioPlayer(contentsOf: Bundle.main.url(forResource: name, withExtension: "mp3")!)
+    player.volume = 0.5
+    cache[name] = player
+    return player
+  }
+
+  func play(_ name: String, useCache: Bool = true) {
+    guard UserDefaults.pwr_isSoundEnabled else { return }
+    get(name, useCache: useCache).play()
+  }
+
+  func toggleSoundSetting() {
+    UserDefaults.pwr_isSoundEnabled = !UserDefaults.pwr_isSoundEnabled
+  }
+}
 
 
 struct MobSpec {

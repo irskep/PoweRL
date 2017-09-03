@@ -103,6 +103,14 @@ class HUDNode: SKSpriteNode {
     return SKSpriteNode(imageNamed: "icon-music-on").pixelized().withZ(1).withAnchor(0, 0)
   }()
 
+  lazy var soundIcon: SKSpriteNode = {
+    return SKSpriteNode(imageNamed: "icon-sound-on").pixelized().withZ(1).withAnchor(0, 0)
+  }()
+
+  lazy var quitIcon: SKSpriteNode = {
+    return SKSpriteNode(imageNamed: "icon-quit").pixelized().withZ(1).withAnchor(0, 0)
+  }()
+
   lazy var line: SKSpriteNode = {
     return PWRSpriteNode(
       texture: nil, color: SKColor.lightGray, size: CGSize(width: 1, height: self.height)
@@ -128,6 +136,8 @@ class HUDNode: SKSpriteNode {
     self.addChild(ammoIcon)
     self.addChild(ammoLabel)
     self.addChild(musicIcon)
+    self.addChild(soundIcon)
+    self.addChild(quitIcon)
   }
 
   func layoutForLandscape() {
@@ -150,7 +160,11 @@ class HUDNode: SKSpriteNode {
     y += 2
     ammoIcon.position = CGPoint(x: 0, y: _y(y) - 1)
     ammoLabel.position = CGPoint(x: 8, y: _y(y) - 2)
+
     musicIcon.position = CGPoint(x: 1, y: 1)
+    soundIcon.position = CGPoint(x: musicIcon.position.x + 10, y: 1)
+    quitIcon.position = CGPoint(x: soundIcon.position.x + 15, y: 1)
+
     line.size = CGSize(width: 1, height: self.height)
     line.position = CGPoint(x: self.width - 1, y: 0)
 
@@ -177,6 +191,8 @@ class HUDNode: SKSpriteNode {
     scoreLabel.position = CGPoint(x: scoreIcon.position.x + 20, y: scoreIcon.position.y + 1)
 
     musicIcon.position = CGPoint(x: width - 9, y: 1)
+    soundIcon.position = CGPoint(x: musicIcon.position.x - 10, y: 1)
+    quitIcon.position = CGPoint(x: soundIcon.position.x - 24, y: 1)
 
     line.size = CGSize(width: self.width, height: 1)
     line.position = CGPoint(x: 0, y: self.height - 1)
@@ -219,6 +235,10 @@ class HUDNode: SKSpriteNode {
     }
   }
 
+  private lazy var _musicIconOff: SKTexture = { return SKTexture(imageNamed: "icon-music-off").pixelized() }()
+  private lazy var _musicIconOn: SKTexture = { return SKTexture(imageNamed: "icon-music-on").pixelized() }()
+  private lazy var _soundIconOff: SKTexture = { return SKTexture(imageNamed: "icon-sound-off").pixelized() }()
+  private lazy var _soundIconOn: SKTexture = { return SKTexture(imageNamed: "icon-sound-on").pixelized() }()
   func update(instant: Bool) {
     if frame.size.width > 40 {
       levelNumberLabel.text = "Level \(self.game.difficulty)"
@@ -229,11 +249,18 @@ class HUDNode: SKSpriteNode {
     healthMeterNode.update(instant: instant)
     scoreLabel.text = "\(game.score)"
     ammoLabel.text = "\(game.player.ammoC?.value ?? 0)"
+
+    musicIcon.texture = UserDefaults.pwr_isMusicEnabled ? _musicIconOn : _musicIconOff
+    soundIcon.texture = UserDefaults.pwr_isSoundEnabled ? _soundIconOn : _soundIconOff
   }
 
   func motionIndicate(_ point: CGPoint) {
     if musicIcon.frame.contains(point) {
       (scene as? MapScene)?.motionToggleMusic()
+    } else if soundIcon.frame.contains(point) {
+      (scene as? MapScene)?.motionToggleSound()
+    } else if quitIcon.frame.contains(point) {
+      (scene as? MapScene)?.motionExit()
     }
   }
 }

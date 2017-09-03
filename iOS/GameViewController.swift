@@ -9,11 +9,14 @@
 import UIKit
 import SpriteKit
 import GameplayKit
+import AVFoundation
 
 class GameViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
+
+    try? AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
 
     let scene: GameScene = GameScene.create()
 

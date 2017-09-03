@@ -105,13 +105,8 @@ class MapScene: OrientationAwareAbstractScene {
 
     MusicPlayer.shared.prepare(track: "1")
     MusicPlayer.shared.play()
-    _updateMusicTexture()
 
-    Player.shared.get("up1", useCache: false).play()
-  }
-
-  private func _updateMusicTexture() {
-    self.hudNode.musicIcon.texture = SKTexture(imageNamed: UserDefaults.pwr_isMusicEnabled ? "icon-music-on" : "icon-music-off").pixelized()
+    Player.shared.play("up1", useCache: false)
   }
 
   override func layoutForLandscape() {
@@ -189,7 +184,25 @@ class MapScene: OrientationAwareAbstractScene {
 
   override func motionToggleMusic() {
     MusicPlayer.shared.toggleMusicSetting()
-    _updateMusicTexture()
+  }
+
+  func motionToggleSound() {
+    Player.shared.toggleSoundSetting()
+  }
+
+  func motionExit() {
+    #if os(iOS)
+      let alertVC = UIAlertController(
+        title: NSLocalizedString("Abandon your current game?", comment: ""),
+        message: NSLocalizedString("All progress will be lost.", comment: ""),
+        preferredStyle: .alert)
+      alertVC.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .destructive, handler: { _ in
+        self.gameOver(reason: .health)
+      }))
+      alertVC.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .cancel, handler: nil))
+      UIApplication.shared.delegate?.window??.rootViewController?.present(alertVC, animated: true, completion: nil)
+    #elseif os(OSX)
+    #endif
   }
 
   private var _lastTargetedPoint: int2? = nil
@@ -200,11 +213,13 @@ class MapScene: OrientationAwareAbstractScene {
     let gridPos: int2
     if isLandscape {
       let visualPointInMap = self.convert(point, to: mapContainerNode)
+      if visualPointInMap.x < 0 || visualPointInMap.y < 0 { return nil }
       gridPos = int2(
         Int32(visualPointInMap.x / tileSize.width),
         Int32(visualPointInMap.y / tileSize.height))
     } else {
       let visualPointInMapInvertedY = self.convert(point, to: hudNode) - CGPoint(x: 0, y: hudSize.width)
+      if visualPointInMapInvertedY.x < 0 || visualPointInMapInvertedY.y < 0 { return nil }
       let visualPointInMap = CGPoint(x: mapContainerNode.frame.size.width - visualPointInMapInvertedY.x, y: visualPointInMapInvertedY.y)
       gridPos = int2(
         Int32(visualPointInMap.y / tileSize.width),
@@ -234,7 +249,7 @@ class MapScene: OrientationAwareAbstractScene {
   var lastPointIndicated: int2? = nil
   override func motionIndicate(point: CGPoint) {
     guard !isDead else { return }
-    if let gridPos = eventPointToGrid(point: point) {
+    if let gridPos = eventPointToGrid(point: point), point.x >= mapContainerNode.position.x, point.y >= mapContainerNode.position.y {
       self.handleGridIndicate(point: point, gridPos: gridPos)
     } else {
       hudNode.motionIndicate(self.convert(point, to: hudNode))
