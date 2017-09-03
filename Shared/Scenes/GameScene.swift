@@ -40,6 +40,8 @@ class GameScene: PixelatedScene {
 
   override func setup() {
     super.setup()
+    
+    scaleMode = .aspectFit
 
     if UserDefaults.pwr_isMusicEnabled {
       MusicPlayer.shared.prepare(track: "loading")
@@ -87,7 +89,7 @@ class GameScene: PixelatedScene {
 
       if let score = self.childNode(withName: "//score") as? SKLabelNode {
         score.position = start.position + CGPoint(x: 0, y: -40)
-        score.setScale(0.5)
+        score.setScale(0.7)
       }
     }
   }

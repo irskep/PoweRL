@@ -22,6 +22,8 @@ class HelpScene: PixelatedScene {
   override func setup() {
     super.setup()
 
+    scaleMode = .aspectFit
+
     #if os(iOS)
       (self.childNode(withName: "//clicktoshoot") as? SKLabelNode)?.text = "Tap to shoot"
       (self.childNode(withName: "//howtomove") as? SKLabelNode)?.text = "Swipe to move"
@@ -30,7 +32,6 @@ class HelpScene: PixelatedScene {
     visitAll {
       guard let node = $0 as? SKSpriteNode, let asset = _Assets16(rawValue: node.name ?? "n/a")
         else { return }
-      print("a", asset)
       node.texture = Assets16.get(asset)
     }
   }
@@ -46,7 +47,7 @@ class HelpScene: PixelatedScene {
       logo2.position = CGPoint(x: 8, y: 200 - 8)
     }
     if let content = self.childNode(withName: "//content") {
-      content.setScale(0.6)
+      content.setScale(0.5)
     }
   }
 }

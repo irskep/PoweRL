@@ -90,14 +90,27 @@ class PixelatedScene: OrientationAwareAbstractScene {
     fixScale()
   }
 
+  override func didChangeSize(_ oldSize: CGSize) {
+    super.didChangeSize(oldSize)
+    guard let height = self.view?.bounds.size.height else {
+      return
+    }
+    let scale = height / 621
+    for child in self.children {
+      child.position *= scale
+      child.setScale(scale)
+    }
+  }
+
   func fixScale() {
-    #if os(iOS)
-      let scale = UIScreen.main.bounds.size.height / (414 * 1.5)
-      for child in self.children {
-        child.position *= scale
-        child.setScale(scale)
-      }
-    #endif
+    guard let height = self.view?.bounds.size.height else {
+      return
+    }
+    let scale = height / 621
+    for child in self.children {
+      child.position *= scale
+      child.setScale(scale)
+    }
   }
 
   override func layoutForLandscape() {

@@ -197,12 +197,28 @@ class MapScene: OrientationAwareAbstractScene {
         message: NSLocalizedString("All progress will be lost.", comment: ""),
         preferredStyle: .alert)
       alertVC.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""), style: .destructive, handler: { _ in
-        self.gameOver(reason: .health)
+        self.euthanize()
       }))
       alertVC.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""), style: .cancel, handler: nil))
       UIApplication.shared.delegate?.window??.rootViewController?.present(alertVC, animated: true, completion: nil)
     #elseif os(OSX)
+      let alert = NSAlert()
+      alert.messageText = NSLocalizedString("Abandon your current game?", comment: "")
+      alert.informativeText = NSLocalizedString("All progress will be lost.", comment: "")
+      alert.addButton(withTitle: NSLocalizedString("Yes", comment: ""))
+      alert.buttons.first?.keyEquivalent = "\r"
+      alert.addButton(withTitle: NSLocalizedString("No", comment: ""))
+      guard let window = NSApp.keyWindow else { return }
+      alert.beginSheetModal(for: window, completionHandler: { (response) in
+        if response == .alertFirstButtonReturn {
+          self.euthanize()
+        }
+      })
     #endif
+  }
+
+  @objc func euthanize(_ sender: Any? = nil) {
+    self.gameOver(reason: .health)
   }
 
   private var _lastTargetedPoint: int2? = nil
