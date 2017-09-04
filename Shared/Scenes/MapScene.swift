@@ -355,14 +355,18 @@ class MapScene: OrientationAwareAbstractScene {
   }
 
   func gameOver(reason: DeathReason) {
-    if let playerPos = game.player?.sprite?.position {
-      makeExplosion(position: playerPos, name: "explosion-1")
-    }
     MusicPlayer.shared.prepare(track: nil)
     game.startEndingLevel()
-    self.view?.presentScene(DeathScene.create(reason: reason, score: game.score), transition: SKTransition.crossFade(withDuration: 3))
     self.deleteSave(id: "continuous")
-
+    if let playerPos = game.player?.sprite?.position, reason == .health {
+      Player.shared.play("playerdeath", useCache: false)
+      game.player.sprite?.run(SKAction.fadeOut(withDuration: 0.3))
+      makeExplosion(position: playerPos, name: "explosion-1", completion: {
+        self.view?.presentScene(DeathScene.create(reason: reason, score: self.game.score), transition: SKTransition.crossFade(withDuration: 1))
+      })
+    } else {
+      self.view?.presentScene(DeathScene.create(reason: reason, score: game.score), transition: SKTransition.crossFade(withDuration: 3))
+    }
   }
 
   func showEnemyDeath(entity: GKEntity) {
@@ -374,7 +378,7 @@ class MapScene: OrientationAwareAbstractScene {
     }
   }
 
-  func makeExplosion(position: CGPoint, name: String) {
+  func makeExplosion(position: CGPoint, name: String, completion: (() -> ())? = nil) {
     let textures = SKTexture(imageNamed: name).spriteSheetTextures()
     let sprite = PWRSpriteNode(texture: textures[0], color: SKColor.white, size: CGSize.zero)
     sprite.size = sprite.texture!.size()
@@ -387,6 +391,7 @@ class MapScene: OrientationAwareAbstractScene {
       SKAction.animate(with: textures, timePerFrame: 0.08, resize: false, restore: false),
       completion: {
         sprite.removeFromParent()
+        completion?()
     })
   }
 

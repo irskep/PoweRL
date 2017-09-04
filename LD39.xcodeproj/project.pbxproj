@@ -10,6 +10,9 @@
 		AA27C70A1F2D9FC2004419F6 /* up3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA27C7091F2D9FC1004419F6 /* up3.mp3 */; };
 		AA27C7281F2D9FFE004419F6 /* up3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA27C7091F2D9FC1004419F6 /* up3.mp3 */; };
 		AA27C7291F2D9FFF004419F6 /* up3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA27C7091F2D9FC1004419F6 /* up3.mp3 */; };
+		AA28CFA61F5DFC42009EDF2E /* playerdeath.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA28CFA51F5DFC42009EDF2E /* playerdeath.mp3 */; };
+		AA28CFA71F5DFC75009EDF2E /* playerdeath.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA28CFA51F5DFC42009EDF2E /* playerdeath.mp3 */; };
+		AA28CFA81F5DFC75009EDF2E /* playerdeath.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = AA28CFA51F5DFC42009EDF2E /* playerdeath.mp3 */; };
 		AA3864E41F47A0DF000753E5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3864E31F47A0DF000753E5 /* Assets.swift */; };
 		AA3864E51F47A0DF000753E5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3864E31F47A0DF000753E5 /* Assets.swift */; };
 		AA3864E61F47A0DF000753E5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3864E31F47A0DF000753E5 /* Assets.swift */; };
@@ -179,6 +182,7 @@
 
 /* Begin PBXFileReference section */
 		AA27C7091F2D9FC1004419F6 /* up3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = up3.mp3; sourceTree = "<group>"; };
+		AA28CFA51F5DFC42009EDF2E /* playerdeath.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = playerdeath.mp3; sourceTree = "<group>"; };
 		AA3864E31F47A0DF000753E5 /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
 		AA70E4B81F2C1BB9005F1DD0 /* MapScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapScene.swift; sourceTree = "<group>"; };
 		AA70E4BC1F2C1BFB005F1DD0 /* AbstractScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractScene.swift; sourceTree = "<group>"; };
@@ -376,6 +380,7 @@
 		AAD6B9FD1F2D741000D0900E /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				AA28CFA51F5DFC42009EDF2E /* playerdeath.mp3 */,
 				AAC40BB21F5B16F8004F4ABD /* fire_begin.mp3 */,
 				AAC40BB31F5B16F8004F4ABD /* fire_end.mp3 */,
 				AAF75A2C1F591824001DEA56 /* kill.mp3 */,
@@ -554,6 +559,7 @@
 				AAD6BA1E1F2D741000D0900E /* hit3.mp3 in Resources */,
 				AAD6BA271F2D741000D0900E /* toggle.mp3 in Resources */,
 				AAC40BB41F5B16F9004F4ABD /* fire_begin.mp3 in Resources */,
+				AA28CFA61F5DFC42009EDF2E /* playerdeath.mp3 in Resources */,
 				AA7332421F2C2712006ECA4D /* MapScene.sks in Resources */,
 				AAD6BA1B1F2D741000D0900E /* hit2.mp3 in Resources */,
 				AAD6BA2A1F2D741000D0900E /* up1.mp3 in Resources */,
@@ -565,6 +571,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAC0F89D1F1AD30900D55037 /* Main.storyboard in Resources */,
+				AA28CFA81F5DFC75009EDF2E /* playerdeath.mp3 in Resources */,
 				AAD6BA161F2D741000D0900E /* gameover.mp3 in Resources */,
 				AA945B721F2D284C006C6DEA /* DeathScene.sks in Resources */,
 				AAD6BA101F2D741000D0900E /* bump.mp3 in Resources */,
@@ -601,6 +608,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA28CFA71F5DFC75009EDF2E /* playerdeath.mp3 in Resources */,
 				AAC0F8AB1F1AD30900D55037 /* Main.storyboard in Resources */,
 				AAE9193F1F2F893C009840C5 /* Mac.xcassets in Resources */,
 				AAD6BA171F2D741000D0900E /* gameover.mp3 in Resources */,
