@@ -358,12 +358,20 @@ class MapScene: OrientationAwareAbstractScene {
     MusicPlayer.shared.prepare(track: nil)
     game.startEndingLevel()
     self.deleteSave(id: "continuous")
-    if let playerPos = game.player?.sprite?.position, reason == .health {
-      Player.shared.play("playerdeath", useCache: false)
-      game.player.sprite?.run(SKAction.fadeOut(withDuration: 0.3))
-      makeExplosion(position: playerPos, name: "explosion-1", completion: {
-        self.view?.presentScene(DeathScene.create(reason: reason, score: self.game.score), transition: SKTransition.crossFade(withDuration: 1))
-      })
+    if let playerPos = game.player?.sprite?.position {
+      if reason == .health {
+        Player.shared.play("playerdeath", useCache: false)
+        game.player.sprite?.run(SKAction.fadeOut(withDuration: 0.3))
+        makeExplosion(position: playerPos, name: "explosion-1", completion: {
+          self.view?.presentScene(DeathScene.create(reason: reason, score: self.game.score), transition: SKTransition.crossFade(withDuration: 1))
+        })
+      } else {
+        Player.shared.play("playerdeath_battery", useCache: false)
+        game.player.sprite?.run(SKAction.fadeOut(withDuration: 0.3))
+        makeExplosion(position: playerPos, name: "explosion-3", completion: {
+          self.view?.presentScene(DeathScene.create(reason: reason, score: self.game.score), transition: SKTransition.crossFade(withDuration: 1))
+        })
+      }
     } else {
       self.view?.presentScene(DeathScene.create(reason: reason, score: game.score), transition: SKTransition.crossFade(withDuration: 3))
     }
