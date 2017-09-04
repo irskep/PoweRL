@@ -69,13 +69,10 @@ extension GKEntity: Dictable {
       "components": self.components.flatMap({ (component) -> Any? in
         let name = "\(type(of: component))"
         if (component as? Reconstructable) != nil {
-          print("reconstructable", name)
           return ["name": name]
         } else if let dictable = component as? Dictable {
-          print("dictable", name)
           return ["name": name, "value": dictable.toDict()]
         } else {
-          print("skipping", name)
           return nil
         }
       })

@@ -355,10 +355,39 @@ class MapScene: OrientationAwareAbstractScene {
   }
 
   func gameOver(reason: DeathReason) {
+    if let playerPos = game.player?.sprite?.position {
+      makeExplosion(position: playerPos, name: "explosion-1")
+    }
     MusicPlayer.shared.prepare(track: nil)
     game.startEndingLevel()
     self.view?.presentScene(DeathScene.create(reason: reason, score: game.score), transition: SKTransition.crossFade(withDuration: 3))
     self.deleteSave(id: "continuous")
+
+  }
+
+  func showEnemyDeath(entity: GKEntity) {
+    if let ptsC = entity.component(ofType: PointValueComponent.self) {
+      flashMessage("+\(pluralize(ptsC.points, "point", "points"))", color: SKColor.green)
+    }
+    if let sprite = entity.sprite {
+      makeExplosion(position: sprite.position, name: "explosion-2")
+    }
+  }
+
+  func makeExplosion(position: CGPoint, name: String) {
+    let textures = SKTexture(imageNamed: name).spriteSheetTextures()
+    let sprite = PWRSpriteNode(texture: textures[0], color: SKColor.white, size: CGSize.zero)
+    sprite.size = sprite.texture!.size()
+    sprite.position = position
+    sprite.zPosition = Z.player + 1
+    self.setMapNodeTransform(sprite)
+    mapContainerNode.addChild(sprite)
+
+    sprite.run(
+      SKAction.animate(with: textures, timePerFrame: 0.08, resize: false, restore: false),
+      completion: {
+        sprite.removeFromParent()
+    })
   }
 
   // MARK: utils

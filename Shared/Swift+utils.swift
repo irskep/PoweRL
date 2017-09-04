@@ -11,6 +11,15 @@ import SpriteKit
 import GameplayKit
 
 
+func pluralize(_ n: Int, _ s: String, _ p: String) -> String {
+  if n == 1 {
+    return "1 \(s)"
+  } else {
+    return "\(n) \(p)"
+  }
+}
+
+
 class PWRSpriteNode: SKSpriteNode {
   @IBInspectable
   var asset16Name: String? {
@@ -115,6 +124,19 @@ extension SKTexture {
   func pixelized() -> SKTexture {
     self.filteringMode = .nearest
     return self
+  }
+
+  func spriteSheetTextures(cellWidth maybeCellWidth: CGFloat? = nil) -> [SKTexture] {
+    var x: CGFloat = 0
+    var textures = [SKTexture]()
+    let size = self.size()
+    let cellWidth = maybeCellWidth ?? size.height
+    while x < self.size().width {
+      let rect = CGRect(origin: CGPoint(x: x / size.width, y: 0), size: CGSize(width: cellWidth / size.width, height: 1))
+      textures.append(SKTexture(rect: rect, in: self).pixelized())
+      x += cellWidth
+    }
+    return textures
   }
 }
 

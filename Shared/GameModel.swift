@@ -13,15 +13,6 @@ import SpriteKit
 let MOVE_TIME: TimeInterval = 0.1
 
 
-private func pluralize(_ n: Int, _ s: String, _ p: String) -> String {
-  if n == 1 {
-    return "1 \(s)"
-  } else {
-    return "\(n) \(p)"
-  }
-}
-
-
 private func createRuleSystem(_ game: GameModel) -> GKRuleSystem {
   let rs = GKRuleSystem()
   rs.state["game"] = game
@@ -272,7 +263,7 @@ extension GameModel {
     ammoC.add(value: -1)
     Player.shared.play("fire_begin", useCache: false)
 
-    let bulletSprite = PWRSpriteNode(.ammo1).withZ(Z.player)
+    let bulletSprite = PWRSpriteNode(.ammo1).withZ(Z.player - 1)
     bulletSprite.position = player.sprite!.position
     scene?.setMapNodeTransform(bulletSprite)
 
@@ -357,7 +348,7 @@ extension GameModel {
     if entity.healthC?.isDead == true {
       if let ptsC = entity.component(ofType: PointValueComponent.self) {
         self.score += ptsC.points
-        scene?.flashMessage("+\(pluralize(ptsC.points, "point", "points"))", color: SKColor.green)
+        scene?.showEnemyDeath(entity: entity)
       }
       self.delete(entity: entity)
     }
