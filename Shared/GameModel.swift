@@ -81,7 +81,7 @@ class GameModel {
       }
       let node = gridGraph.node(atGridPosition: p)!
       resultsForward.append(p)
-      if !node.entities.filter({ $0.component(ofType: TakesUpSpaceComponent.self) != nil }).isEmpty {
+      if !node.entities.filter({ self.isShootable(entity: $0) }).isEmpty {
         // Include last point so player can see
         break
       }
@@ -253,7 +253,7 @@ extension GameModel {
     guard isAcceptingInput else { return }
     guard let node = gridGraph.node(atGridPosition: target) else { return }
     guard let ammoC = player.ammoC else { return }
-    let entitiesToShoot = node.entities.filter({ $0.healthC != nil })
+    let entitiesToShoot = node.entities.filter({ self.isShootable(entity: $0) })
     guard !entitiesToShoot.isEmpty else { return }
     guard ammoC.value > 0 else {
       Player.shared.play("hit2", useCache: false)
@@ -283,6 +283,10 @@ extension GameModel {
       Player.shared.play("fire_end", useCache: false)
       self.executeTurn()
     })
+  }
+
+  func isShootable(entity: GKEntity) -> Bool {
+    return entity.healthC != nil && entity.component(ofType: PickupConsumableComponent.self) == nil
   }
 
   func movePlayer(by delta: int2, completion: OptionalCallback = nil) {

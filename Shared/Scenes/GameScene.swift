@@ -16,6 +16,7 @@ extension SKScene {
 
 extension CGRect {
   var aspectRatioPortrait: CGFloat { return height / width }
+  var aspectRatioLandscape: CGFloat { return width / height }
 }
 
 class GameScene: PixelatedScene {

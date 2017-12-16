@@ -44,6 +44,7 @@ enum _Assets16: String, AssetClass {
   case mobButterfly = "mobButterfly", mobRabbit = "mobRabbit"
   case mobTurtle1 = "mobTurtle1", mobTurtle2 = "mobTurtle2"
   case player = "player", exit = "exit"
+  case filler = "filler"
 
   var coord: (CGFloat, CGFloat) {
     switch self {
@@ -61,6 +62,7 @@ enum _Assets16: String, AssetClass {
     case .mobTurtle2: return (3, 1)
     case .player: return (0, 0)
     case .exit: return (1, 0)
+    case .filler: return (2, 0)
     }
   }
 

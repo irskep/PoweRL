@@ -200,8 +200,9 @@ class MapGenerator {
     }
     shuffledGridPositions = random.arrayByShufflingObjects(in: shuffledGridPositions) as! [int2]
 
-    let getSomePositions = { (n: Int) -> [int2] in
+    let getSomePositions = { (n: Int, verboten: Set<int2>) -> [int2] in
       let val = Array(shuffledGridPositions[0..<min(shuffledGridPositions.count, n)])
+        .filter({ !verboten.contains($0) })
       shuffledGridPositions = Array(shuffledGridPositions.dropFirst(n))
       return val
     }
@@ -222,7 +223,7 @@ class MapGenerator {
 
     var allEntities: [GKEntity] = []
 
-    allEntities += getSomePositions(numWalls).map({
+    allEntities += getSomePositions(numWalls, Set()).map({
       let wall = GKEntity()
       wall.addComponent(WallComponent())
       wall.addComponent(InitialGridPositionComponent(position: $0))
@@ -230,7 +231,7 @@ class MapGenerator {
       return wall
     })
 
-    let playerPosition = getSomePositions(1)[0]
+    let playerPosition = getSomePositions(1, Set())[0]
     let player = GKEntity()
     player.addComponent(SpriteTypeComponent(asset: .player, z: Z.player))
     player.addComponent(InitialGridPositionComponent(position: playerPosition))
@@ -254,7 +255,7 @@ class MapGenerator {
       return MapGenerator.generate(difficulty: difficulty, score: score, size: size, playerTemplate: playerTemplate, random: random, n: n + 1)
     }
 
-    allEntities += getSomePositions(numBatteries).map({
+    allEntities += getSomePositions(numBatteries, Set()).map({
       let battery = GKEntity()
       battery.addComponent(InitialGridPositionComponent(position: $0))
       battery.addComponent(SpriteTypeComponent(asset: .powerupBattery, z: Z.pickup, shouldAnimateAway: false))
@@ -263,7 +264,7 @@ class MapGenerator {
       return battery
     })
 
-    allEntities += getSomePositions(numAmmos).map({
+    allEntities += getSomePositions(numAmmos, Set()).map({
       let ammo = GKEntity()
       let value = random.nextInt(upperBound: 2) + 1
       ammo.addComponent(InitialGridPositionComponent(position: $0))
@@ -273,7 +274,7 @@ class MapGenerator {
       return ammo
     })
 
-    allEntities += getSomePositions(numHealthPacks).map({
+    allEntities += getSomePositions(numHealthPacks, Set()).map({
       let health = GKEntity()
       health.addComponent(InitialGridPositionComponent(position: $0))
       health.addComponent(SpriteTypeComponent(asset: .powerupHealth, z: Z.pickup))
@@ -282,16 +283,27 @@ class MapGenerator {
       return health
     })
 
-    allEntities += getSomePositions(numEnemies).map({
-      let mob = GKEntity()
+    var iters = 0
+    var i = 0
+    while i < numEnemies {
+      iters += 1
+      if iters > 1000 {
+        print("Regenerating map due to enemy placement issue")
+        return MapGenerator.generate(difficulty: difficulty, score: score, size: size, playerTemplate: playerTemplate, random: random, n: n + 1)
+      }
       let specsForThisLevel = mobSpecs.filter({ $0.minDifficulty <= difficulty })
       let spec = specsForThisLevel[random.nextInt(upperBound: specsForThisLevel.count)]
-      mob.addComponent(MobSpecComponent(spec: spec))
-      mob.addComponent(InitialGridPositionComponent(position: $0))
-      return mob
-    })
+      let verbotenPositions = Set<int2>(spec.moves.map({ playerPosition &- $0 }))
+      if let pos = getSomePositions(1, verbotenPositions).first {
+        let mob = GKEntity()
+        mob.addComponent(MobSpecComponent(spec: spec))
+        mob.addComponent(InitialGridPositionComponent(position: pos))
+        allEntities += [mob]
+        i += 1
+      }
+    }
 
-    allEntities += getSomePositions(numDrains).map({
+    allEntities += getSomePositions(numDrains, Set()).map({
       let drain = GKEntity()
       drain.addComponent(SpriteTypeComponent(asset: .bgDrain, z: Z.wall))
       drain.addComponent(PowerComponent(power: -7, isBattery: true))

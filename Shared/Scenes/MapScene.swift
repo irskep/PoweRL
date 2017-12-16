@@ -21,9 +21,15 @@ class MapScene: OrientationAwareAbstractScene {
   var adjustedSize: CGSize { return isLandscape ? frame.size : CGSize(width: frame.size.height, height: frame.size.width) }
   let tileSize = CGSize(width: 16, height: 16)
   var mapPixelSize: CGSize {
-    return CGSize(
-      width: CGFloat(game.mapSize.x) * tileSize.width,
-      height: CGFloat(game.mapSize.y) * tileSize.height)
+    if let view = self.view, view.frame.aspectRatioPortrait > 1.8 || view.frame.aspectRatioLandscape > 1.8 {
+      return CGSize(
+        width: CGFloat(game.mapSize.x + 1) * tileSize.width,
+        height: CGFloat(game.mapSize.y) * tileSize.height)
+    } else {
+      return CGSize(
+        width: CGFloat(game.mapSize.x) * tileSize.width,
+        height: CGFloat(game.mapSize.y) * tileSize.height)
+    }
   }
   var screenScale: CGFloat { return self.adjustedSize.height / self.mapPixelSize.height }
   var screenPixelSize: CGSize {
@@ -90,6 +96,14 @@ class MapScene: OrientationAwareAbstractScene {
         self.mapContainerNode.addChild(node)
         self.gridNodes[CGPoint(x: CGFloat(x), y: CGFloat(y))] = node
       }
+    }
+    for y in 0..<game.mapSize.y {
+      let node = PWRSpriteNode(.bgWall)
+      let x: Int32 = game.mapSize.x
+      node.position = self.spritePoint(forPosition: int2(x, y))
+      node.zPosition = 0
+      self.mapContainerNode.addChild(node)
+      self.gridNodes[CGPoint(x: CGFloat(x), y: CGFloat(y))] = node
     }
 
     game.start(scene: self)
@@ -286,6 +300,7 @@ class MapScene: OrientationAwareAbstractScene {
 
     if isTouch {
       if lastPointIndicated == gridPos {
+        _hideTargetingLaser()
         game.shoot(target: path.last!, path: path)
         lastPointIndicated = nil
       } else {
