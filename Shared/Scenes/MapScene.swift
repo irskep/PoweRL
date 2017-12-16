@@ -98,7 +98,7 @@ class MapScene: OrientationAwareAbstractScene {
       }
     }
     for y in 0..<game.mapSize.y {
-      let node = PWRSpriteNode(.bgWall)
+      let node = PWRSpriteNode(.filler)
       let x: Int32 = game.mapSize.x
       node.position = self.spritePoint(forPosition: int2(x, y))
       node.zPosition = 0
