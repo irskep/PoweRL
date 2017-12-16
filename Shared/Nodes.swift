@@ -161,9 +161,11 @@ class HUDNode: SKSpriteNode {
     ammoIcon.position = CGPoint(x: 0, y: _y(y) - 1)
     ammoLabel.position = CGPoint(x: 8, y: _y(y) - 2)
 
-    musicIcon.position = CGPoint(x: 1, y: 1)
+    let midX = self.frame.size.width / 2
+
+    musicIcon.position = CGPoint(x: midX - 22, y: 1)
     soundIcon.position = CGPoint(x: musicIcon.position.x + 10, y: 1)
-    quitIcon.position = CGPoint(x: soundIcon.position.x + 15, y: 1)
+    quitIcon.position = CGPoint(x: midX + 1, y: 1)
 
     line.size = CGSize(width: 1, height: self.height)
     line.position = CGPoint(x: self.width - 1, y: 0)
@@ -176,9 +178,6 @@ class HUDNode: SKSpriteNode {
   }
 
   func layoutForPortrait() {
-    levelNumberLabel.position = CGPoint(x: 1, y: 1)
-    levelNumberLabel.anchorPoint = CGPoint(x: 0, y: 0)
-    
     ammoIcon.position = CGPoint(x: 43, y: self.height - 2)
     ammoLabel.position = CGPoint(x: 51, y: self.height - 3)
 
@@ -190,9 +189,13 @@ class HUDNode: SKSpriteNode {
     scoreIcon.position = CGPoint(x: 1, y: self.height - 24)
     scoreLabel.position = CGPoint(x: scoreIcon.position.x + 20, y: scoreIcon.position.y + 1)
 
-    musicIcon.position = CGPoint(x: width - 9, y: 1)
-    soundIcon.position = CGPoint(x: musicIcon.position.x - 10, y: 1)
-    quitIcon.position = CGPoint(x: soundIcon.position.x - 24, y: 1)
+    let lastLineY = scoreIcon.position.y - 16
+
+    musicIcon.position = CGPoint(x: width - 9, y: lastLineY)
+    soundIcon.position = CGPoint(x: musicIcon.position.x - 10, y: lastLineY)
+    quitIcon.position = CGPoint(x: soundIcon.position.x - 24, y: lastLineY)
+    levelNumberLabel.position = CGPoint(x: 1, y: lastLineY)
+    levelNumberLabel.anchorPoint = CGPoint(x: 0, y: 0)
 
     line.size = CGSize(width: self.width, height: 1)
     line.position = CGPoint(x: 0, y: self.height - 1)

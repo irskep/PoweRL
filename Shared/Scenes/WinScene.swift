@@ -39,8 +39,9 @@ class WinScene: PixelatedScene {
 
   override func layoutForPortrait() {
     super.layoutForPortrait()
-    childNode(withName: "//text")?.setScale(0.5)
-    childNode(withName: "//score")?.setScale(0.5)
+    let isExtraSkinny = (self.view?.bounds.aspectRatioPortrait ?? 0) > 1.8
+    childNode(withName: "//text")?.setScale(isExtraSkinny ? 0.3 : 0.5)
+    childNode(withName: "//score")?.setScale(isExtraSkinny ? 0.3 : 0.5)
   }
 }
 

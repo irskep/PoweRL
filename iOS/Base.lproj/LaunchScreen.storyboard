@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -30,12 +29,12 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="5y3-TN-unP" secondAttribute="bottom" id="861-Zr-X1R"/>
                             <constraint firstItem="kEy-lZ-WK4" firstAttribute="centerY" secondItem="5y3-TN-unP" secondAttribute="centerY" id="KhX-0h-Bwv"/>
                             <constraint firstItem="kEy-lZ-WK4" firstAttribute="centerX" secondItem="5y3-TN-unP" secondAttribute="centerX" id="OLH-c2-rJH"/>
                             <constraint firstItem="kEy-lZ-WK4" firstAttribute="width" secondItem="5y3-TN-unP" secondAttribute="width" id="Qt9-1z-13f"/>
                             <constraint firstAttribute="trailing" secondItem="5y3-TN-unP" secondAttribute="trailing" id="Xc4-A9-nU9"/>
                             <constraint firstItem="5y3-TN-unP" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="YUw-YS-iEu"/>
-                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="5y3-TN-unP" secondAttribute="bottom" id="ZTk-g9-uKH"/>
                             <constraint firstItem="5y3-TN-unP" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="gMz-hE-RnS"/>
                         </constraints>
                     </view>

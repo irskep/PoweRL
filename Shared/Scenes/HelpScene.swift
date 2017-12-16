@@ -38,6 +38,7 @@ class HelpScene: PixelatedScene {
 
   override func layoutForPortrait() {
     super.layoutForPortrait()
+    let isExtraSkinny = (self.view?.bounds.aspectRatioPortrait ?? 0) > 1.8
     if let logo1 = self.childNode(withName: "//logo1") {
       logo1.setScale(0.35)
       logo1.position = CGPoint(x: 0, y: 200)
@@ -47,7 +48,7 @@ class HelpScene: PixelatedScene {
       logo2.position = CGPoint(x: 8, y: 200 - 8)
     }
     if let content = self.childNode(withName: "//content") {
-      content.setScale(0.5)
+      content.setScale(isExtraSkinny ? 0.4 : 0.5)
     }
   }
 }

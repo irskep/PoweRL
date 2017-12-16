@@ -14,6 +14,10 @@ extension SKScene {
   }
 }
 
+extension CGRect {
+  var aspectRatioPortrait: CGFloat { return height / width }
+}
+
 class GameScene: PixelatedScene {
   fileprivate var label : SKLabelNode?
   fileprivate var spinnyNode : SKShapeNode?
@@ -67,12 +71,14 @@ class GameScene: PixelatedScene {
 
   override func layoutForPortrait() {
     super.layoutForPortrait()
+    let isExtraSkinny = (self.view?.bounds.aspectRatioPortrait ?? 0) > 1.8
+
     if let logo1 = self.childNode(withName: "//logo1") {
-      logo1.setScale(0.35)
+      logo1.setScale(isExtraSkinny ? 0.25 : 0.35)
       logo1.position = CGPoint(x: 0, y: 200)
     }
     if let logo2 = self.childNode(withName: "//logo2") {
-      logo2.setScale(0.35)
+      logo2.setScale(isExtraSkinny ? 0.25 : 0.35)
       logo2.position = CGPoint(x: 8, y: 200 - 8)
     }
     if let robot = self.childNode(withName: "//robot") {
