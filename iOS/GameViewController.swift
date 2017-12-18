@@ -31,9 +31,16 @@ class GameViewController: UIViewController {
     return true
   }
 
+  override func prefersHomeIndicatorAutoHidden() -> Bool {
+    return true
+  }
+
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     (self.view as! SKView).scene?.size = self.view.bounds.size
+
+    // hax: correct transforms on nodes
+    ((self.view as? SKView)?.scene as? OrientationAwareAbstractScene)?.didChangeSize(self.view.bounds.size)
   }
 
   override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

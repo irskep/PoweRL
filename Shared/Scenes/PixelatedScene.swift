@@ -19,6 +19,10 @@ class OrientationAwareAbstractScene: AbstractScene {
 
   override func didMove(to view: SKView) {
     super.didMove(to: view)
+    self.doLayout()
+  }
+
+  func doLayout() {
     if frame.size.isLandscape {
       layoutForLandscape()
     } else {

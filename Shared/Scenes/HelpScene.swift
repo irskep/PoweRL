@@ -25,7 +25,7 @@ class HelpScene: PixelatedScene {
     scaleMode = .aspectFit
 
     #if os(iOS)
-      (self.childNode(withName: "//clicktoshoot") as? SKLabelNode)?.text = "Tap to shoot"
+      (self.childNode(withName: "//clicktoshoot") as? SKLabelNode)?.text = "Tap 2x to shoot"
       (self.childNode(withName: "//howtomove") as? SKLabelNode)?.text = "Swipe to move"
     #endif
 

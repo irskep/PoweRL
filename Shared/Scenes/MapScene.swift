@@ -102,6 +102,7 @@ class MapScene: OrientationAwareAbstractScene {
       let x: Int32 = game.mapSize.x
       node.position = self.spritePoint(forPosition: int2(x, y))
       node.zPosition = 0
+      node.isSpacer = true
       self.mapContainerNode.addChild(node)
       self.gridNodes[CGPoint(x: CGFloat(x), y: CGFloat(y))] = node
     }
@@ -424,6 +425,8 @@ class MapScene: OrientationAwareAbstractScene {
     if isLandscape && node.zRotation != 0 {
       node.zRotation = 0
     } else if !isLandscape && node.zRotation == 0 {
+      node.zRotation = -CGFloat.pi / 2
+    } else if (node as? PWRSpriteNode)?.isSpacer == true && node.zRotation == 0 {
       node.zRotation = -CGFloat.pi / 2
     }
   }

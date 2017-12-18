@@ -30,6 +30,8 @@ class PWRSpriteNode: SKSpriteNode {
     }
   }
 
+  var isSpacer = false
+
   convenience init(_ t: _Assets16) {
     self.init(texture: Assets16.get(t))
   }
