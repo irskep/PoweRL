@@ -146,11 +146,11 @@ class GameModel {
   }
 
   func startEndingLevel() {
-    print("starting end of \(self.difficulty)")
+//    print("starting end of \(self.difficulty)")
   }
 
   func finishEndingLevel() {
-    print("finishing end of \(self.difficulty)")
+//    print("finishing end of \(self.difficulty)")
     for g in gridSystem.components {
       g.gridNode?.removeAllEntities()
     }
@@ -188,7 +188,7 @@ class GameModel {
   }
 
   func executeTurn(completion: OptionalCallback = nil, autotransition: Bool = true) {
-    print("------------")
+//    print("------------")
     ruleSystem.state["game"] = self
     ruleSystem.reset()
     ruleSystem.evaluate()

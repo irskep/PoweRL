@@ -251,7 +251,7 @@ class MapGenerator {
     allEntities += [exit]
 
     if !isEverythingReachable(size: size, entities: allEntities) {
-      print("Regenerating map due to reachability issue")
+//      print("Regenerating map due to reachability issue")
       return MapGenerator.generate(difficulty: difficulty, score: score, size: size, playerTemplate: playerTemplate, random: random, n: n + 1)
     }
 
@@ -288,7 +288,7 @@ class MapGenerator {
     while i < numEnemies {
       iters += 1
       if iters > 1000 {
-        print("Regenerating map due to enemy placement issue")
+//        print("Regenerating map due to enemy placement issue")
         return MapGenerator.generate(difficulty: difficulty, score: score, size: size, playerTemplate: playerTemplate, random: random, n: n + 1)
       }
       let specsForThisLevel = mobSpecs.filter({ $0.minDifficulty <= difficulty })
